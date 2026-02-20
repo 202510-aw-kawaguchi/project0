@@ -1,0 +1,48 @@
+package com.example.clinicflow;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+class ClinicflowAiApplicationTests {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Test
+    void rootEndpointForwardsToIndexHtml() throws Exception {
+        mockMvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(forwardedUrl("/index.html"));
+    }
+
+    @Test
+    void healthEndpointReturnsOkStatus() throws Exception {
+        mockMvc.perform(get("/health"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"status\":\"ok\"}"));
+    }
+
+    @Test
+    void chatEndpointReturnsSupportAnswer() throws Exception {
+        mockMvc.perform(post("/api/chat")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"message\":\"料金を知りたいです\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.intent").value("pricing"))
+                .andExpect(jsonPath("$.answer").exists())
+                .andExpect(jsonPath("$.suggestions").isArray());
+    }
+}
