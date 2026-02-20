@@ -3,263 +3,451 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Customer Support AI</title>
+  <title>カスタマーサポートAI</title>
   <style>
-    :root {
-      --bg: #eef3f9;
-      --panel: #ffffff;
-      --line: #d8e2ef;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --primary: #0b69ff;
-      --primary-soft: #dbeafe;
-      --received: #f3f6fb;
-      --sent: #0b69ff;
-    }
-    * { box-sizing: border-box; }
     body {
       margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background: radial-gradient(900px 420px at -5% -5%, #dbeafe 0%, transparent 60%), radial-gradient(900px 420px at 105% 105%, #dcfce7 0%, transparent 60%), var(--bg);
+      background: #e9eef5;
       font-family: "Segoe UI", "Yu Gothic UI", sans-serif;
-      color: var(--text);
-      padding: 16px;
     }
+
     .chat-container {
-      width: min(100%, 860px);
-      height: min(92vh, 860px);
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      box-shadow: 0 22px 50px rgba(15, 23, 42, 0.14);
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      max-width: 480px;
+      margin: 0 auto;
+      background: #fff;
     }
+
     .chat-header {
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--line);
       display: flex;
       align-items: center;
       gap: 12px;
-      background: linear-gradient(180deg, #ffffff, #f7fbff);
-    }
-    .avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: #c7d7f5;
-      flex: 0 0 auto;
-    }
-    .user-name { margin: 0; font-size: 1rem; }
-    .user-status { font-size: 0.82rem; color: var(--muted); }
-    .user-status::before { content: "●"; color: #22c55e; margin-right: 4px; }
-    .chat-messages {
       padding: 16px;
-      overflow: auto;
+      background: #007ACC;
+      color: white;
+    }
+
+    .user-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0;
+      margin-bottom: 2px;
+    }
+
+    .user-status {
+      font-size: 0.75rem;
+      opacity: 0.9;
+    }
+
+    .user-status.online::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #34C759;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .menu-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: transparent;
+      color: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      background: #f5f5f5;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      background: linear-gradient(180deg, #f9fbff, #f4f8ff 45%, #f8fbff);
     }
+
     .date-divider {
       text-align: center;
-      font-size: 0.75rem;
-      color: var(--muted);
+      margin: 16px 0;
     }
+
+    .date-divider span {
+      background: #e5e5e5;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      color: #666;
+    }
+
     .message {
-      max-width: 86%;
       display: flex;
       gap: 8px;
-      align-items: flex-end;
+      max-width: 85%;
     }
-    .message.received { align-self: flex-start; }
-    .message.sent { align-self: flex-end; }
-    .bubble {
-      padding: 10px 12px;
-      border-radius: 14px;
-      font-size: 0.95rem;
-      line-height: 1.45;
+
+    .message-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
     }
-    .received .bubble {
-      background: var(--received);
-      border: 1px solid #dbe6f5;
+
+    .message-content {
+      display: flex;
+      flex-direction: column;
     }
-    .sent .bubble {
-      background: var(--sent);
-      color: #fff;
+
+    .message-bubble {
+      padding: 12px 16px;
+      border-radius: 18px;
+      font-size: 0.9rem;
+      line-height: 1.5;
     }
-    .meta {
+
+    .message-time {
+      font-size: 0.7rem;
+      color: #999;
       margin-top: 4px;
-      font-size: 0.72rem;
-      color: var(--muted);
     }
+
+    .message.received {
+      align-self: flex-start;
+    }
+
+    .message.received .message-bubble {
+      background: white;
+      color: #333;
+      border-bottom-left-radius: 4px;
+    }
+
+    .message.sent {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message.sent .message-bubble {
+      background: #007ACC;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.sent .message-time {
+      text-align: right;
+    }
+
+    .message-status.read {
+      font-size: 0.7rem;
+      color: #007ACC;
+      margin-left: 8px;
+    }
+
+    .message-meta {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-top: 4px;
+    }
+
+    .chat-input-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: white;
+      border-top: 1px solid #e5e5e5;
+    }
+
+    .message-input {
+      flex: 1;
+      padding: 10px 16px;
+      border: 1px solid #e5e5e5;
+      border-radius: 24px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .message-input:focus {
+      border-color: #007ACC;
+    }
+
+    .attach-btn, .emoji-btn, .send-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: transparent;
+      border-radius: 50%;
+      cursor: pointer;
+      color: #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .send-btn {
+      background: #007ACC;
+      color: white;
+    }
+
+    .send-btn:hover {
+      background: #005A9E;
+    }
+
+    .send-btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+
     .suggestions {
+      margin-left: 40px;
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 8px;
     }
+
     .suggestion-btn {
-      border: 1px solid #bfd4ff;
-      background: var(--primary-soft);
-      color: #1e3a8a;
-      border-radius: 999px;
+      border: 1px solid #bcd9f3;
+      background: #eaf4ff;
+      color: #005A9E;
+      border-radius: 16px;
       padding: 6px 10px;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       cursor: pointer;
     }
-    .chat-input-area {
-      border-top: 1px solid var(--line);
-      padding: 12px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px;
-      background: #fff;
+
+    /* タイピングインジケーター */
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 12px 16px;
+      background: white;
+      border-radius: 18px;
+      width: fit-content;
     }
-    .message-input {
-      height: 42px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 0 12px;
-      font-size: 0.95rem;
-      outline: none;
+
+    .typing-indicator span {
+      width: 8px;
+      height: 8px;
+      background: #999;
+      border-radius: 50%;
+      animation: typing 1.4s infinite ease-in-out;
     }
-    .message-input:focus {
-      border-color: #8ab4ff;
-      box-shadow: 0 0 0 3px rgba(11, 105, 255, 0.16);
+
+    .typing-indicator span:nth-child(2) {
+      animation-delay: 0.2s;
     }
-    .send-btn {
-      border: 1px solid var(--primary);
-      background: var(--primary);
-      color: #fff;
-      border-radius: 10px;
-      width: 92px;
-      font-weight: 600;
-      cursor: pointer;
+
+    .typing-indicator span:nth-child(3) {
+      animation-delay: 0.4s;
     }
-    .send-btn:disabled { opacity: 0.6; cursor: default; }
-    @media (max-width: 560px) {
-      body { padding: 0; }
-      .chat-container { width: 100vw; height: 100vh; border-radius: 0; }
-      .message { max-width: 94%; }
+
+    @keyframes typing {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-8px); }
     }
   </style>
 </head>
 <body>
-  <div class="chat-container">
-    <header class="chat-header">
-      <div class="avatar"></div>
-      <div>
-        <h2 class="user-name">カスタマーサポートAI</h2>
-        <span class="user-status">オンライン</span>
-      </div>
-    </header>
+<div class="chat-container">
+  <header class="chat-header">
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='100%25' height='100%25' fill='%23c8d8f3'/%3E%3Ccircle cx='40' cy='31' r='15' fill='%23748fb8'/%3E%3Crect x='20' y='49' width='40' height='20' rx='10' fill='%23748fb8'/%3E%3C/svg%3E" alt="" class="user-avatar">
+    <div class="user-info">
+      <h2 class="user-name">カスタマーサポートAI</h2>
+      <span class="user-status online">オンライン</span>
+    </div>
+    <button class="menu-btn">⋮</button>
+  </header>
 
-    <main class="chat-messages" id="chatMessages">
-      <div class="date-divider">今日</div>
-      <div class="message received">
-        <div>
-          <div class="bubble">こんにちは。お問い合わせ内容を入力してください。料金・不具合・導入の相談に対応できます。</div>
-          <div class="meta">Support AI</div>
+  <main class="chat-messages" id="chatMessages">
+    <div class="date-divider">
+      <span>今日</span>
+    </div>
+
+    <div class="message received">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='100%25' height='100%25' fill='%23c8d8f3'/%3E%3Ccircle cx='40' cy='31' r='15' fill='%23748fb8'/%3E%3Crect x='20' y='49' width='40' height='20' rx='10' fill='%23748fb8'/%3E%3C/svg%3E" alt="" class="message-avatar">
+      <div class="message-content">
+        <div class="message-bubble">
+          <p>こんにちは。ご質問を入力してください。</p>
         </div>
+        <span class="message-time">09:00</span>
       </div>
-    </main>
+    </div>
+  </main>
 
-    <footer class="chat-input-area">
-      <input id="messageInput" class="message-input" type="text" placeholder="メッセージを入力...">
-      <button id="sendBtn" class="send-btn">送信</button>
-    </footer>
-  </div>
+  <footer class="chat-input-area">
+    <button class="attach-btn">+</button>
+    <input type="text" class="message-input" placeholder="メッセージを入力..." id="messageInput">
+    <button class="emoji-btn">:)</button>
+    <button class="send-btn" id="sendBtn">送信</button>
+  </footer>
+</div>
 
-  <script>
-    const chatMessages = document.getElementById('chatMessages');
-    const messageInput = document.getElementById('messageInput');
-    const sendBtn = document.getElementById('sendBtn');
+<script>
+const chatMessages = document.getElementById('chatMessages');
+const messageInput = document.getElementById('messageInput');
+const sendBtn = document.getElementById('sendBtn');
 
-    function nowText() {
-      const now = new Date();
-      return String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+function sendMessage() {
+    const text = messageInput.value.trim();
+    if (!text) return;
+
+    const messageEl = createMessageElement(text, 'sent');
+    chatMessages.appendChild(messageEl);
+    messageInput.value = '';
+    scrollToBottom();
+    sendToServer(text);
+}
+
+function createMessageElement(text, type) {
+    const now = new Date();
+    const time = now.toLocaleTimeString('ja-JP', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    const div = document.createElement('div');
+    div.className = `message ${type}`;
+
+    if (type === 'received') {
+        div.innerHTML = `
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='100%25' height='100%25' fill='%23c8d8f3'/%3E%3Ccircle cx='40' cy='31' r='15' fill='%23748fb8'/%3E%3Crect x='20' y='49' width='40' height='20' rx='10' fill='%23748fb8'/%3E%3C/svg%3E" alt="" class="message-avatar">
+            <div class="message-content">
+                <div class="message-bubble">
+                    <p>${escapeHtml(text)}</p>
+                </div>
+                <span class="message-time">${time}</span>
+            </div>
+        `;
+    } else {
+        div.innerHTML = `
+            <div class="message-content">
+                <div class="message-bubble">
+                    <p>${escapeHtml(text)}</p>
+                </div>
+                <span class="message-time">${time}</span>
+            </div>
+        `;
     }
 
-    function addMessage(text, type, meta) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'message ' + type;
+    return div;
+}
 
-      const inner = document.createElement('div');
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
 
-      const bubble = document.createElement('div');
-      bubble.className = 'bubble';
-      bubble.textContent = text;
+function scrollToBottom() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
 
-      const metaEl = document.createElement('div');
-      metaEl.className = 'meta';
-      metaEl.textContent = meta + ' ' + nowText();
+function appendSuggestions(items) {
+    if (!items || items.length === 0) return;
 
-      inner.appendChild(bubble);
-      inner.appendChild(metaEl);
-      wrapper.appendChild(inner);
-      chatMessages.appendChild(wrapper);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
+    const wrapper = document.createElement('div');
+    wrapper.className = 'suggestions';
 
-    function addSuggestions(items) {
-      if (!items || items.length === 0) return;
-      const container = document.createElement('div');
-      container.className = 'suggestions';
-
-      items.forEach((item) => {
-        const button = document.createElement('button');
-        button.className = 'suggestion-btn';
-        button.type = 'button';
-        button.textContent = item;
-        button.addEventListener('click', () => {
-          messageInput.value = item;
-          submitMessage();
+    items.forEach((item) => {
+        const btn = document.createElement('button');
+        btn.className = 'suggestion-btn';
+        btn.type = 'button';
+        btn.textContent = item;
+        btn.addEventListener('click', () => {
+            messageInput.value = item;
+            sendMessage();
         });
-        container.appendChild(button);
-      });
+        wrapper.appendChild(btn);
+    });
 
-      chatMessages.appendChild(container);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
+    chatMessages.appendChild(wrapper);
+    scrollToBottom();
+}
+
+function showTypingIndicator() {
+    hideTypingIndicator();
+
+    const indicator = document.createElement('div');
+    indicator.className = 'message received typing';
+    indicator.id = 'typingIndicator';
+    indicator.innerHTML = `
+        <div class="message-content">
+            <div class="typing-indicator">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    `;
+    chatMessages.appendChild(indicator);
+    scrollToBottom();
+}
+
+function hideTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) {
+        indicator.remove();
     }
+}
 
-    async function submitMessage() {
-      const text = messageInput.value.trim();
-      if (!text) return;
+async function sendToServer(text) {
+    sendBtn.disabled = true;
+    showTypingIndicator();
 
-      addMessage(text, 'sent', 'You');
-      messageInput.value = '';
-      sendBtn.disabled = true;
-
-      try {
+    try {
         const response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: text })
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: text })
         });
 
         if (!response.ok) {
-          throw new Error('API error: ' + response.status);
+            throw new Error('API request failed: ' + response.status);
         }
 
         const data = await response.json();
-        addMessage(data.answer || '回答が取得できませんでした。', 'received', 'Support AI');
-        addSuggestions(data.suggestions || []);
-      } catch (error) {
-        addMessage('通信エラーが発生しました。時間をおいて再試行してください。', 'received', 'Support AI');
-      } finally {
+        const answer = data.answer || '回答を取得できませんでした。';
+        hideTypingIndicator();
+
+        const receivedEl = createMessageElement(answer, 'received');
+        chatMessages.appendChild(receivedEl);
+        appendSuggestions(data.suggestions || []);
+        scrollToBottom();
+    } catch (error) {
+        hideTypingIndicator();
+        const errorEl = createMessageElement('通信エラーが発生しました。時間をおいて再試行してください。', 'received');
+        chatMessages.appendChild(errorEl);
+        scrollToBottom();
+    } finally {
         sendBtn.disabled = false;
         messageInput.focus();
-      }
     }
+}
 
-    sendBtn.addEventListener('click', submitMessage);
-    messageInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') submitMessage();
-    });
-  </script>
+sendBtn.addEventListener('click', sendMessage);
+messageInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+</script>
 </body>
 </html>
