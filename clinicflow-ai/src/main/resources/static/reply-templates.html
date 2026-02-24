@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClinicFlow AI | 回答テンプレート</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <style>
+    :root{--bg:#f4f6f9;--card:#fff;--line:#dde3ea;--txt:#333;--muted:#6c757d;--primary:#17a2b8;--ok:#28a745;--warn:#ffc107;--danger:#dc3545;--sh:0 2px 8px rgba(0,0,0,.06)}
+    *{box-sizing:border-box}body{margin:0;font-family:"Noto Sans JP",sans-serif;font-size:14px;line-height:1.6;color:var(--txt);background:var(--bg)}
+    .wrapper{display:flex;min-height:100vh}
+    .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;overflow:auto;background:linear-gradient(180deg,#343a40 0%,#212529 100%);z-index:100;color:#c2c7d0}
+    .brand{padding:16px 20px;background:rgba(0,0,0,.2);color:#fff;font-weight:700}
+    .nav a{display:flex;align-items:center;gap:10px;padding:12px 20px;color:inherit;text-decoration:none}.nav a:hover{background:rgba(255,255,255,.05)}
+    .nav a.active{background:rgba(23,162,184,.2);color:#17a2b8;border-left:3px solid #17a2b8;padding-left:17px}
+    .sub{padding:2px 0 8px 44px}.sub a{font-size:13px;padding:6px 0;display:flex;gap:8px;align-items:center}.sub a.active{color:#fff;font-weight:700}
+    .badge{min-width:18px;height:18px;border-radius:20px;padding:0 6px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+    .badge.info{background:#17a2b8;color:#fff}.badge.warning{background:#ffc107;color:#333}.badge.danger{background:#dc3545;color:#fff}
+    .main{flex:1;margin-left:250px;min-width:0}
+    .header{position:sticky;top:0;height:56px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:50}
+    .content{padding:16px}
+    .page-title{margin:0}.page-sub{margin:2px 0 12px;color:var(--muted);font-size:12px}
+    .layout{display:grid;grid-template-columns:260px 1fr 1.25fr;gap:16px}
+    .card{background:var(--card);border-radius:10px;box-shadow:var(--sh)}
+    .filters{padding:12px}.slabel{margin:0 0 8px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase}
+    .fbtn{width:100%;border:1px solid #e3e9ef;background:#fff;border-radius:8px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;margin-bottom:6px}
+    .fbtn.on{border-color:var(--primary);background:#f2fcfe;color:var(--primary);font-weight:700}
+    .check{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-top:1px dashed #edf2f5}
+    .list{display:flex;flex-direction:column;min-height:740px}.top{padding:12px;border-bottom:1px solid #edf2f5}
+    input,select,textarea,button{font:inherit}
+    .ipt{width:100%;border:1px solid #d8dee6;border-radius:8px;padding:8px 10px}
+    .items{overflow:auto;max-height:calc(100vh - 220px)}
+    .item{border-left:3px solid transparent;border-bottom:1px solid #f0f3f6;padding:12px;cursor:pointer;transition:transform .2s,background .2s}
+    .item:hover{background:#f8f9fa;transform:translateY(-1px)}.item.on{border-left-color:var(--primary);background:#f8fcfd}
+    .nm{font-weight:700}.meta{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+    .chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px}.cat{background:#eef2f6;color:#4f5b67}.draft{background:#e2e3e5;color:#495057}.published{background:#d4edda;color:#1e7e34}.needs_review{background:#fff3cd;color:#7a5b00}.safety{background:#fdecea;color:#b02a37}
+    .subm{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+    .editor{padding:12px;display:flex;flex-direction:column;gap:8px;min-height:740px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.full{grid-column:1/-1}
+    .warn{display:none;border:1px solid #ffeeba;background:#fff7db;color:#7a5b00;border-radius:8px;padding:8px 10px;font-size:12px}.warn.show{display:block}
+    .vars{display:flex;flex-wrap:wrap;gap:6px}.vbtn{border:1px solid #cfd8e3;background:#fff;border-radius:8px;padding:4px 8px;cursor:pointer;font-size:12px}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ta{min-height:250px;resize:vertical}
+    .pv{border:1px solid #d8dee6;border-radius:8px;padding:10px;background:#fff;max-height:360px;overflow:auto}
+    .btns{display:flex;flex-wrap:wrap;gap:7px}.btn{border:1px solid #cfd8e3;background:#fff;border-radius:8px;padding:8px 12px;cursor:pointer}
+    .btn.p{background:var(--primary);border-color:var(--primary);color:#fff}.btn.ok{background:var(--ok);border-color:var(--ok);color:#fff}.btn.w{background:var(--warn);border-color:var(--warn)}.btn.d{background:var(--danger);border-color:var(--danger);color:#fff}
+    .toast{position:fixed;right:16px;bottom:16px;background:#1f2933;color:#fff;padding:10px 12px;border-radius:8px;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translateY(0)}
+    @media (max-width:1200px){.layout{grid-template-columns:260px 1fr}.ed-wrap{grid-column:1/-1}.items{max-height:420px}}
+    @media (max-width:992px){.sidebar{transform:translateX(-100%)}.main{margin-left:0}.layout{grid-template-columns:1fr}.grid2,.split{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <aside class="sidebar">
+      <div class="brand">ClinicFlow AI<br><small>運用ダッシュボード</small></div>
+      <nav class="nav">
+        <a href="/admin-dashboard.html"><span class="material-icons">dashboard</span>ダッシュボード</a>
+        <a href="/inbox.html"><span class="material-icons">inbox</span>受信トレイ <span class="badge info">12</span></a>
+        <a href="/tickets.html"><span class="material-icons">support_agent</span>チケット（有人対応） <span class="badge warning">4</span></a>
+        <a class="active" href="/knowledge.html"><span class="material-icons">menu_book</span>ナレッジ管理</a>
+        <div class="sub">
+          <a href="/faq-edit.html"><span class="material-icons" style="font-size:16px">quiz</span>FAQ編集</a>
+          <a class="active" href="/reply-templates.html"><span class="material-icons" style="font-size:16px">description</span>回答テンプレート</a>
+          <a href="/knowledge.html#approval"><span class="material-icons" style="font-size:16px">fact_check</span>承認フロー <span class="badge danger">2</span></a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="header">
+        <div>ホーム &gt; ナレッジ管理 &gt; 回答テンプレート</div>
+        <div>受付担当：佐藤</div>
+      </header>
+      <div class="content">
+        <h2 class="page-title">回答テンプレート</h2>
+        <p class="page-sub">定型返信の作成・編集・公開管理を行います。</p>
+        <div class="layout">
+          <section class="card filters">
+            <h3 class="slabel">用途カテゴリ</h3>
+            <div id="categoryFilters"></div>
+            <h3 class="slabel" style="margin-top:10px">ステータス</h3>
+            <div id="statusFilters"></div>
+            <label class="check"><span>ピン留めのみ</span><input id="pinOnly" type="checkbox" /></label>
+            <label class="check"><span>安全テンプレのみ</span><input id="safeOnly" type="checkbox" /></label>
+            <label class="check"><span>使用頻度が高い順</span><input id="usageSort" type="checkbox" /></label>
+          </section>
+
+          <section class="card list">
+            <div class="top"><input id="search" class="ipt" placeholder="検索（テンプレ名 / 本文 / タグ / ショートコード）" /></div>
+            <div id="list" class="items"></div>
+          </section>
+
+          <section class="card ed-wrap">
+            <div class="editor">
+              <div class="grid2">
+                <label class="full">テンプレ名<input id="name" class="ipt" /></label>
+                <label>用途カテゴリ<select id="category" class="ipt"></select></label>
+                <label>ステータス<select id="status" class="ipt"><option value="draft">下書き</option><option value="published">公開</option><option value="needs_review">要確認</option></select></label>
+                <label>タグ（カンマ区切り）<input id="tags" class="ipt" /></label>
+                <label>ショートコード（例: /cancel）<input id="shortcut" class="ipt" /></label>
+                <label><input id="pinned" type="checkbox" /> ピン留め</label>
+                <label><input id="safetyTemplate" type="checkbox" /> 安全テンプレ</label>
+              </div>
+              <div id="guardrail" class="warn"></div>
+              <div>
+                <div style="font-size:12px;color:#6c757d;margin-bottom:4px">変数挿入</div>
+                <div class="vars" id="vars"></div>
+              </div>
+              <div class="split">
+                <div><div style="font-size:12px;color:#6c757d">本文（Markdown）</div><textarea id="body" class="ipt ta"></textarea></div>
+                <div><div style="font-size:12px;color:#6c757d">プレビュー（サンプル値置換）</div><div id="preview" class="pv"></div></div>
+              </div>
+              <div class="btns">
+                <button id="save" class="btn p">保存</button>
+                <button id="publish" class="btn ok">公開</button>
+                <button id="review" class="btn w">要確認にする</button>
+                <button id="duplicate" class="btn">複製</button>
+                <button id="delete" class="btn d">削除</button>
+                <button id="insertSafety" class="btn">受診誘導テンプレ挿入</button>
+                <button id="copyUse" class="btn">コピーして使用</button>
+              </div>
+              <div id="meta" style="font-size:12px;color:#6c757d">更新情報: -</div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+  <div id="toast" class="toast"></div>
+
+  <script>
+    // TODO(API): GET/POST/PUT/DELETE を /api/reply-templates に差し替え
+    const KEY = "clinicflow_reply_templates_v1";
+    const CATS = ["予約案内","予約変更/キャンセル","料金案内","施術説明","ダウンタイム/注意事項","術後不安（受診誘導）","クレーム一次対応","アクセス/営業時間","その他"];
+    const STAT = {draft:"下書き",published:"公開",needs_review:"要確認"};
+    const NG = ["診断","処方","病名","投薬"];
+    const VARS = ["{{患者名}}","{{予約日}}","{{施術名}}","{{電話番号}}","{{営業時間}}","{{URL}}"];
+    const SAMPLE = {"{{患者名}}":"山田さま","{{予約日}}":"3月12日","{{施術名}}":"二重整形","{{電話番号}}":"03-1234-5678","{{営業時間}}":"10:00-19:00","{{URL}}":"https://clinicflow.example"};
+    const seed = [
+      {name:"予約日のご案内",category:"予約案内",status:"published",tags:["予約","来院"],shortcut:"/reserve",body:"{{患者名}}\nご予約日は{{予約日}}です。ご来院をお待ちしております。",safetyTemplate:false,usageCount:80,helpfulRate:.92},
+      {name:"予約変更のご案内",category:"予約変更/キャンセル",status:"published",tags:["予約","変更"],shortcut:"/change",body:"{{患者名}}\n予約変更をご希望の場合は{{電話番号}}までご連絡ください。",safetyTemplate:false,usageCount:76,helpfulRate:.89},
+      {name:"キャンセル規定",category:"予約変更/キャンセル",status:"published",tags:["キャンセル","規定"],shortcut:"/cancel",body:"前日18時以降のキャンセルは規定料金が発生します。",safetyTemplate:false,usageCount:61,helpfulRate:.84},
+      {name:"料金案内テンプレ",category:"料金案内",status:"draft",tags:["料金","見積"],shortcut:"/price",body:"{{患者名}}\n{{施術名}}の料金は診察後に正式見積りをご案内します。",safetyTemplate:false,usageCount:55,helpfulRate:.81},
+      {name:"施術説明の一次回答",category:"施術説明",status:"published",tags:["施術","説明"],shortcut:"/procedure",body:"{{施術名}}の流れをご案内します。詳細はカウンセリングで説明します。",safetyTemplate:false,usageCount:49,helpfulRate:.83},
+      {name:"ダウンタイム案内",category:"ダウンタイム/注意事項",status:"published",tags:["ダウンタイム"],shortcut:"/downtime",body:"個人差はありますが数日から1週間程度で落ち着く傾向があります。",safetyTemplate:false,usageCount:67,helpfulRate:.9},
+      {name:"受診誘導（安全）",category:"術後不安（受診誘導）",status:"published",tags:["術後","安全"],shortcut:"/urgent",body:"{{患者名}}\n症状が強い場合は無理をせず、{{電話番号}}へご連絡のうえ受診をご検討ください。",safetyTemplate:true,usageCount:44,helpfulRate:.95},
+      {name:"クレーム一次対応",category:"クレーム一次対応",status:"needs_review",tags:["クレーム"],shortcut:"/claim",body:"ご不快な思いをさせてしまい申し訳ありません。担当者よりご連絡いたします。",safetyTemplate:false,usageCount:31,helpfulRate:.78},
+      {name:"アクセス案内",category:"アクセス/営業時間",status:"published",tags:["アクセス","営業時間"],shortcut:"/access",body:"営業時間は{{営業時間}}です。詳細は{{URL}}をご確認ください。",safetyTemplate:false,usageCount:29,helpfulRate:.87},
+      {name:"術後不安フォロー",category:"術後不安（受診誘導）",status:"draft",tags:["術後","不安"],shortcut:"/follow",body:"不安な症状が続く場合は早めにご相談ください。",safetyTemplate:true,usageCount:21,helpfulRate:.82}
+    ].map((x,i)=>({...x,id:"tpl-"+String(i+1).padStart(3,"0"),updatedAt:"2026-02-24 11:00",updatedBy:"佐藤",version:1,pinned:i%4===0}));
+
+    const st = {items:load(),id:null,cf:"all",sf:"all",pin:false,safe:false,usage:false,q:""};
+    const $ = (id)=>document.getElementById(id);
+    const el = {categoryFilters:$("categoryFilters"),statusFilters:$("statusFilters"),pinOnly:$("pinOnly"),safeOnly:$("safeOnly"),usageSort:$("usageSort"),search:$("search"),list:$("list"),name:$("name"),category:$("category"),tags:$("tags"),shortcut:$("shortcut"),status:$("status"),body:$("body"),pinned:$("pinned"),safetyTemplate:$("safetyTemplate"),preview:$("preview"),guardrail:$("guardrail"),meta:$("meta"),vars:$("vars"),toast:$("toast")};
+
+    function load(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):seed}catch{return seed}}
+    function persist(){localStorage.setItem(KEY,JSON.stringify(st.items))}
+    function now(){const d=new Date(),p=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`}
+    function esc(t){return String(t??"").replace(/[&<>\"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
+    function md(txt){let h="",ul=false;for(const r of String(txt||"").split("\n")){const l=esc(r);if(l.startsWith("- ")){if(!ul){h+="<ul>";ul=true}h+=`<li>${l.slice(2)}</li>`;continue}if(ul){h+="</ul>";ul=false}if(l.startsWith("### "))h+=`<h3>${l.slice(4)}</h3>`;else if(!l.trim())h+="<br>";else h+=`<p>${l}</p>`}if(ul)h+="</ul>";return h.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")}
+    function repVars(t){let x=t;for(const k of Object.keys(SAMPLE)){x=x.split(k).join(SAMPLE[k])}return x}
+    function filtered(){
+      const k=st.q.trim().toLowerCase();
+      let a=st.items.filter(i=>(st.cf==="all"||i.category===st.cf)&&(st.sf==="all"||i.status===st.sf)&&(!st.pin||i.pinned)&&(!st.safe||i.safetyTemplate)&&(!k||`${i.name} ${i.body} ${(i.tags||[]).join(" ")} ${i.shortcut||""}`.toLowerCase().includes(k)));
+      a.sort((x,y)=>st.usage?y.usageCount-x.usageCount:(x.updatedAt<y.updatedAt?1:-1));
+      return a;
+    }
+    function cntCat(c){return st.items.filter(i=>i.category===c).length}
+    function cntSt(s){return st.items.filter(i=>i.status===s).length}
+    function statusCls(s){return s==="published"?"published":s==="needs_review"?"needs_review":"draft"}
+    function toast(msg){el.toast.textContent=msg;el.toast.classList.add("show");setTimeout(()=>el.toast.classList.remove("show"),1400)}
+    function selected(){return st.items.find(i=>i.id===st.id)||null}
+
+    function renderFilters(){
+      const cbtn=[{k:"all",n:"すべて",c:st.items.length},...CATS.map(c=>({k:c,n:c,c:cntCat(c)}))];
+      el.categoryFilters.innerHTML=cbtn.map(v=>`<button class="fbtn ${st.cf===v.k?"on":""}" data-ft="c" data-v="${v.k}"><span>${v.n}</span><span>${v.c}</span></button>`).join("");
+      const sbtn=[{k:"all",n:"すべて",c:st.items.length},{k:"draft",n:"下書き",c:cntSt("draft")},{k:"published",n:"公開",c:cntSt("published")},{k:"needs_review",n:"要確認",c:cntSt("needs_review")}];
+      el.statusFilters.innerHTML=sbtn.map(v=>`<button class="fbtn ${st.sf===v.k?"on":""}" data-ft="s" data-v="${v.k}"><span>${v.n}</span><span>${v.c}</span></button>`).join("");
+      el.pinOnly.checked=st.pin;el.safeOnly.checked=st.safe;el.usageSort.checked=st.usage;
+    }
+
+    function renderList(){
+      const a=filtered();if(!st.id||!st.items.find(i=>i.id===st.id))st.id=(a[0]||st.items[0]||{}).id||null;
+      if(!a.length){el.list.innerHTML='<div style="padding:22px;color:#6c757d">該当するテンプレートがありません。</div>';return}
+      el.list.innerHTML=a.map(i=>`<article class="item ${i.id===st.id?"on":""}" data-id="${i.id}">
+        <div class="nm">${esc(i.name)} ${i.pinned?'📌':''}</div>
+        <div class="meta"><span class="chip cat">${esc(i.category)}</span><span class="chip ${statusCls(i.status)}">${STAT[i.status]}</span>${i.safetyTemplate?'<span class="chip safety">安全テンプレ</span>':''}</div>
+        <div class="subm"><span>${i.updatedAt} / ${esc(i.updatedBy)}</span><span><span class="material-icons" style="font-size:14px;vertical-align:-2px">bolt</span> ${i.usageCount} ・ 👍 ${Math.round(i.helpfulRate*100)}%</span></div>
+      </article>`).join("");
+    }
+
+    function renderEditor(){
+      el.category.innerHTML=CATS.map(c=>`<option value="${c}">${c}</option>`).join("");
+      el.vars.innerHTML=VARS.map(v=>`<button class="vbtn" data-var="${v}">${v}</button>`).join("");
+      const i=selected();if(!i)return;
+      el.name.value=i.name;el.category.value=i.category;el.tags.value=(i.tags||[]).join(", ");el.shortcut.value=i.shortcut||"";el.status.value=i.status;el.body.value=i.body;el.pinned.checked=!!i.pinned;el.safetyTemplate.checked=!!i.safetyTemplate;
+      el.preview.innerHTML=md(repVars(i.body));el.meta.textContent=`更新情報: v${i.version} / ${i.updatedAt} / ${i.updatedBy}`;checkGuard(i.body);
+    }
+
+    function checkGuard(body){
+      const hit=NG.filter(w=>String(body).includes(w));
+      if(hit.length){el.guardrail.classList.add("show");el.guardrail.textContent=`注意: 禁止表現候補（${hit.join("、")}）が含まれています。要確認ステータスを推奨します。`;}
+      else{el.guardrail.classList.remove("show");el.guardrail.textContent="";}
+    }
+
+    function applyEditor(overrideStatus){
+      const i=selected();if(!i)return;
+      i.name=el.name.value.trim()||"無題テンプレート";i.category=el.category.value;i.tags=el.tags.value.split(",").map(s=>s.trim()).filter(Boolean);i.shortcut=el.shortcut.value.trim();i.status=overrideStatus||el.status.value;i.body=el.body.value;i.pinned=el.pinned.checked;i.safetyTemplate=el.safetyTemplate.checked;
+      i.version=(i.version||0)+1;i.updatedAt=now();i.updatedBy="佐藤";
+    }
+
+    function save(forceStatus){
+      let ov=forceStatus||null;
+      if(!forceStatus && NG.some(w=>el.body.value.includes(w))){
+        if(confirm("本文に禁止表現候補があります。要確認へ変更しますか？"))ov="needs_review";
+      }
+      applyEditor(ov);persist();rerender();toast("保存しました");
+    }
+
+    function rerender(){renderFilters();renderList();renderEditor()}
+    function insertAtCursor(text){
+      const ta=el.body,start=ta.selectionStart,end=ta.selectionEnd;
+      ta.value=ta.value.slice(0,start)+text+ta.value.slice(end);ta.focus();
+      ta.selectionStart=ta.selectionEnd=start+text.length;
+      el.preview.innerHTML=md(repVars(ta.value));checkGuard(ta.value);
+    }
+
+    document.addEventListener("click",(e)=>{
+      const fb=e.target.closest(".fbtn");if(fb){if(fb.dataset.ft==="c")st.cf=fb.dataset.v;else st.sf=fb.dataset.v;rerender();return}
+      const it=e.target.closest(".item");if(it){st.id=it.dataset.id;renderList();renderEditor();return}
+      const vb=e.target.closest(".vbtn");if(vb){insertAtCursor(vb.dataset.var)}
+    });
+    el.pinOnly.onchange=()=>{st.pin=el.pinOnly.checked;rerender()};el.safeOnly.onchange=()=>{st.safe=el.safeOnly.checked;rerender()};el.usageSort.onchange=()=>{st.usage=el.usageSort.checked;rerender()};
+    el.search.oninput=()=>{st.q=el.search.value;rerender()};
+    [el.name,el.category,el.tags,el.shortcut,el.status,el.body,el.pinned,el.safetyTemplate].forEach(x=>x.oninput=()=>{el.preview.innerHTML=md(repVars(el.body.value));checkGuard(el.body.value)});
+    $("save").onclick=()=>save();$("publish").onclick=()=>save("published");$("review").onclick=()=>save("needs_review");
+    $("duplicate").onclick=()=>{const i=selected();if(!i)return;const c={...structuredClone(i),id:"tpl-"+Date.now(),name:i.name+"（コピー）",version:1,updatedAt:now(),updatedBy:"佐藤"};st.items.unshift(c);st.id=c.id;persist();rerender();toast("複製しました")};
+    $("delete").onclick=()=>{const i=selected();if(!i)return;if(!confirm(`「${i.name}」を削除しますか？`))return;st.items=st.items.filter(v=>v.id!==i.id);st.id=null;persist();rerender();toast("削除しました")};
+    $("insertSafety").onclick=()=>{insertAtCursor("\n---\n※症状が強い場合や不安がある場合は、すぐに当院へご連絡ください。\n緊急性がある場合は医療機関の受診をご検討ください。\n---")};
+    $("copyUse").onclick=async()=>{try{await navigator.clipboard.writeText(repVars(el.body.value));toast("コピーしました")}catch{toast("コピーに失敗しました")}};
+    rerender();
+  </script>
+</body>
+</html>
