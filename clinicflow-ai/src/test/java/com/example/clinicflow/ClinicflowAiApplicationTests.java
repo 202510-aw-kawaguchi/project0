@@ -46,7 +46,7 @@ class ClinicflowAiApplicationTests {
     void authenticatedUserCanAccessRoot() throws Exception {
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
-                .andExpect(forwardedUrl("/index.html"));
+                .andExpect(forwardedUrl("/admin-dashboard.html"));
     }
 
     @Test
