@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -14,6 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -27,13 +29,28 @@ class ClinicflowAiApplicationTests {
     private ObjectMapper objectMapper;
 
     @Test
-    void rootEndpointForwardsToIndexHtml() throws Exception {
+    void unauthenticatedUserIsRedirectedToLogin() throws Exception {
+        mockMvc.perform(get("/"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
+    }
+
+    @Test
+    void loginPageIsAccessibleWithoutAuthentication() throws Exception {
+        mockMvc.perform(get("/login"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void authenticatedUserCanAccessRoot() throws Exception {
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(forwardedUrl("/index.html"));
     }
 
     @Test
+    @WithMockUser(username = "admin", roles = "ADMIN")
     void healthEndpointReturnsOkStatus() throws Exception {
         mockMvc.perform(get("/health"))
                 .andExpect(status().isOk())
@@ -41,8 +58,9 @@ class ClinicflowAiApplicationTests {
     }
 
     @Test
+    @WithMockUser(username = "admin", roles = "ADMIN")
     void chatEndpointReturnsSupportAnswer() throws Exception {
-        String requestJson = objectMapper.writeValueAsString(new ChatRequest("料金を知りたいです"));
+        String requestJson = objectMapper.writeValueAsString(new ChatRequest("price"));
 
         mockMvc.perform(post("/api/chat")
                         .contentType(MediaType.APPLICATION_JSON)

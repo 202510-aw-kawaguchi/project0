@@ -71,6 +71,10 @@
       border-radius: 50%;
       cursor: pointer;
       font-size: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
     }
 
     .chat-messages {
@@ -272,7 +276,7 @@
       <h2 class="user-name">カスタマーサポートAI</h2>
       <span class="user-status online">オンライン</span>
     </div>
-    <button class="menu-btn">⋮</button>
+    <a class="menu-btn" href="/logout" title="logout">⎋</a>
   </header>
 
   <main class="chat-messages" id="chatMessages">
