@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClinicFlow AI | レポート</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    :root{--bg:#f4f6f9;--card:#fff;--line:#dde3ea;--txt:#2f3742;--muted:#6c7683;--pri:#17a2b8;--ok:#28a745;--warn:#ffc107;--danger:#dc3545;--shadow:0 2px 8px rgba(0,0,0,.06)}
+    *{box-sizing:border-box}body{margin:0;font-family:"Noto Sans JP",sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.6}
+    .wrapper{display:flex;min-height:100vh}.sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;overflow:auto;background:linear-gradient(180deg,#343a40,#212529);color:#c2c7d0;z-index:100}
+    .sidebar-brand{padding:16px 20px;background:rgba(0,0,0,.2);color:#fff;display:flex;gap:10px;align-items:center}.sidebar-brand .material-icons{color:#17a2b8}
+    .brand-title{font-size:18px;font-weight:700;line-height:1.2}.brand-sub{font-size:11px;opacity:.85}.sidebar-user{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:10px;align-items:center}
+    .avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;background:linear-gradient(135deg,#17a2b8,#20c997)}
+    .sidebar-nav{padding:10px 0 20px}.sidebar-item{padding:12px 20px;display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none}.sidebar-item:hover{background:rgba(255,255,255,.05)}
+    .sidebar-item.active{background:rgba(23,162,184,.2);color:#17a2b8;border-left:3px solid #17a2b8;padding-left:17px}
+    .sidebar-item-badge{margin-left:auto;min-width:18px;height:18px;padding:0 6px;border-radius:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:#fff}.sidebar-item-badge.info{background:#17a2b8}.sidebar-item-badge.warning{background:#ffc107;color:#333}
+    .main{flex:1;margin-left:250px;min-width:0}.header{height:56px;position:sticky;top:0;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.08);display:flex;justify-content:space-between;align-items:center;padding:0 16px;z-index:50}
+    .header-left,.header-right{display:flex;align-items:center;gap:8px}.menu-toggle{display:none;width:40px;height:40px;border:0;border-radius:50%;background:transparent}.menu-toggle:hover,.header-btn:hover{background:#f4f6f9}
+    .breadcrumb{font-size:13px;color:#6c757d}.breadcrumb a{color:#17a2b8;text-decoration:none}.header-btn{width:40px;height:40px;border:0;border-radius:50%;background:transparent;position:relative;display:grid;place-items:center}
+    .header-btn-badge{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff}.header-btn-badge.red{background:#dc3545}.header-btn-badge.yellow{background:#ffc107;color:#333}
+    .header-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700;background:linear-gradient(135deg,#17a2b8,#20c997)}
+    .content{padding:20px}.title{margin:0;font-size:30px}.sub{margin:2px 0 14px;color:var(--muted)}
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}.kpi{background:var(--card);box-shadow:var(--shadow);border-radius:10px;padding:14px}.kpi-label{font-size:12px;color:var(--muted)}.kpi-value{margin-top:5px;font-size:28px;font-weight:700}
+    .filters{background:var(--card);box-shadow:var(--shadow);border-radius:10px;padding:12px;display:grid;grid-template-columns:auto 170px auto auto auto;gap:8px;align-items:center;margin-bottom:14px}
+    .tabs{display:flex;gap:6px}.tab{border:1px solid #d2dae3;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer}.tab.active{background:#17a2b8;color:#fff;border-color:#17a2b8}
+    .sel,.btn{border:1px solid #d2dae3;border-radius:8px;padding:8px 10px;font:inherit;background:#fff}.btn.primary{background:#17a2b8;border-color:#17a2b8;color:#fff}
+    .grid{display:grid;grid-template-columns:2fr 1.2fr 1fr;gap:14px;margin-bottom:14px}.card{background:var(--card);box-shadow:var(--shadow);border-radius:10px}
+    .card-head{padding:12px 14px;border-bottom:1px solid #edf2f6;font-weight:700}.card-body{padding:14px}
+    .bar-chart{height:220px;display:flex;align-items:flex-end;gap:8px}.bar{flex:1;min-width:26px;background:linear-gradient(180deg,#17a2b8,#20c997);border-radius:6px 6px 0 0;position:relative}
+    .bar span{position:absolute;left:50%;bottom:-22px;transform:translateX(-50%);font-size:11px;color:#6c757d}.bar strong{position:absolute;left:50%;top:-22px;transform:translateX(-50%);font-size:11px;color:#425160}
+    .hbar-list{display:grid;gap:9px}.hrow{display:grid;grid-template-columns:84px 1fr 42px;align-items:center;gap:8px;font-size:12px}.htrack{height:12px;background:#eef2f6;border-radius:12px;overflow:hidden}.hfill{height:100%;background:linear-gradient(90deg,#17a2b8,#4ea8de)}
+    .reason{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px dashed #e8edf3}.reason:last-child{border-bottom:0}
+    table{width:100%;border-collapse:collapse}.table-wrap{overflow:auto}.table th{background:#f8f9fa;color:#6c757d;text-transform:uppercase;font-size:12px;text-align:left;padding:10px 12px}.table td{padding:12px;border-top:1px solid #eef2f6}.table tr:hover td{background:#f8f9fa}
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:90}.overlay.show{display:block}
+    @media(max-width:1200px){.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}}
+    @media(max-width:992px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.menu-toggle{display:grid}.filters{grid-template-columns:1fr}.tabs{flex-wrap:wrap}}
+    @media(max-width:768px){.content{padding:16px}.kpis{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand"><span class="material-icons">health_and_safety</span><div><div class="brand-title">ClinicFlow AI</div><div class="brand-sub">運用ダッシュボード</div></div></div>
+    <div class="sidebar-user"><div class="avatar">佐藤</div><div><div style="color:#fff">受付担当：佐藤</div><div style="font-size:11px;color:#6c757d">サポート管理者</div></div></div>
+    <nav class="sidebar-nav">
+      <a class="sidebar-item" href="/admin-dashboard.html"><span class="material-icons">dashboard</span>ダッシュボード</a>
+      <a class="sidebar-item" href="/inbox.html"><span class="material-icons">inbox</span>受信トレイ <span class="sidebar-item-badge info">12</span></a>
+      <a class="sidebar-item" href="/tickets.html"><span class="material-icons">support_agent</span>チケット（有人対応） <span class="sidebar-item-badge warning">4</span></a>
+      <a class="sidebar-item" href="/knowledge.html"><span class="material-icons">menu_book</span>ナレッジ管理</a>
+      <a class="sidebar-item" href="/customers.html"><span class="material-icons">groups</span>顧客管理</a>
+      <a class="sidebar-item active" href="/reports.html"><span class="material-icons">analytics</span>レポート</a>
+      <a class="sidebar-item" href="#"><span class="material-icons">shield</span>設定（ガードレール）</a>
+    </nav>
+  </aside>
+  <div class="overlay" id="overlay"></div>
+  <main class="main">
+    <header class="header">
+      <div class="header-left"><button class="menu-toggle" id="menuToggle" type="button"><span class="material-icons">menu</span></button><div class="breadcrumb"><a href="#">ホーム</a> &gt; レポート</div></div>
+      <div class="header-right"><button class="header-btn" type="button"><span class="material-icons">search</span></button><button class="header-btn" type="button"><span class="material-icons">mail</span><span class="header-btn-badge red">3</span></button><button class="header-btn" type="button"><span class="material-icons">notifications</span><span class="header-btn-badge yellow">15</span></button><div class="header-avatar">佐藤</div></div>
+    </header>
+    <section class="content">
+      <h1 class="title">レポート</h1>
+      <p class="sub">問い合わせ対応の効果を可視化</p>
+
+      <section class="kpis" id="kpiCards"></section>
+
+      <section class="filters">
+        <div class="tabs" id="periodTabs"></div>
+        <select class="sel" id="categorySelect"><option>全て</option><option>予約</option><option>料金</option><option>術後不安</option><option>施術説明</option><option>その他</option></select>
+        <button class="btn primary" id="applyBtn" type="button">適用</button>
+        <button class="btn" id="resetBtn" type="button">リセット</button>
+      </section>
+
+      <section class="grid">
+        <article class="card"><div class="card-head">問い合わせ推移</div><div class="card-body"><div class="bar-chart" id="trendChart"></div></div></article>
+        <article class="card"><div class="card-head">カテゴリ内訳</div><div class="card-body"><div class="hbar-list" id="categoryBreakdown"></div></div></article>
+        <article class="card"><div class="card-head">handoff理由</div><div class="card-body" id="handoffReasons"></div></article>
+      </section>
+
+      <article class="card">
+        <div class="card-head">カテゴリ別サマリー</div>
+        <div class="card-body table-wrap">
+          <table class="table">
+            <thead><tr><th>カテゴリ</th><th>件数</th><th>AI解決率</th><th>handoff率</th><th>平均初回応答</th></tr></thead>
+            <tbody id="summaryTable"></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+  </main>
+</div>
+<script>
+const data={
+  week:{kpi:[1240,'68%','32%',14],trend:[44,52,39,61,73,58,66],cats:[['予約',35],['料金',22],['術後不安',18],['施術説明',15],['その他',10]],reasons:[['危険兆候',9],['医療判断要求',4],['その他',3]],rows:[['予約',434,'74%','26%','1分42秒'],['料金',273,'79%','21%','2分08秒'],['術後不安',223,'45%','55%','1分11秒'],['施術説明',186,'66%','34%','2分19秒'],['その他',124,'63%','37%','2分33秒']]},
+  month:{kpi:[1240,'68%','32%',14],trend:[180,195,210,198,224,236],cats:[['予約',32],['料金',24],['術後不安',20],['施術説明',14],['その他',10]],reasons:[['危険兆候',8],['医療判断要求',4],['その他',2]],rows:[['予約',412,'71%','29%','1分55秒'],['料金',298,'77%','23%','2分05秒'],['術後不安',248,'49%','51%','1分14秒'],['施術説明',174,'65%','35%','2分22秒'],['その他',108,'61%','39%','2分41秒']]},
+  last30:{kpi:[1240,'68%','32%',14],trend:[154,172,181,205,214,231],cats:[['予約',31],['料金',23],['術後不安',21],['施術説明',13],['その他',12]],reasons:[['危険兆候',10],['医療判断要求',2],['その他',2]],rows:[['予約',398,'72%','28%','1分49秒'],['料金',286,'76%','24%','2分07秒'],['術後不安',261,'47%','53%','1分09秒'],['施術説明',165,'64%','36%','2分21秒'],['その他',130,'60%','40%','2分39秒']]}
+};
+const periodLabels={week:'今週',month:'今月',last30:'過去30日'};
+const state={period:'week'};
+const $=id=>document.getElementById(id);
+
+function renderTabs(){
+  $('periodTabs').innerHTML=Object.entries(periodLabels).map(([k,v])=>`<button class="tab ${state.period===k?'active':''}" data-p="${k}" type="button">${v}</button>`).join('');
+}
+function renderKpi(){
+  const [total,ai,human,alert]=data[state.period].kpi;
+  $('kpiCards').innerHTML=[['期間合計問い合わせ数',total],['AI自動解決率',ai],['有人対応率',human],['safetyAlert件数',alert]].map(([label,value])=>`<article class="kpi"><div class="kpi-label">${label}</div><div class="kpi-value">${value}</div></article>`).join('');
+}
+function renderTrend(){
+  const arr=data[state.period].trend,max=Math.max(...arr);
+  $('trendChart').innerHTML=arr.map((v,i)=>`<div class="bar" style="height:${Math.round((v/max)*100)}%"><strong>${v}</strong><span>${i+1}</span></div>`).join('');
+}
+function renderCats(){
+  $('categoryBreakdown').innerHTML=data[state.period].cats.map(([name,ratio])=>`<div class="hrow"><span>${name}</span><div class="htrack"><div class="hfill" style="width:${ratio}%"></div></div><strong>${ratio}%</strong></div>`).join('');
+}
+function renderReasons(){
+  $('handoffReasons').innerHTML=data[state.period].reasons.map(([name,count])=>`<div class="reason"><span>${name}</span><strong>${count}件</strong></div>`).join('');
+}
+function renderTable(){
+  $('summaryTable').innerHTML=data[state.period].rows.map(row=>`<tr>${row.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('');
+}
+function renderAll(){renderTabs();renderKpi();renderTrend();renderCats();renderReasons();renderTable();}
+
+document.addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(!b)return;state.period=b.dataset.p;renderAll();});
+$('applyBtn').addEventListener('click',()=>renderAll());
+$('resetBtn').addEventListener('click',()=>{$('categorySelect').value='全て';state.period='week';renderAll();});
+
+const mt=$('menuToggle'),sb=$('sidebar'),ov=$('overlay');
+mt&&mt.addEventListener('click',()=>{sb.classList.toggle('open');ov.classList.toggle('show')});
+ov&&ov.addEventListener('click',()=>{sb.classList.remove('open');ov.classList.remove('show')});
+
+document.querySelectorAll('.sidebar-nav a').forEach((link)=>{
+  link.addEventListener('click',(e)=>{if((link.getAttribute('href')||'').trim()==='#')e.preventDefault();});
+});
+
+renderAll();
+</script>
+</body>
+</html>
