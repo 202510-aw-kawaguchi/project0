@@ -29,6 +29,7 @@ body{margin:0;font-family:"Noto Sans JP",sans-serif;background:#f4f6f9;color:#33
 <div class="split"><div><div style="font-size:12px;color:#6c757d">本文（Markdown）</div><textarea id="body"></textarea></div><div><div style="font-size:12px;color:#6c757d">ライブプレビュー</div><div id="pv" class="pv"></div></div></div>
 <div class="btns"><button id="save" class="btn p">保存</button><button id="pub" class="btn s">公開</button><button id="rev" class="btn w">要確認にする</button><button id="dup" class="btn">複製</button><button id="del" class="btn d">削除</button><button id="tmp" class="btn">受診誘導テンプレ挿入</button></div>
 <div id="meta" style="font-size:12px;color:#6c757d">更新情報: -</div></div></section></div></div></main></div>
+<script src="/staff-common.js"></script>
 <script>
 // TODO(API): GET/POST/PUT/DELETE を /api/knowledge/faqs に差し替え
 const KEY="clinicflow_faq_items_v1",C=["料金","予約/変更/キャンセル","施術説明","ダウンタイム/注意事項","術後不安（受診誘導含む）","アクセス/営業時間","規約/プライバシー","その他"],S={draft:"下書き",published:"公開",needs_review:"要確認"},NG=["診断","処方","病名","投薬"];

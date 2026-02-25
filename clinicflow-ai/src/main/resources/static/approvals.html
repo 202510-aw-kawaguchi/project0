@@ -144,6 +144,7 @@
   </main>
 </div>
 <div id="toast" class="toast"></div>
+<script src="/staff-common.js"></script>
 <script>
   // TODO(API): approvals一覧は GET /api/approvals、更新は PATCH /api/approvals/{id} に差し替え
   const KEY="clinicflow_approvals_v1";
@@ -166,6 +167,11 @@
   const st={items:load(),id:null,fStatus:"all",fType:"all",fRisks:new Set(),fPriority:"all",fDue:"all",fAssignee:"all",q:"",tab:"diff"};
   const $=id=>document.getElementById(id);
   const el={fStatus:$("fStatus"),fType:$("fType"),fPriority:$("fPriority"),fDue:$("fDue"),fAssignee:$("fAssignee"),search:$("search"),list:$("list"),dTitle:$("dTitle"),dMeta:$("dMeta"),dAssignee:$("dAssignee"),riskBanner:$("riskBanner"),beforeBox:$("beforeBox"),afterBox:$("afterBox"),ckMedical:$("ckMedical"),ckExaggeration:$("ckExaggeration"),ckPrivacy:$("ckPrivacy"),ckSafety:$("ckSafety"),cmtInput:$("cmtInput"),addCmt:$("addCmt"),cmtList:$("cmtList"),toast:$("toast"),btnPublish:$("btnPublish")};
+  const staffCtx=(window.StaffSettings&&window.StaffSettings.loadSettings)?window.StaffSettings.loadSettings():{members:[],currentId:""};
+  const toStaffId=v=>(window.StaffSettings&&window.StaffSettings.normalizeStaffId)?window.StaffSettings.normalizeStaffId(v,staffCtx):"";
+  const staffName=id=>(window.StaffSettings&&window.StaffSettings.getStaffName)?window.StaffSettings.getStaffName(id,staffCtx):"未割当";
+  const activeStaff=()=>((window.StaffSettings&&window.StaffSettings.getActiveMembers)?window.StaffSettings.getActiveMembers(staffCtx):[]);
+  st.items.forEach(a=>{const id=toStaffId(a.assigneeId||a.assignee);a.assigneeId=id;a.assignee=staffName(id);});
   function load(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):seed}catch{return seed}}
   function saveLS(){localStorage.setItem(KEY,JSON.stringify(st.items))}
   function toast(m){el.toast.textContent=m;el.toast.classList.add("show");setTimeout(()=>el.toast.classList.remove("show"),1400)}
@@ -187,7 +193,7 @@
       (st.fStatus==="all"||a.status===st.fStatus)&&
       (st.fType==="all"||a.type===st.fType)&&
       (st.fPriority==="all"||a.priority===st.fPriority)&&
-      (st.fAssignee==="all"||a.assignee===st.fAssignee)&&
+      (st.fAssignee==="all"||(st.fAssignee==="__none"?!a.assigneeId:a.assigneeId===st.fAssignee))&&
       dueMatch(a)&&
       ([...st.fRisks].every(r=>a.riskFlags.includes(r)))&&
       (!k||`${a.title} ${a.diff.after} ${a.category} ${a.requestedBy}`.toLowerCase().includes(k))
@@ -219,7 +225,7 @@
     el.list.innerHTML=arr.map(a=>`<article class="item ${a.id===st.id?"on":""}" data-id="${a.id}">
       <div class="nm">${esc(a.title)}</div>
       <div class="chips"><span class="chip cat">${a.type}</span><span class="chip cat">${esc(a.category)}</span><span class="chip ${stCls(a.status)}">${a.status}</span><span class="chip ${prCls(a.priority)}">${a.priority}</span>${a.riskFlags.map(r=>`<span class="chip rf">${esc(r)}</span>`).join("")}</div>
-      <div class="meta"><span class="${dueClass(a)}">期限: ${a.dueAt}</span><span>担当: ${a.assignee}</span></div>
+      <div class="meta"><span class="${dueClass(a)}">期限: ${a.dueAt}</span><span>担当: ${staffName(a.assigneeId)}</span></div>
       <div class="meta"><span>申請: ${a.requestedBy} / ${a.requestedAt}</span><span>ID: ${a.id}</span></div>
     </article>`).join("");
   }
@@ -227,7 +233,7 @@
     const a=selected();if(!a)return;
     el.dTitle.textContent=a.title;
     el.dMeta.textContent=`${a.status} / ${a.priority} | ${a.type}・${a.category} | ${a.itemId} | v${a.versionFrom}→v${a.versionTo} | 期限 ${a.dueAt}`;
-    el.dAssignee.value=a.assignee;
+    el.dAssignee.value=a.assigneeId||"";
     if(a.riskFlags.length){
       const red=a.riskFlags.includes("医療判断疑い");
       el.riskBanner.className="warn show"+(red?" red":"");
@@ -239,7 +245,13 @@
     el.cmtList.innerHTML=a.comments.length?a.comments.map(c=>`<div class="cmt"><div style="font-size:12px;color:#6c757d">${c.by} / ${c.time}</div><div>${esc(c.text)}</div></div>`).join(""):'<div style="color:#6c757d">コメントなし</div>';
     el.btnPublish.disabled=a.status!=="承認済み";
   }
-  function rerender(){renderFilters();renderList();renderDetail();document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.dataset.tab===st.tab))}
+  function renderAssigneeSelectors(){
+    const detailOptions=`<option value="">未割当</option>${activeStaff().map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}`;
+    const filterOptions=`<option value="all">すべて</option><option value="__none">未割当</option>${activeStaff().map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}`;
+    if(el.dAssignee){el.dAssignee.innerHTML=detailOptions;}
+    if(el.fAssignee){el.fAssignee.innerHTML=filterOptions;el.fAssignee.value=st.fAssignee;}
+  }
+  function rerender(){renderFilters();renderAssigneeSelectors();renderList();renderDetail();document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.dataset.tab===st.tab))}
   document.addEventListener("click",e=>{
     const f=e.target.closest(".fbtn");if(f){if(f.dataset.f==="status")st.fStatus=f.dataset.v;else st.fType=f.dataset.v;rerender();return}
     const it=e.target.closest(".item");if(it){st.id=it.dataset.id;renderList();renderDetail();return}
@@ -248,7 +260,7 @@
   document.querySelectorAll("[data-risk]").forEach(c=>c.onchange=()=>{if(c.checked)st.fRisks.add(c.dataset.risk);else st.fRisks.delete(c.dataset.risk);rerender()});
   el.fPriority.onchange=()=>{st.fPriority=el.fPriority.value;rerender()};el.fDue.onchange=()=>{st.fDue=el.fDue.value;rerender()};el.fAssignee.onchange=()=>{st.fAssignee=el.fAssignee.value;rerender()};
   el.search.oninput=()=>{st.q=el.search.value;rerender()};
-  el.dAssignee.onchange=()=>{const a=selected();if(!a)return;a.assignee=el.dAssignee.value;saveLS();rerender();toast("担当を更新しました")};
+  el.dAssignee.onchange=()=>{const a=selected();if(!a)return;a.assigneeId=el.dAssignee.value;a.assignee=staffName(a.assigneeId);saveLS();rerender();toast("担当を更新しました")};
   function saveChecklist(){const a=selected();if(!a)return;a.checklist={medicalJudgement:el.ckMedical.value,exaggeration:el.ckExaggeration.value,privacy:el.ckPrivacy.value,safetyTemplate:el.ckSafety.value};saveLS();toast("チェック更新しました")}
   el.ckMedical.onchange=saveChecklist;el.ckExaggeration.onchange=saveChecklist;el.ckPrivacy.onchange=saveChecklist;el.ckSafety.onchange=saveChecklist;
   $("addCmt").onclick=()=>{const a=selected(),t=$("cmtInput").value.trim();if(!a||!t)return;a.comments.push({by:"佐藤",time:now(),text:t});$("cmtInput").value="";saveLS();renderDetail();toast("コメント追加しました")};
@@ -258,6 +270,7 @@
   $("btnPublish").onclick=()=>{const a=selected();if(!a||a.status!=="承認済み")return;toast("公開反映しました（モック）")};
   $("btnSafeInsert").onclick=()=>{const a=selected();if(!a)return;a.diff.after += "\n---\n※症状が強い場合や不安がある場合は、すぐに当院へご連絡ください。\n---";if(!a.riskFlags.includes("安全テンプレ不足")){}else a.riskFlags=a.riskFlags.filter(r=>r!=="安全テンプレ不足");saveLS();rerender();toast("安全テンプレを追記しました")};
   $("btnDetect").onclick=()=>{const a=selected();if(!a)return;const hit=ngWords.filter(w=>a.diff.after.includes(w));if(!hit.length){toast("禁止表現は見つかりませんでした");return}a.riskFlags=[...new Set([...a.riskFlags,"医療判断疑い"])];a.comments.push({by:"システム",time:now(),text:`禁止表現検出: ${hit.join("、")}`});saveLS();rerender();toast("禁止表現を検出しました")};
+  if(window.StaffSettings&&window.StaffSettings.renderSidebarUser){window.StaffSettings.renderSidebarUser(document);}
   rerender();
 </script>
 </body>
