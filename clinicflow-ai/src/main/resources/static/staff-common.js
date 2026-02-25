@@ -270,6 +270,107 @@
     selectEl.innerHTML = buildStaffOptions(selectedId, null, includeUnassigned);
   }
 
+  function ensureHeaderDropdownStyle() {
+    if (document.getElementById("cfHeaderDropdownStyle")) return;
+    var style = document.createElement("style");
+    style.id = "cfHeaderDropdownStyle";
+    style.textContent =
+      ".header-right{position:relative}" +
+      ".dropdown-panel{position:absolute;top:60px;right:20px;width:300px;background:#fff;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:16px;z-index:200;display:none;border:1px solid #e7edf3}" +
+      ".dropdown-panel.active{display:block}" +
+      ".dropdown-title{margin:0 0 10px;font-size:14px;font-weight:700}" +
+      ".dropdown-input{width:100%;border:1px solid #d7dee6;border-radius:8px;padding:8px 10px;font-size:13px;outline:none}" +
+      ".dropdown-list{display:grid;gap:8px}.dropdown-item{padding:8px 10px;background:#f8fafc;border-radius:8px;font-size:13px}" +
+      ".dropdown-foot{margin-top:10px;font-size:12px}.dropdown-foot a{color:#17a2b8;text-decoration:none}" +
+      ".dropdown-btn{border:1px solid #d7dee6;border-radius:8px;background:#fff;padding:7px 10px;cursor:pointer}" +
+      "@media(max-width:992px){.dropdown-panel{right:10px;left:10px;width:auto}}";
+    document.head.appendChild(style);
+  }
+
+  function findHeaderIconButton(iconName) {
+    var icons = document.querySelectorAll(".header-right .header-btn .material-icons");
+    for (var i = 0; i < icons.length; i++) {
+      var text = (icons[i].textContent || "").trim();
+      if (text === iconName) return icons[i].closest(".header-btn");
+    }
+    return null;
+  }
+
+  function initHeaderDropdowns() {
+    // skip pages that already have page-specific implementation
+    if (document.getElementById("mailBtn") && document.getElementById("notifyBtn")) return;
+    var right = document.querySelector(".header-right");
+    if (!right) return;
+
+    var searchBtn = findHeaderIconButton("search");
+    var mailBtn = findHeaderIconButton("mail");
+    var notifyBtn = findHeaderIconButton("notifications");
+    if (!mailBtn && !notifyBtn && !searchBtn) return;
+    if (right.dataset.dropdownBound === "1") return;
+    right.dataset.dropdownBound = "1";
+
+    ensureHeaderDropdownStyle();
+
+    function ensurePanel(id, html) {
+      var panel = document.getElementById(id);
+      if (!panel) {
+        panel = document.createElement("div");
+        panel.id = id;
+        panel.className = "dropdown-panel";
+        panel.innerHTML = html;
+        right.appendChild(panel);
+      }
+      panel.addEventListener("click", function (e) { e.stopPropagation(); });
+      return panel;
+    }
+
+    var searchPanel = ensurePanel("searchDropdown", '<h4 class="dropdown-title">検索</h4><input id="headerSearchInput" class="dropdown-input" type="text" placeholder="顧客名・内容で検索">');
+    var mailPanel = ensurePanel("mailDropdown", '<h4 class="dropdown-title">メール</h4><div class="dropdown-list"><a class="dropdown-item" href="/inbox.html?customer=%E5%B1%B1%E7%94%B0%E3%81%95%E3%81%BE" style="display:block;color:inherit;text-decoration:none;">山田さま：返信待ち</a><a class="dropdown-item" href="/inbox.html?customer=%E4%BD%90%E8%97%A4%E3%81%95%E3%81%BE" style="display:block;color:inherit;text-decoration:none;">佐藤さま：予約変更</a><a class="dropdown-item" href="/inbox.html?customer=%E9%88%B4%E6%9C%A8%E3%81%95%E3%81%BE" style="display:block;color:inherit;text-decoration:none;">鈴木さま：施術説明</a></div><div class="dropdown-foot"><a href="/inbox.html">すべて表示</a></div>');
+    var notifyPanel = ensurePanel("notifyDropdown", '<h4 class="dropdown-title">通知</h4><div class="dropdown-list"><div class="dropdown-item">安全アラート発生</div><div class="dropdown-item">クレーム優先対応</div><div class="dropdown-item">仮受付完了</div></div><div class="dropdown-foot"><button class="dropdown-btn" id="markAllReadBtn" type="button">すべて既読にする</button></div>');
+
+    var active = "";
+    function closeAll() {
+      searchPanel.classList.remove("active");
+      mailPanel.classList.remove("active");
+      notifyPanel.classList.remove("active");
+      active = "";
+    }
+    function toggle(kind) {
+      var map = { search: searchPanel, mail: mailPanel, notify: notifyPanel };
+      var next = map[kind];
+      if (!next) return;
+      var isOpen = active === kind;
+      closeAll();
+      if (!isOpen) {
+        next.classList.add("active");
+        active = kind;
+        if (kind === "search") {
+          var input = document.getElementById("headerSearchInput");
+          if (input) input.focus();
+        }
+      }
+    }
+
+    if (searchBtn) searchBtn.addEventListener("click", function (e) { e.stopPropagation(); toggle("search"); });
+    if (mailBtn) mailBtn.addEventListener("click", function (e) { e.stopPropagation(); toggle("mail"); });
+    if (notifyBtn) notifyBtn.addEventListener("click", function (e) { e.stopPropagation(); toggle("notify"); });
+
+    document.addEventListener("click", closeAll);
+
+    var inputEl = document.getElementById("headerSearchInput");
+    if (inputEl) {
+      inputEl.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") console.log("header search:", inputEl.value || "");
+      });
+    }
+    var readBtn = document.getElementById("markAllReadBtn");
+    if (readBtn) {
+      readBtn.addEventListener("click", function () {
+        console.log("notifications marked as read (demo)");
+      });
+    }
+  }
+
   window.StaffSettings = {
     DEFAULT_STAFF,
     loadSettings,
@@ -287,8 +388,10 @@
 
   // updated: execute once immediately and again on DOMContentLoaded
   renderSidebarUser(document);
+  initHeaderDropdowns();
   document.addEventListener("DOMContentLoaded", function () {
     renderSidebarUser(document);
+    initHeaderDropdowns();
   });
   // updated: fallback delegation so click works even if page markup differs
   document.addEventListener("click", function (e) {
