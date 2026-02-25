@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClinicFlow AI | 設定（ガードレール）</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    :root{--bg:#f4f6f9;--card:#fff;--line:#dde3ea;--txt:#2f3742;--muted:#6c7683;--pri:#17a2b8;--danger:#dc3545;--ok:#28a745;--shadow:0 2px 8px rgba(0,0,0,.06)}
+    *{box-sizing:border-box}body{margin:0;font-family:"Noto Sans JP",sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.6}
+    .wrapper{display:flex;min-height:100vh}.sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;overflow:auto;background:linear-gradient(180deg,#343a40,#212529);color:#c2c7d0;z-index:100}
+    .sidebar-brand{padding:16px 20px;background:rgba(0,0,0,.2);color:#fff;display:flex;gap:10px;align-items:center}.sidebar-brand .material-icons{color:#17a2b8}
+    .brand-title{font-size:18px;font-weight:700;line-height:1.2}.brand-sub{font-size:11px;opacity:.85}.sidebar-user{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:10px;align-items:center}
+    .avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;background:linear-gradient(135deg,#17a2b8,#20c997)}
+    .sidebar-nav{padding:10px 0 20px}.sidebar-item{padding:12px 20px;display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none}.sidebar-item:hover{background:rgba(255,255,255,.05)}
+    .sidebar-item.active{background:rgba(23,162,184,.2);color:#17a2b8;border-left:3px solid #17a2b8;padding-left:17px}
+    .sidebar-item-badge{margin-left:auto;min-width:18px;height:18px;padding:0 6px;border-radius:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:#fff}.sidebar-item-badge.info{background:#17a2b8}.sidebar-item-badge.warning{background:#ffc107;color:#333}
+    .main{flex:1;margin-left:250px;min-width:0}.header{height:56px;position:sticky;top:0;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.08);display:flex;justify-content:space-between;align-items:center;padding:0 16px;z-index:50}
+    .header-left,.header-right{display:flex;align-items:center;gap:8px}.menu-toggle{display:none;width:40px;height:40px;border:0;border-radius:50%;background:transparent}.menu-toggle:hover,.header-btn:hover{background:#f4f6f9}
+    .breadcrumb{font-size:13px;color:#6c757d}.breadcrumb a{color:#17a2b8;text-decoration:none}.header-btn{width:40px;height:40px;border:0;border-radius:50%;background:transparent;position:relative;display:grid;place-items:center}
+    .header-btn-badge{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff}.header-btn-badge.red{background:#dc3545}.header-btn-badge.yellow{background:#ffc107;color:#333}
+    .header-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700;background:linear-gradient(135deg,#17a2b8,#20c997)}
+    .content{padding:20px}.title{margin:0;font-size:30px}.sub{margin:2px 0 14px;color:var(--muted)}
+    .layout{display:grid;grid-template-columns:280px 1fr;gap:14px}
+    .card{background:var(--card);box-shadow:var(--shadow);border-radius:10px}
+    .left{padding:10px}.nav-btn{width:100%;border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 10px;margin-bottom:8px;text-align:left;cursor:pointer}
+    .nav-btn.active{border-color:var(--pri);background:#f1fcfe;color:#0e7f90;font-weight:700}
+    .panel{padding:14px;display:none}.panel.active{display:block}
+    .sec-title{margin:0 0 10px}.row{display:grid;gap:8px;margin-bottom:10px}.inline{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .sw{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff}
+    .ipt,.txt,.sel{width:100%;border:1px solid #d2dae3;border-radius:8px;padding:8px 10px;font:inherit;background:#fff}.txt{min-height:120px;resize:vertical}
+    .chip-wrap{display:flex;gap:6px;flex-wrap:wrap}.chip{display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:4px 10px;background:#eef2f6;color:#44515f;font-size:12px}
+    .chip button{border:0;background:transparent;cursor:pointer}
+    .btn{border:1px solid #d2dae3;border-radius:8px;padding:8px 12px;background:#fff;cursor:pointer;font:inherit}.btn.primary{background:#17a2b8;border-color:#17a2b8;color:#fff}
+    .btn.warn{background:#fff3cd;border-color:#ffc107;color:#7a5b00}.btn.danger{background:#dc3545;border-color:#dc3545;color:#fff}
+    .out{border:1px solid #e8edf3;background:#f8fafc;border-radius:8px;padding:10px;min-height:46px}
+    .detect{font-weight:700}.detect.ok{color:var(--ok)}.detect.ng{color:var(--danger)}
+    .toast{position:fixed;right:16px;bottom:16px;background:#1f2933;color:#fff;padding:10px 12px;border-radius:8px;opacity:0;transform:translateY(8px);transition:.2s}.toast.show{opacity:1;transform:translateY(0)}
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:90}.overlay.show{display:block}
+    @media(max-width:992px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.menu-toggle{display:grid}.layout{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand"><span class="material-icons">health_and_safety</span><div><div class="brand-title">ClinicFlow AI</div><div class="brand-sub">運用ダッシュボード</div></div></div>
+    <div class="sidebar-user"><div class="avatar">佐藤</div><div><div style="color:#fff">受付担当：佐藤</div><div style="font-size:11px;color:#6c757d">サポート管理者</div></div></div>
+    <nav class="sidebar-nav">
+      <a class="sidebar-item" href="/admin-dashboard.html"><span class="material-icons">dashboard</span>ダッシュボード</a>
+      <a class="sidebar-item" href="/inbox.html"><span class="material-icons">inbox</span>受信トレイ <span class="sidebar-item-badge info">12</span></a>
+      <a class="sidebar-item" href="/tickets.html"><span class="material-icons">support_agent</span>チケット（有人対応） <span class="sidebar-item-badge warning">4</span></a>
+      <a class="sidebar-item" href="/knowledge.html"><span class="material-icons">menu_book</span>ナレッジ管理</a>
+      <a class="sidebar-item" href="/customers.html"><span class="material-icons">groups</span>顧客管理</a>
+      <a class="sidebar-item" href="/reports.html"><span class="material-icons">analytics</span>レポート</a>
+      <a class="sidebar-item active" href="/settings.html"><span class="material-icons">shield</span>設定（ガードレール）</a>
+    </nav>
+  </aside>
+  <div class="overlay" id="overlay"></div>
+  <main class="main">
+    <header class="header">
+      <div class="header-left"><button class="menu-toggle" id="menuToggle" type="button"><span class="material-icons">menu</span></button><div class="breadcrumb"><a href="#">ホーム</a> &gt; 設定（ガードレール）</div></div>
+      <div class="header-right"><button class="header-btn" type="button"><span class="material-icons">mail</span><span class="header-btn-badge red">3</span></button><button class="header-btn" type="button"><span class="material-icons">notifications</span><span class="header-btn-badge yellow">15</span></button><div class="header-avatar">佐藤</div></div>
+    </header>
+    <section class="content">
+      <h1 class="title">設定（ガードレール）</h1>
+      <p class="sub">医療リスクを抑えるための出力ルールと安全設定を管理</p>
+      <div class="layout">
+        <aside class="card left" id="catNav"></aside>
+        <section class="card" id="panelRoot">
+          <article class="panel active" data-panel="guard">
+            <h3 class="sec-title">ガードレール</h3>
+            <div class="row">
+              <label class="sw"><span>医療判断をしない（診断・処方の回避）</span><input type="checkbox" id="gNoMedical"></label>
+              <label class="sw"><span>危険兆候は有人切替</span><input type="checkbox" id="gRiskHandoff"></label>
+              <label class="sw"><span>根拠（citations）が無い場合は回答を控える</span><input type="checkbox" id="gNeedCitations"></label>
+              <label>自信が低い場合の有人切替閾値（0〜1）<input class="ipt" id="gThreshold" type="number" step="0.01" min="0" max="1"></label>
+            </div>
+            <!-- updated: persisted to localStorage -->
+            <button class="btn primary" data-save="guard" type="button">保存</button>
+          </article>
+
+          <article class="panel" data-panel="words">
+            <h3 class="sec-title">危険ワード</h3>
+            <div class="row">
+              <div class="chip-wrap" id="wordChips"></div>
+              <div class="inline"><input class="ipt" id="wordInput" placeholder="危険ワードを入力"><button class="btn" id="wordAdd" type="button">追加</button><button class="btn danger" id="wordDelete" type="button">削除</button><button class="btn warn" id="wordReset" type="button">初期値に戻す</button></div>
+              <label>検知テスト<input class="ipt" id="detectInput" placeholder="テスト文章を入力"></label>
+              <div class="out"><span id="detectResult" class="detect ok">未検知です</span></div>
+            </div>
+            <button class="btn primary" data-save="words" type="button">保存</button>
+          </article>
+
+          <article class="panel" data-panel="template">
+            <h3 class="sec-title">受診誘導テンプレ</h3>
+            <div class="row">
+              <textarea class="txt" id="tmplInput"></textarea>
+              <div class="inline"><button class="btn" id="tmplInsert" type="button">テンプレ挿入（推奨文）</button></div>
+              <div class="out" id="tmplPreview"></div>
+            </div>
+            <button class="btn primary" data-save="template" type="button">保存</button>
+          </article>
+
+          <article class="panel" data-panel="pii">
+            <h3 class="sec-title">PIIマスキング</h3>
+            <div class="row">
+              <label class="sw"><span>メールをマスク</span><input type="checkbox" id="mEmail"></label>
+              <label class="sw"><span>電話番号をマスク</span><input type="checkbox" id="mPhone"></label>
+              <label class="sw"><span>住所っぽい文字列をマスク（モック）</span><input type="checkbox" id="mAddress"></label>
+              <label>マスクテスト<input class="ipt" id="maskInput" placeholder="例: test@example.com 090-1234-5678 東京都渋谷区1-2-3"></label>
+              <div class="out" id="maskOutput"></div>
+            </div>
+            <button class="btn primary" data-save="pii" type="button">保存</button>
+          </article>
+
+          <article class="panel" data-panel="notify">
+            <h3 class="sec-title">通知/エスカレーション</h3>
+            <div class="row">
+              <label class="sw"><span>安全アラートは通知する</span><input type="checkbox" id="nAlert"></label>
+              <label>しきい値（件）<input class="ipt" id="nThreshold" type="number" min="1" step="1"></label>
+              <label>通知先<input class="ipt" id="nDest"></label>
+            </div>
+            <button class="btn primary" data-save="notify" type="button">保存</button>
+          </article>
+
+          <article class="panel" data-panel="integration">
+            <h3 class="sec-title">連携（モック）</h3>
+            <div class="row">
+              <label class="sw"><span>Slack連携</span><input type="checkbox" id="iSlack"></label>
+              <label class="sw"><span>メール連携</span><input type="checkbox" id="iMail"></label>
+              <label class="sw"><span>Webhook連携</span><input type="checkbox" id="iWebhook"></label>
+            </div>
+            <button class="btn primary" data-save="integration" type="button">保存</button>
+          </article>
+        </section>
+      </div>
+    </section>
+  </main>
+</div>
+<div id="toast" class="toast"></div>
+<script>
+const STORAGE_KEY='clinicflow_settings_v1';
+const defaultWords=['出血','発熱','呼吸困難','アレルギー','強い痛み','意識','腫れが悪化'];
+const recommendedTemplate='症状が続く場合や悪化する場合は、安全のため早めの受診をご案内します。至急のご連絡はお電話でお願いします。';
+const categories=[
+  {id:'guard',label:'ガードレール'},
+  {id:'words',label:'危険ワード'},
+  {id:'template',label:'受診誘導テンプレ'},
+  {id:'pii',label:'PIIマスキング'},
+  {id:'notify',label:'通知/エスカレーション'},
+  {id:'integration',label:'連携（モック）'}
+];
+const defaults={
+  active:'guard',
+  guard:{noMedical:true,riskHandoff:true,needCitations:true,threshold:0.35},
+  words:[...defaultWords],
+  template:recommendedTemplate,
+  pii:{email:true,phone:true,address:true},
+  notify:{alert:true,threshold:1,dest:'support@example.com'},
+  integration:{slack:false,mail:true,webhook:false}
+};
+function loadState(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(raw)return {...defaults,...JSON.parse(raw)};
+  }catch(_){}
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(defaults));
+  return structuredClone(defaults);
+}
+let state=loadState();
+const $=id=>document.getElementById(id);
+function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1200);}
+
+function renderCategoryNav(){
+  $('catNav').innerHTML=categories.map(c=>`<button class="nav-btn ${state.active===c.id?'active':''}" data-cat="${c.id}" type="button">${c.label}</button>`).join('');
+}
+function showPanel(id){
+  state.active=id;
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===id));
+  renderCategoryNav();
+}
+function renderWords(){
+  $('wordChips').innerHTML=state.words.map(w=>`<span class="chip">${w}<button type="button" data-del="${w}">×</button></span>`).join('');
+}
+function detectWords(text){
+  const hit=state.words.filter(w=>text.includes(w));
+  const el=$('detectResult');
+  if(hit.length){el.className='detect ng';el.textContent=`検知しました: ${hit.join(' / ')}`;}
+  else{el.className='detect ok';el.textContent='未検知です';}
+}
+function renderTemplatePreview(){ $('tmplPreview').textContent=$('tmplInput').value.trim()||'（プレビューなし）'; }
+function applyMask(text){
+  let out=text;
+  if($('mEmail').checked)out=out.replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g,'***@***');
+  if($('mPhone').checked)out=out.replace(/0\d{1,4}-?\d{1,4}-?\d{3,4}/g,'***-****-****');
+  if($('mAddress').checked)out=out.replace(/(東京都|北海道|(?:京都|大阪)府|.{2,3}県).{3,25}/g,'[住所マスク]');
+  return out;
+}
+function renderMask(){ $('maskOutput').textContent=applyMask($('maskInput').value); }
+function hydrate(){
+  $('gNoMedical').checked=state.guard.noMedical;
+  $('gRiskHandoff').checked=state.guard.riskHandoff;
+  $('gNeedCitations').checked=state.guard.needCitations;
+  $('gThreshold').value=state.guard.threshold;
+  $('tmplInput').value=state.template;
+  $('mEmail').checked=state.pii.email;
+  $('mPhone').checked=state.pii.phone;
+  $('mAddress').checked=state.pii.address;
+  $('nAlert').checked=state.notify.alert;
+  $('nThreshold').value=state.notify.threshold;
+  $('nDest').value=state.notify.dest;
+  $('iSlack').checked=state.integration.slack;
+  $('iMail').checked=state.integration.mail;
+  $('iWebhook').checked=state.integration.webhook;
+  renderWords();renderTemplatePreview();renderMask();detectWords($('detectInput').value);showPanel(state.active||'guard');
+}
+
+document.addEventListener('click',e=>{
+  const cat=e.target.closest('[data-cat]'); if(cat){showPanel(cat.dataset.cat);saveState();return;}
+  const del=e.target.closest('[data-del]'); if(del){state.words=state.words.filter(w=>w!==del.dataset.del);renderWords();detectWords($('detectInput').value);saveState();return;}
+  if(e.target.id==='wordAdd'){const v=$('wordInput').value.trim();if(v&&!state.words.includes(v)){state.words.push(v);$('wordInput').value='';renderWords();detectWords($('detectInput').value);}return;}
+  if(e.target.id==='wordDelete'){const v=$('wordInput').value.trim();if(v){state.words=state.words.filter(w=>w!==v);$('wordInput').value='';renderWords();detectWords($('detectInput').value);}return;}
+  if(e.target.id==='wordReset'){state.words=[...defaultWords];renderWords();detectWords($('detectInput').value);return;}
+  if(e.target.id==='tmplInsert'){ $('tmplInput').value=recommendedTemplate;renderTemplatePreview();return; }
+});
+
+$('detectInput').addEventListener('input',e=>detectWords(e.target.value));
+$('tmplInput').addEventListener('input',renderTemplatePreview);
+['mEmail','mPhone','mAddress'].forEach(id=>$(id).addEventListener('change',renderMask));
+$('maskInput').addEventListener('input',renderMask);
+
+document.querySelectorAll('[data-save]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    state.guard.noMedical=$('gNoMedical').checked;
+    state.guard.riskHandoff=$('gRiskHandoff').checked;
+    state.guard.needCitations=$('gNeedCitations').checked;
+    state.guard.threshold=Math.max(0,Math.min(1,Number($('gThreshold').value)||0));
+    state.template=$('tmplInput').value;
+    state.pii.email=$('mEmail').checked;state.pii.phone=$('mPhone').checked;state.pii.address=$('mAddress').checked;
+    state.notify.alert=$('nAlert').checked;state.notify.threshold=Math.max(1,Number($('nThreshold').value)||1);state.notify.dest=$('nDest').value.trim()||'support@example.com';
+    state.integration.slack=$('iSlack').checked;state.integration.mail=$('iMail').checked;state.integration.webhook=$('iWebhook').checked;
+    saveState();toast('保存しました');
+  });
+});
+
+const mt=$('menuToggle'),sb=$('sidebar'),ov=$('overlay');
+mt&&mt.addEventListener('click',()=>{sb.classList.toggle('open');ov.classList.toggle('show')});
+ov&&ov.addEventListener('click',()=>{sb.classList.remove('open');ov.classList.remove('show')});
+
+// updated: preventDefault only for placeholder anchors
+document.querySelectorAll('.sidebar-nav a').forEach((link)=>{
+  link.addEventListener('click',(e)=>{ if((link.getAttribute('href')||'').trim()==='#') e.preventDefault(); });
+});
+
+hydrate();
+</script>
+</body>
+</html>
