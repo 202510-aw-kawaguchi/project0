@@ -142,6 +142,23 @@
               <label class="sw"><span>安全アラートは通知する</span><input type="checkbox" id="nAlert"></label>
               <label>しきい値（件）<input class="ipt" id="nThreshold" type="number" min="1" step="1"></label>
               <label>通知先<input class="ipt" id="nDest"></label>
+              <label class="sw"><span>営業時間外モードを有効化</span><input type="checkbox" id="ahEnabled"></label>
+              <label class="sw"><span>営業時間判定を有効化</span><input type="checkbox" id="bhEnabled"></label>
+              <div class="inline">
+                <label style="flex:1">開始時刻<input class="ipt" id="bhStart" type="time"></label>
+                <label style="flex:1">終了時刻<input class="ipt" id="bhEnd" type="time"></label>
+              </div>
+              <div class="inline">
+                <span class="tag-muted">休診日</span>
+                <label><input type="checkbox" class="bh-closed" value="Sun"> 日</label>
+                <label><input type="checkbox" class="bh-closed" value="Mon"> 月</label>
+                <label><input type="checkbox" class="bh-closed" value="Tue"> 火</label>
+                <label><input type="checkbox" class="bh-closed" value="Wed"> 水</label>
+                <label><input type="checkbox" class="bh-closed" value="Thu"> 木</label>
+                <label><input type="checkbox" class="bh-closed" value="Fri"> 金</label>
+                <label><input type="checkbox" class="bh-closed" value="Sat"> 土</label>
+              </div>
+              <label>デモ時刻（任意）<input class="ipt" id="demoNow" type="datetime-local"></label>
             </div>
             <button class="btn primary" data-save="notify" type="button">保存</button>
           </article>
@@ -221,12 +238,23 @@ const defaults={
   template:recommendedTemplate,
   pii:{email:true,phone:true,address:true},
   notify:{alert:true,threshold:1,dest:'support@example.com'},
-  integration:{slack:false,mail:true,webhook:false}
+  integration:{slack:false,mail:true,webhook:false},
+  businessHours:{start:'10:00',end:'19:00',closedDays:['Wed'],enabled:true},
+  afterHoursMode:{enabled:true},
+  demoNow:''
 };
 function loadState(){
   try{
     const raw=localStorage.getItem(STORAGE_KEY);
-    if(raw)return {...defaults,...JSON.parse(raw)};
+    if(raw){
+      const parsed=JSON.parse(raw);
+      return {
+        ...defaults,
+        ...parsed,
+        businessHours:{...defaults.businessHours,...(parsed.businessHours||{})},
+        afterHoursMode:{...defaults.afterHoursMode,...(parsed.afterHoursMode||{})}
+      };
+    }
   }catch(_){}
   localStorage.setItem(STORAGE_KEY,JSON.stringify(defaults));
   return structuredClone(defaults);
@@ -281,6 +309,12 @@ function hydrate(){
   $('nAlert').checked=state.notify.alert;
   $('nThreshold').value=state.notify.threshold;
   $('nDest').value=state.notify.dest;
+  $('ahEnabled').checked=state.afterHoursMode.enabled;
+  $('bhEnabled').checked=state.businessHours.enabled;
+  $('bhStart').value=state.businessHours.start;
+  $('bhEnd').value=state.businessHours.end;
+  $('demoNow').value=state.demoNow||'';
+  document.querySelectorAll('.bh-closed').forEach(el=>{el.checked=(state.businessHours.closedDays||[]).includes(el.value);});
   $('iSlack').checked=state.integration.slack;
   $('iMail').checked=state.integration.mail;
   $('iWebhook').checked=state.integration.webhook;
@@ -445,6 +479,12 @@ document.querySelectorAll('[data-save]').forEach(btn=>{
     state.template=$('tmplInput').value;
     state.pii.email=$('mEmail').checked;state.pii.phone=$('mPhone').checked;state.pii.address=$('mAddress').checked;
     state.notify.alert=$('nAlert').checked;state.notify.threshold=Math.max(1,Number($('nThreshold').value)||1);state.notify.dest=$('nDest').value.trim()||'support@example.com';
+    state.afterHoursMode.enabled=$('ahEnabled').checked;
+    state.businessHours.enabled=$('bhEnabled').checked;
+    state.businessHours.start=$('bhStart').value||'10:00';
+    state.businessHours.end=$('bhEnd').value||'19:00';
+    state.businessHours.closedDays=[...document.querySelectorAll('.bh-closed:checked')].map(el=>el.value);
+    state.demoNow=$('demoNow').value||'';
     state.integration.slack=$('iSlack').checked;state.integration.mail=$('iMail').checked;state.integration.webhook=$('iWebhook').checked;
     saveState();toast('保存しました');
   });

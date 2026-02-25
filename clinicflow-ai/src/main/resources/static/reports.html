@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -35,8 +35,12 @@
     .hbar-list{display:grid;gap:9px}.hrow{display:grid;grid-template-columns:84px 1fr 42px;align-items:center;gap:8px;font-size:12px}.htrack{height:12px;background:#eef2f6;border-radius:12px;overflow:hidden}.hfill{height:100%;background:linear-gradient(90deg,#17a2b8,#4ea8de)}
     .reason{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px dashed #e8edf3}.reason:last-child{border-bottom:0}
     table{width:100%;border-collapse:collapse}.table-wrap{overflow:auto}.table th{background:#f8f9fa;color:#6c757d;text-transform:uppercase;font-size:12px;text-align:left;padding:10px 12px}.table td{padding:12px;border-top:1px solid #eef2f6}.table tr:hover td{background:#f8f9fa}
+    .ai-report{margin:0 0 14px}.ai-report-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}.mini-kpi{background:#f8fbff;border:1px solid #e4edf5;border-radius:8px;padding:10px}
+    .mini-kpi .label{font-size:12px;color:#6c7683}.mini-kpi .value{font-size:22px;font-weight:700;margin-top:2px}.metric-row{display:grid;grid-template-columns:150px 1fr 64px;align-items:center;gap:8px;margin-bottom:8px}
+    .meter{height:10px;background:#e9eef4;border-radius:999px;overflow:hidden}.meter-fill{height:100%;background:linear-gradient(90deg,#17a2b8,#20c997)}
     .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:90}.overlay.show{display:block}
     @media(max-width:1200px){.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}}
+    @media(max-width:1200px){.ai-report-grid{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:992px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.menu-toggle{display:grid}.filters{grid-template-columns:1fr}.tabs{flex-wrap:wrap}}
     @media(max-width:768px){.content{padding:16px}.kpis{grid-template-columns:1fr}}
   </style>
@@ -82,6 +86,16 @@
         <article class="card"><div class="card-head">handoff理由</div><div class="card-body" id="handoffReasons"></div></article>
       </section>
 
+      <article class="card ai-report">
+        <div class="card-head">AI精度レポート</div>
+        <div class="card-body">
+          <div class="ai-report-grid" id="aiClassStats"></div>
+          <div class="metric-row"><span>自動返信成功率</span><div class="meter"><div class="meter-fill" id="autoReplyRateBar" style="width:0%"></div></div><strong id="autoReplyRateText">0%</strong></div>
+          <div class="metric-row"><span>エスカレーション率</span><div class="meter"><div class="meter-fill" id="escalationRateBar" style="width:0%"></div></div><strong id="escalationRateText">0%</strong></div>
+          <div class="metric-row"><span>confidence平均値</span><div class="meter"><div class="meter-fill" id="confidenceAvgBar" style="width:0%"></div></div><strong id="confidenceAvgText">0%</strong></div>
+        </div>
+      </article>
+
       <article class="card">
         <div class="card-head">カテゴリ別サマリー</div>
         <div class="card-body table-wrap">
@@ -105,6 +119,7 @@ const data={
 const periodLabels={week:'今週',month:'今月',last30:'過去30日'};
 const state={period:'week'};
 const $=id=>document.getElementById(id);
+const INBOX_KEY='inboxItems';
 
 function renderTabs(){
   $('periodTabs').innerHTML=Object.entries(periodLabels).map(([k,v])=>`<button class="tab ${state.period===k?'active':''}" data-p="${k}" type="button">${v}</button>`).join('');
@@ -126,7 +141,53 @@ function renderReasons(){
 function renderTable(){
   $('summaryTable').innerHTML=data[state.period].rows.map(row=>`<tr>${row.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('');
 }
-function renderAll(){renderTabs();renderKpi();renderTrend();renderCats();renderReasons();renderTable();}
+function getClassification(item){
+  return item.classification || (item.aiMeta&&item.aiMeta.classification) || 'manual_review';
+}
+function toPercent(v){
+  return `${Math.round((Number(v)||0)*100)}%`;
+}
+function normalizeConfidence(v){
+  const n=Number(v);
+  if(Number.isNaN(n)) return 0;
+  if(n>1) return Math.min(1,n/100);
+  return Math.max(0,Math.min(1,n));
+}
+function renderAiAccuracyReport(){
+  let items=[];
+  try{
+    const raw=JSON.parse(localStorage.getItem(INBOX_KEY)||'[]');
+    if(Array.isArray(raw)) items=raw;
+  }catch(_){}
+  const counts={safety:0,reservation:0,complaint:0,general:0,manual_review:0};
+  let confidenceSum=0, confidenceCount=0, autoRepliedGeneral=0;
+  items.forEach(item=>{
+    const cls=getClassification(item);
+    counts[cls]=(counts[cls]||0)+1;
+    const conf=normalizeConfidence(item&&item.aiMeta?item.aiMeta.confidence:0);
+    if(conf>0){confidenceSum+=conf;confidenceCount+=1;}
+    const autoReplied=!!(item&&item.flags&&item.flags.autoReplied);
+    if(cls==='general'&&autoReplied) autoRepliedGeneral+=1;
+  });
+  const total=items.length;
+  const generalCount=counts.general||0;
+  const escalation=((counts.safety||0)+(counts.complaint||0))/(total||1);
+  const autoReplyRate=autoRepliedGeneral/(generalCount||1);
+  const confidenceAvg=confidenceCount?confidenceSum/confidenceCount:0;
+  $('aiClassStats').innerHTML=[
+    ['safety件数',counts.safety,'#dc3545'],
+    ['reservation件数',counts.reservation,'#17a2b8'],
+    ['complaint件数',counts.complaint,'#ffc107'],
+    ['general件数',counts.general,'#28a745']
+  ].map(([label,value,color])=>`<div class="mini-kpi"><div class="label">${label}</div><div class="value" style="color:${color}">${value}</div></div>`).join('');
+  $('autoReplyRateBar').style.width=toPercent(autoReplyRate);
+  $('autoReplyRateText').textContent=toPercent(autoReplyRate);
+  $('escalationRateBar').style.width=toPercent(escalation);
+  $('escalationRateText').textContent=toPercent(escalation);
+  $('confidenceAvgBar').style.width=toPercent(confidenceAvg);
+  $('confidenceAvgText').textContent=toPercent(confidenceAvg);
+}
+function renderAll(){renderTabs();renderKpi();renderTrend();renderCats();renderReasons();renderTable();renderAiAccuracyReport();}
 
 document.addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(!b)return;state.period=b.dataset.p;renderAll();});
 $('applyBtn').addEventListener('click',()=>renderAll());
@@ -139,8 +200,10 @@ ov&&ov.addEventListener('click',()=>{sb.classList.remove('open');ov.classList.re
 document.querySelectorAll('.sidebar-nav a').forEach((link)=>{
   link.addEventListener('click',(e)=>{if((link.getAttribute('href')||'').trim()==='#')e.preventDefault();});
 });
+window.addEventListener('storage',(e)=>{if(e.key===INBOX_KEY) renderAiAccuracyReport();});
 
 renderAll();
 </script>
 </body>
 </html>
+

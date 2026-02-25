@@ -24,17 +24,18 @@
     .header-btn-badge{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:50%;font-size:11px;font-weight:700;display:grid;place-items:center;color:#fff}.header-btn-badge.red{background:#dc3545}.header-btn-badge.yellow{background:#ffc107;color:#333}
     .header-search-wrap{max-width:0;overflow:hidden;transition:max-width .25s}.header-search-wrap.open{max-width:280px}.header-search{width:260px;border:1px solid #d7dee6;border-radius:20px;padding:8px 12px;font-size:13px;outline:none}
     .header-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#17a2b8,#20c997);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700}
-    .content{padding:20px}.shell{display:grid;grid-template-columns:1.05fr 1.2fr;gap:20px}.card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06)}.inbox-list,.inbox-detail{min-height:680px;display:flex;flex-direction:column}
+    .content{padding:20px}.shell{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:20px}.shell>article{min-width:0}.card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06)}.inbox-list,.inbox-detail{min-height:680px;display:flex;flex-direction:column;min-width:0}
     .filter-bar{padding:14px;border-bottom:1px solid #edf1f5;display:grid;gap:10px}.tabs{display:flex;gap:8px;flex-wrap:wrap}.tab-btn{border:1px solid #d8dee6;background:#fff;border-radius:20px;padding:6px 12px;font-size:12px;cursor:pointer;color:#56606b}.tab-btn.active{background:#17a2b8;border-color:#17a2b8;color:#fff}
     .filter-controls{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr auto;gap:8px}.filter-controls select,.filter-controls input{border:1px solid #d8dee6;border-radius:8px;padding:7px 10px;font-size:12px;background:#fff}.btn-reset{border:1px solid #d8dee6;border-radius:8px;background:#fff;padding:7px 12px;cursor:pointer;font-size:12px}
     .list-scroll{overflow:auto;padding:6px 0}.inbox-item{border-left:3px solid transparent;padding:12px 14px 12px 12px;cursor:pointer;transition:background .2s;border-bottom:1px solid #f0f3f6}.inbox-item:hover{background:#f8f9fa}.inbox-item.active{border-left-color:#17a2b8;background:#f8fcfd}
     .item-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}.unread-dot{width:8px;height:8px;border-radius:50%;background:#17a2b8}.item-name{font-weight:700}.item-time{margin-left:auto;color:#6c757d;font-size:12px}
     .meta-row{display:flex;gap:6px;align-items:center;margin-bottom:5px;flex-wrap:wrap}.item-summary{color:#5d6772;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:500}.b-cat{background:#eef2f6;color:#4d5967}.b-ai{background:#dff4ef;color:#187a66}.b-handoff{background:#ffe3e5;color:#a12335}.b-alert{background:#fff3cd;color:#7a5b00}.b-open{background:#ffe3e5;color:#a12335}.b-progress{background:#d4edda;color:#1e7e34}.b-done{background:#e2e3e5;color:#495057}
+    .badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:500}.b-cat{background:#eef2f6;color:#4d5967}.b-ai{background:#dff4ef;color:#187a66}.b-handoff{background:#ffe3e5;color:#a12335}.b-alert{background:#fff3cd;color:#7a5b00}.b-open{background:#ffe3e5;color:#a12335}.b-progress{background:#d4edda;color:#1e7e34}.b-done{background:#e2e3e5;color:#495057}.b-after{background:#eef2ff;color:#4955a3}.b-auto{background:#e8f7ee;color:#157347}.b-check{background:#fdecec;color:#b02a37}
     .detail-head{padding:16px;border-bottom:1px solid #edf1f5}.alert-banner{background:#f8d7da;color:#8f1d29;border-radius:8px;padding:10px 12px;margin-bottom:12px;border:1px solid #f2bec4}
     .customer-title{margin:0;font-size:18px}.customer-meta{color:#5f6873;font-size:12px}.customer-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
     .messages{flex:1;overflow:auto;padding:14px 16px;background:#fbfcfd;display:flex;flex-direction:column;gap:10px}.msg{max-width:86%;padding:10px 12px;border-radius:12px}.msg.user{align-self:flex-end;background:#17a2b8;color:#fff;border-bottom-right-radius:4px}.msg.assistant{align-self:flex-start;background:#fff;border:1px solid #e8edf2;border-bottom-left-radius:4px}.msg-time{margin-top:5px;font-size:11px;opacity:.75}
     details.citation{margin-top:8px;background:#f8f9fa;border:1px solid #e4e9ef;border-radius:8px;padding:6px 8px}details.citation summary{cursor:pointer;color:#2a6285;font-size:12px}.citation-item{font-size:12px;margin-top:6px;color:#4f5a67}
+    .ai-card{margin-top:10px;border:1px solid #e6edf4;border-radius:8px;background:#f8fbff;padding:10px}.ai-card h4{margin:0 0 6px}.ai-meta{font-size:12px;color:#5f6873;display:grid;gap:4px}
     .actions{padding:14px 16px 16px;border-top:1px solid #edf1f5;background:#fff}.action-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.btn{border:1px solid #d7dee6;background:#fff;border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer}.btn.primary{background:#17a2b8;border-color:#17a2b8;color:#fff}.btn.warn{background:#fff3cd;border-color:#ffc107;color:#6d5200}.btn.danger{background:#dc3545;border-color:#dc3545;color:#fff}
     .reply-box{width:100%;min-height:74px;border:1px solid #d7dee6;border-radius:8px;padding:10px;font-size:13px;resize:vertical;outline:none}.empty{padding:26px;color:#6c757d;text-align:center}
     .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:90}.sidebar-overlay.show{display:block}
@@ -69,23 +70,645 @@
 <script src="/staff-common.js"></script>
 <script src="/knowledge-badge.js"></script>
 <script>
-const inboxItems=[{id:'c-001',unread:true,customerName:'\u5c71\u7530\u3055\u307e',customerTag:'\u8853\u5f8c3\u65e5',maskedContact:'090-****-1234',category:'\u8853\u5f8c\u4e0d\u5b89',status:'\u672a\u5bfe\u5fdc',aiDecision:'handoff',safetyAlert:true,updatedAt:'10:27',lastMessage:'\u8853\u5f8c\u306b\u51fa\u8840\u304c\u7d9a\u3044\u3066\u3044\u307e\u3059...',summary:'\u5b89\u5168\u30eb\u30fc\u30eb\u306b\u8a72\u5f53\u3002\u6709\u4eba\u5bfe\u5fdc\u3078\u30a8\u30b9\u30ab\u30ec\u30fc\u30b7\u30e7\u30f3\u304c\u5fc5\u8981\u3067\u3059\u3002',messages:[{role:'user',text:'\u8853\u5f8c\u306e\u51fa\u8840\u304c\u6b62\u307e\u308a\u307e\u305b\u3093\u3002',time:'10:25'},{role:'assistant',text:'\u5b89\u5168\u306e\u305f\u3081\u3001\u304a\u65e9\u3081\u306b\u53d7\u8a3a\u3057\u3066\u304f\u3060\u3055\u3044\u3002',time:'10:27',citations:[{source:'postcare.md',snippet:'\u51fa\u8840\u304c\u7d99\u7d9a\u3059\u308b\u5834\u5408\u306f\u53d7\u8a3a\u3092\u512a\u5148'}]}]},{id:'c-002',unread:true,customerName:'\u4f50\u85e4\u3055\u307e',customerTag:'\u521d\u8a3a',maskedContact:'080-****-9912',category:'\u4e88\u7d04\u5909\u66f4',status:'\u5bfe\u5fdc\u4e2d',aiDecision:'handoff',safetyAlert:false,updatedAt:'10:12',lastMessage:'\u6765\u9031\u6728\u66dc\u306b\u5909\u66f4\u3067\u304d\u307e\u3059\u304b\uff1f',summary:'\u7a7a\u304d\u67a0\u78ba\u8a8d\u306e\u305f\u3081\u30b9\u30bf\u30c3\u30d5\u5bfe\u5fdc\u4e2d\u3002',messages:[{role:'user',text:'\u4e88\u7d04\u3092\u5909\u66f4\u3067\u304d\u307e\u3059\u304b\uff1f',time:'10:10'}]},{id:'c-003',unread:false,customerName:'\u9234\u6728\u3055\u307e',customerTag:'\u65bd\u8853\u524d\u76f8\u8ac7',maskedContact:'070-****-2251',category:'\u65bd\u8853\u8aac\u660e',status:'\u672a\u5bfe\u5fdc',aiDecision:'needs_review',safetyAlert:false,updatedAt:'09:55',lastMessage:'\u30c0\u30a6\u30f3\u30bf\u30a4\u30e0\u306f\u4f55\u65e5\u3067\u3059\u304b\uff1f',summary:'\u30c6\u30f3\u30d7\u30ec\u56de\u7b54\u3067\u5bfe\u5fdc\u53ef\u80fd\u3002',messages:[{role:'user',text:'\u30c0\u30a6\u30f3\u30bf\u30a4\u30e0\u306f\u4f55\u65e5\u3067\u3059\u304b\uff1f',time:'09:53'}]}];
-const state={selectedId:'c-001',tab:'all',category:'',status:'',query:''};
-const inboxListEl=document.getElementById('inboxList');const detailRootEl=document.getElementById('detailRoot');const tabContainerEl=document.getElementById('tabContainer');const categoryFilterEl=document.getElementById('categoryFilter');const statusFilterEl=document.getElementById('statusFilter');const headerSearchEl=document.getElementById('headerSearch');
-const aiLabel=t=>t==='ai_resolved'?{cls:'b-ai',text:'AI\u81ea\u52d5'}:t==='handoff'?{cls:'b-handoff',text:'\u6709\u4eba\u5bfe\u5fdc'}:{cls:'b-alert',text:'\u8981\u78ba\u8a8d'};const statusCls=s=>s==='\u5bfe\u5fdc\u4e2d'?'b-progress':s==='\u5b8c\u4e86'?'b-done':'b-open';
-function filtered(){const q=state.query.trim().toLowerCase();return inboxItems.filter(i=>{if(state.tab==='unread'&&!i.unread)return false;if(state.tab==='handoff'&&i.aiDecision!=='handoff')return false;if(state.tab==='alert'&&!i.safetyAlert)return false;if(state.tab==='ai'&&i.aiDecision!=='ai_resolved')return false;if(state.category&&i.category!==state.category)return false;if(state.status&&i.status!==state.status)return false;if(q){const text=[i.customerName,i.category,i.lastMessage,...i.messages.map(m=>m.text)].join(' ').toLowerCase();if(!text.includes(q))return false}return true})}
-function ensureSelection(list){if(!list.length){state.selectedId=null;return}if(!list.some(x=>x.id===state.selectedId))state.selectedId=list[0].id}
-function renderList(){const list=filtered();ensureSelection(list);if(!list.length){inboxListEl.innerHTML='<div class="empty">\u6761\u4ef6\u306b\u4e00\u81f4\u3059\u308b\u554f\u3044\u5408\u308f\u305b\u306f\u3042\u308a\u307e\u305b\u3093\u3002</div>';return}inboxListEl.innerHTML=list.map(i=>{const ai=aiLabel(i.aiDecision==='needs_review'?'needs_review':i.aiDecision);return `<div class="inbox-item ${i.id===state.selectedId?'active':''}" data-id="${i.id}"><div class="item-top">${i.unread?'<span class="unread-dot"></span>':'<span style="width:8px"></span>'}<span class="item-name">${i.customerName}</span><span class="item-time">${i.updatedAt}</span></div><div class="meta-row"><span class="badge b-cat">${i.category}</span><span class="badge ${i.safetyAlert?'b-alert':ai.cls}">${i.safetyAlert?'\u5b89\u5168\u30a2\u30e9\u30fc\u30c8':ai.text}</span><span class="badge ${statusCls(i.status)}">${i.status}</span></div><div class="item-summary">${i.lastMessage}</div></div>`}).join('')}
-function renderDetail(){const s=inboxItems.find(x=>x.id===state.selectedId);if(!s){detailRootEl.innerHTML='<div class="empty">\u554f\u3044\u5408\u308f\u305b\u3092\u9078\u629e\u3057\u3066\u304f\u3060\u3055\u3044\u3002</div>';return}const showAlert=s.aiDecision==='handoff'||s.safetyAlert;const msgs=s.messages.map(m=>`<div class="msg ${m.role}"><div>${m.text}</div><div class="msg-time">${m.time}</div>${m.role==='assistant'&&m.citations?`<details class="citation"><summary>\u5F15\u7528\u30BD\u30FC\u30B9</summary>${m.citations.map(c=>`<div class="citation-item"><strong>${c.source}</strong>: ${c.snippet}</div>`).join('')}</details>`:''}</div>`).join('');detailRootEl.innerHTML=`<div class="detail-head">${showAlert?`<div class="alert-banner"><strong>\u6CE8\u610F:</strong> \u6709\u4EBA\u5BFE\u5FDC\u3078\u306E\u30A8\u30B9\u30AB\u30EC\u30FC\u30B7\u30E7\u30F3\u304C\u5FC5\u8981\u3067\u3059\u3002<br>${s.summary||''}</div>`:''}<h3 class="customer-title">${s.customerName}</h3><div class="customer-meta">${s.maskedContact}</div><div class="customer-tags"><span class="badge b-cat">${s.customerTag}</span><span class="badge b-cat">\u30AB\u30C6\u30B4\u30EA: ${s.category}</span><span class="badge ${statusCls(s.status)}">${s.status}</span></div></div><div class="messages">${msgs}</div><div class="actions"><div class="action-row"><button class="btn ${showAlert?'danger':'warn'}" id="handoffBtn" type="button">\u30C1\u30B1\u30C3\u30C8\u5316\uFF08\u6709\u4EBA\u5BFE\u5FDC\u3078\uFF09</button><button class="btn" data-template="\u4E88\u7D04\u6848\u5185\u3092\u53D7\u3051\u4ED8\u3051\u307E\u3057\u305F\u3002\u5019\u88DC\u65E5\u6642\u3092\u78BA\u8A8D\u3057\u3066\u6298\u308A\u8FD4\u3057\u307E\u3059\u3002">\u30C6\u30F3\u30D7\u30EC\u8FD4\u4FE1: \u4E88\u7D04\u6848\u5185</button><button class="btn" data-template="\u6599\u91D1\u306E\u76EE\u5B89\u3092\u3054\u6848\u5185\u3057\u307E\u3059\u3002\u8A73\u7D30\u898B\u7A4D\u306F\u6765\u9662\u6642\u306B\u78BA\u5B9A\u3057\u307E\u3059\u3002">\u30C6\u30F3\u30D7\u30EC\u8FD4\u4FE1: \u6599\u91D1\u6848\u5185</button><button class="btn" data-template="\u5B89\u5168\u306E\u305F\u3081\u53D7\u8A3A\u3092\u3054\u6848\u5185\u3057\u307E\u3059\u3002\u5E0C\u671B\u6642\u9593\u5E2F\u3092\u6559\u3048\u3066\u304F\u3060\u3055\u3044\u3002">\u30C6\u30F3\u30D7\u30EC\u8FD4\u4FE1: \u53D7\u8A3A\u8A98\u5C0E</button></div><textarea id="replyBox" class="reply-box" placeholder="\u8FD4\u4FE1\u6587\u3092\u5165\u529B\uFF08\u30E2\u30C3\u30AF\uFF09"></textarea><div class="action-row" style="margin-top:10px;"><button class="btn primary" id="doneBtn" type="button">\u5B8C\u4E86\u306B\u3059\u308B</button><button class="btn" id="knowledgeBtn" type="button">\u30CA\u30EC\u30C3\u30B8\u306B\u8FFD\u52A0</button></div></div>`}
-function bindList(){inboxListEl.querySelectorAll('.inbox-item').forEach(el=>el.addEventListener('click',()=>{state.selectedId=el.dataset.id;const t=inboxItems.find(x=>x.id===state.selectedId);if(t)t.unread=false;renderAll()}))}
-function bindDetail(){const s=inboxItems.find(x=>x.id===state.selectedId);if(!s)return;const hb=document.getElementById('handoffBtn');if(hb)hb.addEventListener('click',()=>{s.status='\u5BFE\u5FDC\u4E2D';s.aiDecision='handoff';renderAll()});const db=document.getElementById('doneBtn');if(db)db.addEventListener('click',()=>{s.status='\u5B8C\u4E86';s.unread=false;s.updatedAt='\u4ECA';renderAll()});const kb=document.getElementById('knowledgeBtn');if(kb)kb.addEventListener('click',()=>alert('\u30CA\u30EC\u30C3\u30B8\u8FFD\u52A0\uFF08\u30E2\u30C3\u30AF\uFF09'));const reply=document.getElementById('replyBox');detailRootEl.querySelectorAll('[data-template]').forEach(btn=>btn.addEventListener('click',()=>{if(reply){reply.value=btn.dataset.template;reply.focus()}}))}
-function renderAll(){renderList();renderDetail();bindList();bindDetail()}
+const INBOX_KEY='inboxItems';
+const SETTINGS_KEY='clinicflow_settings_v2';
+const CATEGORY_GENERAL=['料金','施術説明','ダウンタイム/注意事項','アクセス/営業時間','その他（軽微）','その他'];
+const SAFETY_WORDS=['出血','血が止まら','止血','呼吸','息が','胸が苦しい','意識','失神','激痛','強い痛み','高熱','発熱','腫れがひどい','化膿','アレルギー','じんましん','嘔吐','めまい'];
+const RESERVATION_WORDS_STRONG=['予約','予約したい','予約変更','変更','キャンセル','取りたい','空き','空いて','日時','日程','何日','何時','予約できますか'];
+const RESERVATION_WORDS_WEAK=['相談','カウンセリング','希望'];
+const COMPLAINT_WORDS=['最悪','返金','クレーム','訴える','二度と','怒','対応が悪い','納得できない','ひどい','詐欺'];
+const RESERVATION_CATEGORY_HINTS=['予約','変更','キャンセル'];
+const debugMode=(new URLSearchParams(location.search)).get('debug')==='1';
+const CLASS_PRIORITY={safety:1,complaint:2,reservation:3,manual_review:4,general:5};
+const STATUS_PRIORITY={
+  '未対応':1,'未読':1,'open':1,'new':1,
+  '対応中':2,'in_progress':2,'processing':2,
+  '仮受付完了':2,'reservation_completed':2,
+  '顧客返信待ち':3,'waiting_customer':3,
+  '完了':4,'解決済':4,'done':4,'resolved':4,'closed':4
+};
 
-tabContainerEl.addEventListener('click',e=>{const t=e.target.closest('[data-tab]');if(!t)return;state.tab=t.dataset.tab;tabContainerEl.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));t.classList.add('active');renderAll()});
-categoryFilterEl.addEventListener('change',()=>{state.category=categoryFilterEl.value;renderAll()});statusFilterEl.addEventListener('change',()=>{state.status=statusFilterEl.value;renderAll()});headerSearchEl.addEventListener('input',()=>{state.query=headerSearchEl.value;renderAll()});
-document.getElementById('resetBtn').addEventListener('click',()=>{state.tab='all';state.category='';state.status='';state.query='';categoryFilterEl.value='';statusFilterEl.value='';headerSearchEl.value='';document.getElementById('dateFrom').value='';document.getElementById('dateTo').value='';tabContainerEl.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));tabContainerEl.querySelector('[data-tab="all"]').classList.add('active');renderAll()});
-const st=document.getElementById('searchToggleBtn'),sw=document.getElementById('headerSearchWrap');st.addEventListener('click',()=>{sw.classList.toggle('open');if(sw.classList.contains('open'))headerSearchEl.focus()});
-const mt=document.getElementById('menuToggle'),sb=document.getElementById('sidebar'),ov=document.getElementById('overlay');mt.addEventListener('click',()=>{sb.classList.toggle('open');ov.classList.toggle('show')});ov.addEventListener('click',()=>{sb.classList.remove('open');ov.classList.remove('show')});window.addEventListener('resize',()=>{if(window.innerWidth>992){sb.classList.remove('open');ov.classList.remove('show')}});
+const seedInboxItems=[
+  {id:'c-001',customerName:'山田さま',category:'術後不安',status:'未対応',createdAt:'2026-02-24 10:25',updatedAt:'2026-02-24 10:27',messages:[{role:'user',text:'術後の出血が止まりません。',time:'10:25'}],flags:{afterHours:false,autoReplied:false,safetyAlert:true,complaint:false,reservation:false},aiMeta:null,unread:true,customerTag:'術後3日',maskedContact:'090-****-1234'},
+  {id:'c-002',customerName:'佐藤さま',category:'予約変更',status:'対応中',createdAt:'2026-02-24 10:10',updatedAt:'2026-02-24 10:12',messages:[{role:'user',text:'来週木曜に予約を変更できますか？',time:'10:10'}],flags:{afterHours:false,autoReplied:false,safetyAlert:false,complaint:false,reservation:true},aiMeta:null,unread:true,customerTag:'初診',maskedContact:'080-****-9912'},
+  {id:'c-003',customerName:'鈴木さま',category:'施術説明',status:'未対応',createdAt:'2026-02-24 09:53',updatedAt:'2026-02-24 09:55',messages:[{role:'user',text:'ダウンタイムは何日ですか？',time:'09:53'}],flags:{afterHours:false,autoReplied:false,safetyAlert:false,complaint:false,reservation:false},aiMeta:null,unread:false,customerTag:'施術前相談',maskedContact:'070-****-2251'},
+  // demo: complaint items for verification
+  {id:'c-004',customerName:'中村さま',category:'その他（軽微）',status:'未対応',createdAt:'2026-02-24 11:05',updatedAt:'2026-02-24 11:07',messages:[{role:'user',text:'対応が悪いです。最悪でした。返金してほしいです。',time:'11:05'}],flags:{afterHours:false,autoReplied:false,safetyAlert:false,complaint:false,reservation:false},aiMeta:null,unread:true,customerTag:'再診',maskedContact:'090-****-7788'},
+  {id:'c-005',customerName:'高橋さま',category:'料金',status:'未対応',createdAt:'2026-02-24 11:20',updatedAt:'2026-02-24 11:21',messages:[{role:'user',text:'説明と違って納得できない。ひどい対応です。',time:'11:20'}],flags:{afterHours:false,autoReplied:false,safetyAlert:false,complaint:false,reservation:false},aiMeta:null,unread:true,customerTag:'初診',maskedContact:'080-****-3399'}
+];
+
+const state={selectedId:'',tab:'all',category:'',status:'',query:''};
+const inboxListEl=document.getElementById('inboxList');
+const detailRootEl=document.getElementById('detailRoot');
+const tabContainerEl=document.getElementById('tabContainer');
+const categoryFilterEl=document.getElementById('categoryFilter');
+const statusFilterEl=document.getElementById('statusFilter');
+const headerSearchEl=document.getElementById('headerSearch');
+const dateFromEl=document.getElementById('dateFrom');
+const dateToEl=document.getElementById('dateTo');
+
+function nowHHMM(){
+  const d=new Date();
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+function nowISO(){
+  return new Date().toISOString();
+}
+function loadSettings(){
+  const defaults={businessHours:{start:'10:00',end:'19:00',closedDays:['Wed'],enabled:true},afterHoursMode:{enabled:true},demoNow:''};
+  try{
+    const raw=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}');
+    return {
+      ...defaults,
+      ...raw,
+      businessHours:{...defaults.businessHours,...(raw.businessHours||{})},
+      afterHoursMode:{...defaults.afterHoursMode,...(raw.afterHoursMode||{})}
+    };
+  }catch(_){
+    return defaults;
+  }
+}
+function loadInboxItems(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(INBOX_KEY)||'null');
+    if(Array.isArray(raw)&&raw.length)return raw.map(normalizeInboxItem);
+  }catch(_){}
+  const seeded=seedInboxItems.map(normalizeInboxItem);
+  localStorage.setItem(INBOX_KEY,JSON.stringify(seeded));
+  return seeded;
+}
+function ensureDemoComplaintItems(){
+  // demo support: inject complaint test records even when localStorage already exists
+  const requiredIds=['c-004','c-005'];
+  const exists=new Set(inboxItems.map(i=>i.id));
+  let changed=false;
+  seedInboxItems
+    .filter(x=>requiredIds.includes(x.id))
+    .forEach(seed=>{
+      if(!exists.has(seed.id)){
+        inboxItems.push(normalizeInboxItem(seed));
+        changed=true;
+      }
+    });
+  if(changed) saveInboxItems();
+}
+function saveInboxItems(){
+  localStorage.setItem(INBOX_KEY,JSON.stringify(inboxItems));
+}
+function normalizeInboxItem(item){
+  const flags={afterHours:false,autoReplied:false,safetyAlert:false,complaint:false,reservation:false,manualReview:false,nextActionTag:'なし',...(item.flags||{})};
+  if(item.safetyAlert) flags.safetyAlert=true;
+  if(item.reservation) flags.reservation=true;
+  if(item.complaint) flags.complaint=true;
+  if(item.aiDecision==='ai_resolved') flags.autoReplied=true;
+  const aiMeta=item.aiMeta||{classification:'manual_review',confidence:0.40,citations:[],model:'mock'};
+  if(aiMeta.autoReplyAt==='-') delete aiMeta.autoReplyAt;
+  const messages=Array.isArray(item.messages)?item.messages:[];
+  return {
+    id:item.id||`c-${Date.now()}`,
+    customerName:item.customerName||'顧客',
+    category:item.category||'その他（軽微）',
+    status:item.status||'未対応',
+    createdAt:item.createdAt||nowISO(),
+    updatedAt:item.updatedAt||nowISO(),
+    messages,
+    flags,
+    aiMeta,
+    ticketCreated:!!item.ticketCreated,
+    ticketPriority:item.ticketPriority||'',
+    assignedTo:item.assignedTo||'',
+    ticketDepartment:item.ticketDepartment||'',
+    ticketSla:item.ticketSla||'',
+    ticketId:item.ticketId||'',
+    reservationFormData:item.reservationFormData||null,
+    complaintSummary:item.complaintSummary||null,
+    unread:typeof item.unread==='boolean'?item.unread:true,
+    customerTag:item.customerTag||'一般',
+    maskedContact:item.maskedContact||'---'
+  };
+}
+
+function parseHM(v){const p=String(v||'00:00').split(':').map(Number);return (p[0]||0)*60+(p[1]||0);}
+function formatYmd(d){
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,'0');
+  const day=String(d.getDate()).padStart(2,'0');
+  return `${y}${m}${day}`;
+}
+function generateTicketId(){
+  const ymd=formatYmd(new Date());
+  const re=new RegExp(`^TKT-${ymd}-(\\d+)$`);
+  let max=0;
+  inboxItems.forEach(it=>{
+    const m=String(it.ticketId||'').match(re);
+    if(m){
+      const n=Number(m[1]||0);
+      if(n>max) max=n;
+    }
+  });
+  return `TKT-${ymd}-${String(max+1).padStart(3,'0')}`;
+}
+function getNowFromSettings(settings){
+  if(settings.demoNow){
+    const d=new Date(settings.demoNow);
+    if(!isNaN(d.getTime())) return d;
+  }
+  return new Date();
+}
+function isAfterHours(settings){
+  const bh=settings.businessHours||{};
+  if(!bh.enabled) return false;
+  const now=getNowFromSettings(settings);
+  const day=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][now.getDay()];
+  if((bh.closedDays||[]).includes(day)) return true;
+  const cur=now.getHours()*60+now.getMinutes();
+  const start=parseHM(bh.start||'10:00');
+  const end=parseHM(bh.end||'19:00');
+  return !(cur>=start&&cur<=end);
+}
+function latestUserMessage(item){
+  const user=[...(item.messages||[])].reverse().find(m=>m.role==='user');
+  return user?user.text:'';
+}
+function normalizeText(text){
+  return String(text||'')
+    .toLowerCase()
+    .replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s){return String.fromCharCode(s.charCodeAt(0)-65248);})
+    .replace(/\s+/g,'');
+}
+function includesAny(text,words){
+  return words.some(w=>text.includes(normalizeText(w)));
+}
+function uniqueWords(words){
+  const set=new Set();
+  const out=[];
+  words.forEach(w=>{
+    const k=String(w||'').trim();
+    if(!k||set.has(k)) return;
+    set.add(k);
+    out.push(k);
+  });
+  return out;
+}
+function truncateText(text,maxLen){
+  const s=String(text||'').trim();
+  if(s.length<=maxLen) return s;
+  return `${s.slice(0,Math.max(0,maxLen-1))}…`;
+}
+function summarizeComplaintText(messageText){
+  const raw=String(messageText||'').trim();
+  const firstSentence=(raw.split(/[。！？!\?\n]/).find(x=>String(x||'').trim())||raw).trim();
+  const hitWords=uniqueWords(COMPLAINT_WORDS.filter(w=>normalizeText(raw).includes(normalizeText(w))));
+  const angerHighWords=['最悪','返金','訴える','詐欺','怒','ひどい','対応が悪い'];
+  const level=hitWords.some(w=>angerHighWords.includes(w))?'高':(hitWords.length>=2?'中':'低');
+  const emotionText=hitWords.length?`感情語: ${hitWords.slice(0,3).join(' / ')}`:'感情語: 特定なし';
+  const summary=truncateText(`${firstSentence}。${emotionText}`,200);
+  return {summary,emotionLevel:level,recommendation:'翌営業日優先連絡'};
+}
+function hasCategoryHint(category,hints){
+  const c=normalizeText(category);
+  return hints.some(h=>c.includes(normalizeText(h)));
+}
+function classifyAfterHours(messageText,category){
+  const t=normalizeText(messageText);
+  const c=String(category||'');
+  const isGeneralPriorityCategory=CATEGORY_GENERAL.includes(c);
+  const hasReservationCategoryHint=hasCategoryHint(c,RESERVATION_CATEGORY_HINTS);
+  const hasReservationStrong=includesAny(t,RESERVATION_WORDS_STRONG);
+  const hasReservationWeak=includesAny(t,RESERVATION_WORDS_WEAK);
+  if(includesAny(t,SAFETY_WORDS)) return 'safety';
+  if(includesAny(t,COMPLAINT_WORDS)) return 'complaint';
+  // fix: 施術説明/料金などは strong ヒットがない限り general を優先
+  if(hasReservationStrong) return 'reservation';
+  if(hasReservationWeak&&hasReservationCategoryHint) return 'reservation';
+  if(isGeneralPriorityCategory) return 'general';
+  if(hasReservationWeak||hasReservationCategoryHint) return 'reservation';
+  return 'manual_review';
+}
+function confidenceByClassification(cls){
+  if(cls==='safety') return 0.92;
+  if(cls==='reservation') return 0.85;
+  if(cls==='complaint') return 0.80;
+  if(cls==='general') return 0.70;
+  return 0.40;
+}
+function getClassification(item){
+  return item.classification || (item.aiMeta&&item.aiMeta.classification) || 'manual_review';
+}
+function getClassPriority(item){
+  const cls=getClassification(item);
+  return CLASS_PRIORITY[cls] || CLASS_PRIORITY.manual_review;
+}
+function getStatusPriority(item){
+  const status=String(item.status||'').trim();
+  return STATUS_PRIORITY[status] || 2;
+}
+function toSortTimestamp(item){
+  const raw=item.updatedAt || item.createdAt;
+  if(!raw) return 0;
+  if(typeof raw==='number') return raw;
+  if(/^\d{2}:\d{2}$/.test(String(raw))){
+    const now=new Date();
+    const parts=String(raw).split(':').map(Number);
+    now.setHours(parts[0]||0,parts[1]||0,0,0);
+    return now.getTime();
+  }
+  const t=new Date(raw).getTime();
+  return Number.isNaN(t)?0:t;
+}
+function sortByRiskPriority(a,b){
+  // リスク優先ソートのため: classification -> status -> updatedAt(desc)
+  const cp=getClassPriority(a)-getClassPriority(b);
+  if(cp!==0) return cp;
+  const sp=getStatusPriority(a)-getStatusPriority(b);
+  if(sp!==0) return sp;
+  return toSortTimestamp(b)-toSortTimestamp(a);
+}
+function normalizeFlags(item,classification){
+  // updated: classification-based flag normalization (mutually exclusive)
+  item.flags.reservation=classification==='reservation';
+  item.flags.safetyAlert=classification==='safety';
+  item.flags.complaint=classification==='complaint';
+  item.flags.manualReview=classification==='manual_review';
+  if(classification==='safety') item.flags.nextActionTag='至急対応';
+  else if(classification==='reservation') item.flags.nextActionTag='翌営業日対応';
+  else if(classification==='complaint') item.flags.nextActionTag='翌営業日優先';
+  else if(classification==='manual_review') item.flags.nextActionTag='要確認';
+  else item.flags.nextActionTag=item.flags.autoReplied?'自動返信済':'なし';
+}
+function generateAutoReply(messageText,category){
+  const map={
+    '料金':'料金は施術内容や状態により異なります。まずは一般的な目安をご案内し、詳細は営業時間内にスタッフが確認します。',
+    '施術説明':'施術内容は一般的な流れをご案内できます。最終判断は医療スタッフの説明をご確認ください。',
+    'ダウンタイム/注意事項':'ダウンタイムには個人差があります。一般的な目安を参考にしつつ、症状が続く場合は無理をせずご相談ください。',
+    'アクセス/営業時間':'アクセスと営業時間の一般情報をご案内します。詳細確認は営業時間内にスタッフが行います。',
+    'その他（軽微）':'ご質問ありがとうございます。一般案内として確認可能な範囲でご案内します。'
+  };
+  const body=map[category]||map['その他（軽微）'];
+  return {
+    answerText:`現在は営業時間外です。\n${body}\n営業時間内にスタッフが確認する場合があります。`,
+    citations:[{source:'knowledge-mock',snippet:`${category}の一般案内テンプレートを参照`}],
+    classification:'general',
+    confidence:0.7
+  };
+}
+function callChatApi(payload){
+  // TODO(Spring Boot差し替え): ここを POST /api/chat (or /chat) 呼び出しに置き換える
+  return generateAutoReply(payload.messageText,payload.category);
+}
+
+function processAfterHoursAutoReply(){
+  const settings=loadSettings();
+  const afterHoursMode=!!(settings.afterHoursMode&&settings.afterHoursMode.enabled);
+  const afterHours=afterHoursMode?isAfterHours(settings):false;
+  let changed=false;
+  inboxItems.forEach(item=>{
+    const prevAfter=!!item.flags.afterHours;
+    item.flags.afterHours=afterHours;
+    if(prevAfter!==afterHours) changed=true;
+    const text=latestUserMessage(item);
+    const classification=classifyAfterHours(text,item.category);
+    normalizeFlags(item,classification);
+    if(!item.aiMeta) item.aiMeta={};
+    if(item.aiMeta.classification!==classification){item.aiMeta.classification=classification;changed=true;}
+    const conf=confidenceByClassification(classification);
+    if(Number(item.aiMeta.confidence)!==conf){item.aiMeta.confidence=conf;changed=true;}
+    // safety は営業時間に関係なく自動チケット化して有人対応を必須化する
+    if(classification==='safety'){
+      if(!item.ticketCreated){
+        item.ticketCreated=true;
+        item.ticketId=item.ticketId||generateTicketId();
+        changed=true;
+      }
+      if(item.ticketPriority!=='HIGH'){item.ticketPriority='HIGH';changed=true;}
+      if(item.assignedTo!=='医療スタッフ'){item.assignedTo='医療スタッフ';changed=true;}
+      if(item.ticketDepartment!=='医療チーム'){item.ticketDepartment='医療チーム';changed=true;}
+      if(item.ticketSla!=='30分以内'){item.ticketSla='30分以内';changed=true;}
+      if(item.status!=='未対応'){item.status='未対応';changed=true;}
+    }
+    if(classification==='complaint'){
+      const complaintSummary=summarizeComplaintText(text);
+      const prev=item.complaintSummary||{};
+      if(prev.summary!==complaintSummary.summary||prev.emotionLevel!==complaintSummary.emotionLevel){
+        item.complaintSummary={...complaintSummary,updatedAt:nowISO()};
+        changed=true;
+      }
+    }else if(item.complaintSummary){
+      delete item.complaintSummary;
+      changed=true;
+    }
+    item.aiMeta.model='mock';
+    if(!Array.isArray(item.aiMeta.citations)) item.aiMeta.citations=[];
+    if(item.aiMeta.autoReplyAt==='-'){delete item.aiMeta.autoReplyAt;changed=true;}
+    const already=item.flags.autoReplied||(item.aiMeta&&item.aiMeta.autoReplyAt);
+    // fix: legacy data cleanup. non-general should not keep auto reply state.
+    if(classification!=='general'&&(item.flags.autoReplied||item.aiMeta.autoReplyAt)){
+      item.flags.autoReplied=false;
+      delete item.aiMeta.autoReplyAt;
+      changed=true;
+    }
+    if(!afterHoursMode||!afterHours) return;
+    if(classification==='general'&&!already){
+      const ai=callChatApi({messageText:text,category:item.category,itemId:item.id});
+      item.messages.push({role:'assistant',text:ai.answerText,time:nowHHMM(),citations:ai.citations});
+      item.flags.autoReplied=true;
+      item.aiMeta.classification='general';
+      item.aiMeta.confidence=ai.confidence||0.72;
+      item.aiMeta.citations=ai.citations||[];
+      item.aiMeta.autoReplyAt=nowISO();
+      normalizeFlags(item,'general');
+      item.updatedAt=nowISO();
+      changed=true;
+    // ②予約 / ③危険兆候 / ④クレームの返信生成は次実装で追加する
+    }else if(classification!=='general'){
+      item.flags.autoReplied=false;
+      delete item.aiMeta.autoReplyAt;
+      normalizeFlags(item,classification);
+      changed=true;
+      // TODO(次ステップ): ②予約 ③危険兆候 ④クレーム の返信生成はここで追加
+    }
+  });
+  if(changed) saveInboxItems();
+}
+
+let inboxItems=loadInboxItems();
+ensureDemoComplaintItems();
+state.selectedId=inboxItems[0]?inboxItems[0].id:'';
+processAfterHoursAutoReply();
+
+function badgeStatusCls(s){return s==='対応中'?'b-progress':s==='完了'?'b-done':'b-open';}
+function fmtTime(v){
+  if(!v) return '--:--';
+  if(/^\d{2}:\d{2}$/.test(v)) return v;
+  const d=new Date(v); if(isNaN(d.getTime())) return String(v);
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+function filtered(){
+  const q=state.query.trim().toLowerCase();
+  const from=dateFromEl.value?new Date(dateFromEl.value):null;
+  const to=dateToEl.value?new Date(dateToEl.value+'T23:59:59'):null;
+  const list=inboxItems.filter(i=>{
+    if(state.tab==='unread'&&!i.unread)return false;
+    if(state.tab==='handoff'&&!i.flags.reservation&&!i.flags.safetyAlert&&!i.flags.complaint)return false;
+    if(state.tab==='alert'&&!i.flags.safetyAlert)return false;
+    if(state.tab==='ai'&&!isAiResolved(i))return false;
+    if(state.category&&i.category!==state.category)return false;
+    if(state.status&&i.status!==state.status)return false;
+    if(from||to){
+      const t=new Date(i.createdAt);
+      if(from&&t<from)return false;
+      if(to&&t>to)return false;
+    }
+    if(q){
+      const text=[i.customerName,i.category,...(i.messages||[]).map(m=>m.text)].join(' ').toLowerCase();
+      if(!text.includes(q)) return false;
+    }
+    return true;
+  });
+  return list.sort(sortByRiskPriority);
+}
+function isAiResolved(item){
+  return item.flags.autoReplied===true && item.aiMeta&&item.aiMeta.classification==='general';
+}
+function ensureSelection(list){
+  if(!list.length){state.selectedId='';return;}
+  if(!list.some(x=>x.id===state.selectedId)) state.selectedId=list[0].id;
+}
+function renderList(){
+  const list=filtered();
+  ensureSelection(list);
+  if(!list.length){inboxListEl.innerHTML='<div class="empty">条件に一致する問い合わせはありません。</div>';return;}
+  inboxListEl.innerHTML=list.map(i=>{
+    const last=(i.messages||[]).slice(-1)[0];
+    const summary=last?last.text:'';
+    return `<div class="inbox-item ${i.id===state.selectedId?'active':''}" data-id="${i.id}">
+      <div class="item-top">${i.unread?'<span class="unread-dot"></span>':'<span style="width:8px"></span>'}<span class="item-name">${i.customerName}</span><span class="item-time">${fmtTime(i.updatedAt)}</span></div>
+      <div class="meta-row">
+        <span class="badge b-cat">${i.category}</span>
+        <span class="badge ${badgeStatusCls(i.status)}">${i.status}</span>
+        ${i.flags.afterHours?'<span class="badge b-after">🌙 営業時間外</span>':''}
+        ${isAiResolved(i)?'<span class="badge b-auto">🤖 自動返信済</span>':''}
+        ${i.flags.reservation?`<span class="badge b-ai">${i.reservationFormData?'🗓 仮受付（情報取得済）':'🗓 仮受付'}</span>`:''}
+        ${i.flags.safetyAlert?'<span class="badge b-alert">🚨 安全アラート</span>':''}
+        ${(getClassification(i)==='safety'&&i.ticketCreated)?'<span class="badge b-handoff">🔴 有人対応（緊急）</span>':''}
+        ${i.flags.complaint?'<span class="badge b-handoff">⚠ クレーム（優先）</span>':''}
+        ${(i.aiMeta&&i.aiMeta.classification==='manual_review')?'<span class="badge b-check">要確認</span>':''}
+        ${debugMode?`<span class="badge b-cat">P${getClassPriority(i)} ${getClassification(i)}</span>`:''}
+      </div>
+      <div class="item-summary">${summary}</div>
+    </div>`;
+  }).join('');
+}
+function renderAICard(i){
+  if(!i.aiMeta) return '';
+  const classification=i.aiMeta.classification||'manual_review';
+  const conf=Math.max(30,Math.round(Number(i.aiMeta.confidence||0.40)*100));
+  const labels={general:'一般質問',reservation:'予約',safety:'安全',complaint:'クレーム',manual_review:'要確認'};
+  const classDetail=renderClassDetailCard(i,classification);
+  return `<div class="ai-card">
+    <h4>AI判定</h4>
+    <div class="ai-meta">
+      <div>classification: ${classification}（${labels[classification]||'要確認'}）</div>
+      <div>confidence: ${isNaN(conf)?'40%':conf+'%'}</div>
+      <div>次アクション: ${i.flags.nextActionTag||'なし'}</div>
+      <div>営業時間外: ${i.flags.afterHours?'はい':'いいえ'}</div>
+    </div>
+    ${classDetail}
+  </div>`;
+}
+function buildTimeOptions(selected){
+  const out=[];
+  for(let h=10;h<=18;h++){
+    ['00','30'].forEach(m=>{
+      if(h===18&&m==='30') return;
+      const t=`${String(h).padStart(2,'0')}:${m}`;
+      out.push(`<option value="${t}" ${selected===t?'selected':''}>${t}</option>`);
+    });
+  }
+  return out.join('');
+}
+function renderClassDetailCard(i,classification){
+  const cites=Array.isArray(i.aiMeta&&i.aiMeta.citations)?i.aiMeta.citations:[];
+  if(classification==='general'){
+    if(!isAiResolved(i)){
+      return `<div class="ai-card" style="margin-top:8px"><h4>自動返信対象（一般質問）</h4><div class="ai-meta"><div>営業時間外の一般質問として分類済みです。未返信のため次回判定時に自動返信します。</div></div></div>`;
+    }
+    const autoReplyAt=i.aiMeta&&i.aiMeta.autoReplyAt?new Date(i.aiMeta.autoReplyAt).toLocaleString():'';
+    const reply=[...(i.messages||[])].reverse().find(m=>m.role==='assistant'&&String(m.text||'').includes('現在は営業時間外です'));
+    return `<div class="ai-card" style="margin-top:8px">
+      <h4>AI自動返信ログ（根拠）</h4>
+      <div class="ai-meta">
+        ${autoReplyAt?`<div>autoReplyAt: ${autoReplyAt}</div>`:''}
+        <div>replyText: ${reply?reply.text:'-'}</div>
+      </div>
+      <details class="citation"><summary>引用ソース</summary>${cites.length?cites.map(c=>`<div class="citation-item"><strong>${c.source}</strong>: ${c.snippet}</div>`).join(''):'<div class="citation-item">ログなし</div>'}</details>
+    </div>`;
+  }
+  if(classification==='reservation'){
+    const f=i.reservationFormData||{};
+    return `<div class="ai-card" style="margin-top:8px">
+      <h4>仮受付フォーム（営業時間外）</h4>
+      <div class="ai-meta" style="gap:8px">
+        <label>希望日<br><input id="reservationDate" type="date" value="${f.preferredDate||''}" style="margin-top:4px;width:100%;border:1px solid #d8dee6;border-radius:6px;padding:7px 8px"></label>
+        <label>希望時間<br><select id="reservationTime" style="margin-top:4px;width:100%;border:1px solid #d8dee6;border-radius:6px;padding:7px 8px"><option value="">選択してください</option>${buildTimeOptions(f.preferredTime||'')}</select></label>
+        <label>施術名<br><select id="reservationProcedure" style="margin-top:4px;width:100%;border:1px solid #d8dee6;border-radius:6px;padding:7px 8px">
+          <option value="">選択してください</option>
+          <option value="二重" ${f.procedure==='二重'?'selected':''}>二重</option>
+          <option value="糸リフト" ${f.procedure==='糸リフト'?'selected':''}>糸リフト</option>
+          <option value="ボトックス" ${f.procedure==='ボトックス'?'selected':''}>ボトックス</option>
+          <option value="ヒアルロン酸" ${f.procedure==='ヒアルロン酸'?'selected':''}>ヒアルロン酸</option>
+          <option value="その他" ${f.procedure==='その他'?'selected':''}>その他</option>
+        </select></label>
+        <div>初診/再診<br>
+          <label style="margin-right:10px"><input type="radio" name="reservationVisitType" value="初診" ${f.visitType!=='再診'?'checked':''}> 初診</label>
+          <label><input type="radio" name="reservationVisitType" value="再診" ${f.visitType==='再診'?'checked':''}> 再診</label>
+        </div>
+        <label>備考<br><textarea id="reservationNote" rows="3" style="margin-top:4px;width:100%;border:1px solid #d8dee6;border-radius:6px;padding:7px 8px;resize:vertical">${f.note||''}</textarea></label>
+        <button class="btn primary" id="reservationSaveBtn" type="button">仮受付を保存</button>
+      </div>
+    </div>`;
+  }
+  if(classification==='safety'){
+    const ruleId=(i.aiMeta&&i.aiMeta.ruleId)||'SAFETY_GENERIC';
+    return `<div class="ai-card" style="margin-top:8px"><h4>安全アラート</h4><div class="ai-meta"><div>ruleId: ${ruleId}</div><div>症状が強い場合は医療機関の受診をご検討ください。</div><div>チケットID: ${i.ticketId||'-'}</div><div>担当部署: ${i.ticketDepartment||'医療チーム'}</div><div>SLA目安: ${i.ticketSla||'30分以内'}</div></div></div>`;
+  }
+  if(classification==='complaint'){
+    const fallback=summarizeComplaintText(latestUserMessage(i));
+    const s=i.complaintSummary||fallback;
+    return `<div class="ai-card" style="margin-top:8px"><h4>クレーム要約</h4><div class="ai-meta"><div>要点: ${s.summary||'要約なし'}</div><div>感情レベル: ${s.emotionLevel||'中'}</div><div>推奨対応: 翌営業日優先連絡</div></div></div>`;
+  }
+  return `<div class="ai-card" style="margin-top:8px"><h4>要確認</h4><div class="ai-meta"><div>この内容は分類できませんでした。スタッフが確認してください。</div></div></div>`;
+}
+function renderDetail(){
+  const i=inboxItems.find(x=>x.id===state.selectedId);
+  if(!i){detailRootEl.innerHTML='<div class="empty">問い合わせを選択してください。</div>';return;}
+  const msgs=(i.messages||[]).map(m=>`<div class="msg ${m.role}"><div>${m.text}</div><div class="msg-time">${m.time||fmtTime(i.updatedAt)}</div>${m.citations?`<details class="citation"><summary>引用ソース</summary>${m.citations.map(c=>`<div class="citation-item"><strong>${c.source}</strong>: ${c.snippet}</div>`).join('')}</details>`:''}</div>`).join('');
+  detailRootEl.innerHTML=`<div class="detail-head">
+      <h3 class="customer-title">${i.customerName}</h3>
+      <div class="customer-meta">${i.maskedContact}</div>
+      <div class="customer-tags">
+        <span class="badge b-cat">${i.customerTag||'一般'}</span>
+        <span class="badge b-cat">カテゴリ: ${i.category}</span>
+        <span class="badge ${badgeStatusCls(i.status)}">${i.status}</span>
+        ${i.flags.afterHours?'<span class="badge b-after">🌙 営業時間外</span>':''}
+        ${isAiResolved(i)?'<span class="badge b-auto">🤖 自動返信済</span>':''}
+        ${i.flags.reservation?`<span class="badge b-ai">${i.reservationFormData?'🗓 仮受付（情報取得済）':'🗓 仮受付'}</span>`:''}
+        ${i.flags.safetyAlert?'<span class="badge b-alert">🚨 安全アラート</span>':''}
+        ${(getClassification(i)==='safety'&&i.ticketCreated)?'<span class="badge b-handoff">🔴 有人対応（緊急）</span>':''}
+        ${i.flags.complaint?'<span class="badge b-handoff">⚠ クレーム（優先）</span>':''}
+        ${(i.aiMeta&&i.aiMeta.classification==='manual_review')?'<span class="badge b-check">要確認</span>':''}
+      </div>
+      ${renderAICard(i)}
+    </div>
+    <div class="messages">${msgs}</div>
+    <div class="actions">
+      <div class="action-row">
+        <button class="btn warn" id="handoffBtn" type="button">チケット化（有人対応へ）</button>
+        <button class="btn" data-template="営業時間内に確認のうえご連絡します。">テンプレ返信: 受付</button>
+      </div>
+      <textarea id="replyBox" class="reply-box" placeholder="返信文を入力（モック）"></textarea>
+      <div class="action-row" style="margin-top:10px;">
+        <button class="btn primary" id="sendReplyBtn" type="button">スタッフ返信を送信</button>
+        ${getClassification(i)==='safety'
+          ?'<button class="btn danger" id="urgentStartBtn" type="button">至急対応を開始</button>'
+          :'<button class="btn primary" id="doneBtn" type="button">完了にする</button>'}
+        <button class="btn" id="reAutoBtn" type="button">自動返信を再実行（デモ）</button>
+      </div>
+    </div>`;
+}
+function bindList(){
+  inboxListEl.querySelectorAll('.inbox-item').forEach(el=>el.addEventListener('click',()=>{
+    state.selectedId=el.dataset.id;
+    const t=inboxItems.find(x=>x.id===state.selectedId);
+    if(t){t.unread=false;saveInboxItems();}
+    renderAll();
+  }));
+}
+function bindDetail(){
+  const i=inboxItems.find(x=>x.id===state.selectedId);
+  if(!i) return;
+  const reply=document.getElementById('replyBox');
+  detailRootEl.querySelectorAll('[data-template]').forEach(btn=>btn.addEventListener('click',()=>{reply.value=btn.dataset.template;reply.focus();}));
+  const handoff=document.getElementById('handoffBtn');
+  if(handoff) handoff.addEventListener('click',()=>{i.status='対応中';i.updatedAt=nowISO();saveInboxItems();renderAll();});
+  const done=document.getElementById('doneBtn');
+  const urgentStart=document.getElementById('urgentStartBtn');
+  const reservationSaveBtn=document.getElementById('reservationSaveBtn');
+  if(urgentStart) urgentStart.addEventListener('click',()=>{
+    i.status='対応中';
+    i.updatedAt=nowISO();
+    i.ticketCreated=true;
+    i.ticketId=i.ticketId||generateTicketId();
+    i.ticketPriority='HIGH';
+    i.assignedTo='医療スタッフ';
+    i.ticketDepartment='医療チーム';
+    i.ticketSla='30分以内';
+    saveInboxItems();
+    renderAll();
+  });
+  if(done) done.addEventListener('click',()=>{i.status='完了';i.unread=false;i.updatedAt=nowISO();saveInboxItems();renderAll();});
+  if(reservationSaveBtn) reservationSaveBtn.addEventListener('click',()=>{
+    const preferredDate=(document.getElementById('reservationDate')||{}).value||'';
+    const preferredTime=(document.getElementById('reservationTime')||{}).value||'';
+    const procedure=(document.getElementById('reservationProcedure')||{}).value||'';
+    const visitType=((detailRootEl.querySelector('input[name="reservationVisitType"]:checked')||{}).value)||'初診';
+    const note=(document.getElementById('reservationNote')||{}).value||'';
+    i.reservationFormData={preferredDate,preferredTime,procedure,visitType,note,savedAt:nowISO()};
+    i.status='仮受付完了';
+    i.updatedAt=nowISO();
+    saveInboxItems();
+    renderAll();
+  });
+  const send=document.getElementById('sendReplyBtn');
+  if(send) send.addEventListener('click',()=>{
+    const text=(reply.value||'').trim();
+    if(!text) return;
+    i.messages.push({role:'staff',text,time:nowHHMM()});
+    i.status=i.status==='未対応'?'対応中':i.status;
+    i.updatedAt=nowISO();
+    reply.value='';
+    saveInboxItems();
+    renderAll();
+  });
+  const reAuto=document.getElementById('reAutoBtn');
+  if(reAuto) reAuto.addEventListener('click',()=>{
+    i.flags.autoReplied=false;
+    if(!i.aiMeta) i.aiMeta={};
+    delete i.aiMeta.autoReplyAt;
+    processAfterHoursAutoReply();
+    saveInboxItems();
+    renderAll();
+  });
+}
+function renderAll(){renderList();renderDetail();bindList();bindDetail();}
+
+tabContainerEl.addEventListener('click',e=>{
+  const t=e.target.closest('[data-tab]');
+  if(!t) return;
+  state.tab=t.dataset.tab;
+  tabContainerEl.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  t.classList.add('active');
+  renderAll();
+});
+categoryFilterEl.addEventListener('change',()=>{state.category=categoryFilterEl.value;renderAll();});
+statusFilterEl.addEventListener('change',()=>{state.status=statusFilterEl.value;renderAll();});
+headerSearchEl.addEventListener('input',()=>{state.query=headerSearchEl.value;renderAll();});
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  state.tab='all';state.category='';state.status='';state.query='';
+  categoryFilterEl.value='';statusFilterEl.value='';headerSearchEl.value='';dateFromEl.value='';dateToEl.value='';
+  tabContainerEl.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  tabContainerEl.querySelector('[data-tab="all"]').classList.add('active');
+  renderAll();
+});
+
+const st=document.getElementById('searchToggleBtn'),sw=document.getElementById('headerSearchWrap');
+st.addEventListener('click',()=>{sw.classList.toggle('open');if(sw.classList.contains('open'))headerSearchEl.focus();});
+const mt=document.getElementById('menuToggle'),sb=document.getElementById('sidebar'),ov=document.getElementById('overlay');
+mt.addEventListener('click',()=>{sb.classList.toggle('open');ov.classList.toggle('show');});
+ov.addEventListener('click',()=>{sb.classList.remove('open');ov.classList.remove('show');});
+window.addEventListener('resize',()=>{if(window.innerWidth>992){sb.classList.remove('open');ov.classList.remove('show');}});
+
+if(window.StaffSettings&&window.StaffSettings.renderSidebarUser){window.StaffSettings.renderSidebarUser(document);}
 renderAll();
 </script>
 </body>
