@@ -3,177 +3,357 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ClinicFlow AI | 顧客管理</title>
+  <title>ClinicFlow AI | 顧客カルテ（ライト版）</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    :root{--bg:#f4f6f9;--card:#fff;--line:#dee4eb;--txt:#2f3742;--muted:#6c7683;--pri:#17a2b8;--ok:#28a745;--warn:#ffc107;--danger:#dc3545;--shadow:0 2px 8px rgba(0,0,0,.06)}
-    *{box-sizing:border-box}body{margin:0;font-family:"Noto Sans JP",sans-serif;font-size:14px;line-height:1.6;color:var(--txt);background:var(--bg)}
+    *{box-sizing:border-box}body{margin:0;font-family:"Noto Sans JP",sans-serif;background:#f4f6f9;color:#2f3742}
     .wrapper{display:flex;min-height:100vh}
-    .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;overflow-y:auto;z-index:100;background:linear-gradient(180deg,#343a40,#212529);color:#c2c7d0;transition:transform .3s}
+    .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;overflow:auto;background:linear-gradient(180deg,#343a40,#212529);color:#c2c7d0;z-index:20}
     .sidebar-brand{padding:16px 20px;background:rgba(0,0,0,.2);display:flex;gap:10px;align-items:center;color:#fff}
-    .sidebar-brand .material-icons{color:var(--pri)}.brand-title{font-size:18px;font-weight:700;line-height:1.2}.brand-sub{font-size:11px;opacity:.85}
-    .sidebar-user{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:10px;align-items:center}
-    .avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;background:linear-gradient(135deg,#17a2b8,#20c997)}
-    .sidebar-nav{padding:8px 0 20px}
-    .sidebar-item{padding:12px 20px;display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none}
+    .sidebar-brand .material-icons{color:#17a2b8}.brand-title{font-size:18px;font-weight:700;line-height:1.2}.brand-sub{font-size:11px;opacity:.85}
+    .sidebar-user{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px}
+    .avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;background:#17a2b8;font-weight:700}
+    .user-name{font-size:14px;color:#fff}.user-role{font-size:11px;color:#8c959d}
+    .sidebar-item{padding:12px 20px;color:inherit;text-decoration:none;display:flex;align-items:center;gap:10px}
     .sidebar-item:hover{background:rgba(255,255,255,.05)}
     .sidebar-item.active{background:rgba(23,162,184,.2);color:#17a2b8;border-left:3px solid #17a2b8;padding-left:17px}
-    .badge{margin-left:auto;min-width:18px;height:18px;border-radius:20px;padding:0 6px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
-    .badge.info{background:#17a2b8;color:#fff}.badge.warning{background:#ffc107;color:#333}
-
-    .main{flex:1;margin-left:250px;min-width:0}
-    .header{height:56px;position:sticky;top:0;z-index:50;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:space-between;padding:0 16px}
-    .header-left,.header-right{display:flex;align-items:center;gap:8px}
-    .menu-toggle{display:none;width:40px;height:40px;border:0;border-radius:50%;background:transparent}
-    .menu-toggle:hover,.header-btn:hover{background:#f4f6f9}.header-btn{width:40px;height:40px;border:0;border-radius:50%;background:transparent;display:grid;place-items:center;position:relative}
-    .header-btn-badge{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff}
-    .header-btn-badge.red{background:#dc3545}.header-btn-badge.yellow{background:#ffc107;color:#333}
-    .header-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700;background:linear-gradient(135deg,#17a2b8,#20c997)}
-
-    .content{padding:18px}
-    .page-title{margin:0;font-size:38px;letter-spacing:.02em}
-    .page-sub{margin:2px 0 12px;color:var(--muted)}
-    .card{background:var(--card);border-radius:10px;box-shadow:var(--shadow)}
-    .filter-wrap{padding:12px;margin-bottom:12px}
-    .filter-top{display:grid;grid-template-columns:2fr 180px;gap:8px}
-    .ipt,.sel{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit;background:#fff}
-    .pill-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
-    .pill{border:1px solid #d8e0e9;background:#fff;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer}
-    .pill.on{background:#eaf9fc;border-color:#bde7ef;color:#0e8496;font-weight:700}
-    .check{display:inline-flex;align-items:center;gap:5px}
-
-    .columns{display:grid;grid-template-columns:1fr 1fr 1.35fr;gap:12px}
-    .col-head{padding:12px 14px;border-bottom:1px solid #edf2f5;display:flex;justify-content:space-between;align-items:center;font-weight:700}
-    .col-body{padding:8px;display:grid;gap:8px;max-height:600px;overflow:auto}
-    .item{border:1px solid #e6edf3;border-left:3px solid transparent;border-radius:8px;padding:10px;cursor:pointer;transition:.2s}
-    .item:hover{transform:translateY(-1px);box-shadow:var(--shadow)}.item.on{border-left-color:var(--pri);background:#f5fbfd}
-    .name{font-weight:700}.sub{font-size:12px;color:var(--muted)}.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
-    .chip{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:11px}
-    .chip.gray{background:#eef2f6;color:#4d5967}.chip.cyan{background:#e6f8fc;color:#0f8496}.chip.warn{background:#fff3cd;color:#7a5b00}.chip.danger{background:#fdecea;color:#b02a37}
-    .pager{padding:8px;display:flex;justify-content:flex-end;gap:6px}.page{width:28px;height:28px;border-radius:6px;border:1px solid #d5dde6;display:grid;place-items:center;font-size:12px}
-    .page.on{background:var(--pri);border-color:var(--pri);color:#fff}
-
-    .detail{padding:12px;display:flex;flex-direction:column;gap:10px}
-    .customer-head{border:1px solid var(--line);border-radius:8px;padding:10px}
-    .customer-name{font-size:30px;font-weight:700}
-    .tabs{display:flex;gap:6px;overflow:auto}
-    .tab{white-space:nowrap;border:1px solid #cfd8e3;background:#fff;border-radius:8px;padding:6px 10px;cursor:pointer}
-    .tab.on{background:var(--pri);border-color:var(--pri);color:#fff}
-    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
-    .kpi{border-radius:10px;padding:10px;color:#fff}.kpi1{background:#1e88e5}.kpi2{background:#f9a825}.kpi3{background:#ef5350}
-    .actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid #cfd8e3;background:#fff;border-radius:8px;padding:8px 12px;cursor:pointer;font:inherit}
-    .btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
-    .box{border:1px solid var(--line);border-radius:8px;padding:10px}
-    .msg{max-width:84%;border-radius:12px;padding:8px 10px;margin:6px 0}.msg.user{margin-left:auto;background:#dff4ff}.msg.assistant{background:#f5f6f8}
-    .hidden{display:none}
-    .tag{display:inline-flex;align-items:center;gap:4px;background:#eef2f6;border-radius:20px;padding:3px 10px;font-size:12px}.tag button{border:0;background:transparent;cursor:pointer}
+    .main{margin-left:250px;flex:1;min-width:0}
+    .header{position:sticky;top:0;z-index:10;height:56px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.08);display:flex;justify-content:space-between;align-items:center;padding:0 16px}
+    .header-btn{width:40px;height:40px;border:0;background:transparent;border-radius:50%;display:grid;place-items:center}
+    .header-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;background:#17a2b8;font-weight:700}
+    .content{padding:20px}
+    .title{margin:0;font-size:28px}.sub{margin:3px 0 14px;color:#6c7683}
+    .toolbar{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:12px;display:grid;grid-template-columns:1.6fr 1fr 1fr auto;gap:8px}
+    .ipt,.sel,.btn{border:1px solid #d2dae3;border-radius:8px;padding:8px 10px;font:inherit;background:#fff}
+    .btn{cursor:pointer}.btn.primary{background:#17a2b8;border-color:#17a2b8;color:#fff}
+    .layout{margin-top:12px;display:grid;grid-template-columns:minmax(300px,1fr) minmax(0,2fr);gap:12px}
+    .card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .list{max-height:74vh;overflow:auto;padding:10px;display:grid;gap:8px}
+    .item{border:1px solid #e6edf3;border-radius:8px;padding:10px;cursor:pointer}
+    .item.active{border-left:3px solid #17a2b8;background:#f5fbfd}
+    .name{font-weight:700}.meta{font-size:12px;color:#647282}.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+    .chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;background:#eef2f6;color:#4d5967}
+    .chip.warn{background:#fff3cd;color:#7a5b00}.chip.danger{background:#ffe3e5;color:#a12335}
+    .detail{padding:14px}
+    .detail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+    .risk{display:flex;gap:6px;flex-wrap:wrap}
+    .risk .chip{font-size:12px}
+    .tabs{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
+    .tab{border:1px solid #cfd8e3;background:#fff;border-radius:8px;padding:6px 10px;cursor:pointer}
+    .tab.active{background:#17a2b8;border-color:#17a2b8;color:#fff}
+    .pane{display:none}.pane.active{display:block}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .field label{font-size:12px;color:#647282;display:block;margin-bottom:4px}
+    .field input,.field textarea,.field select{width:100%;border:1px solid #d2dae3;border-radius:8px;padding:8px 10px;font:inherit}
+    .field textarea{min-height:120px;resize:vertical}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap}
+    .tag{display:inline-flex;align-items:center;gap:4px;background:#eef2f6;border-radius:20px;padding:3px 10px;font-size:12px}
+    .tag button{border:0;background:transparent;cursor:pointer}
+    .table-wrap{overflow:auto;border:1px solid #e6edf3;border-radius:8px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:9px 10px;border-bottom:1px solid #eef2f6;text-align:left;font-size:12px;white-space:nowrap}
+    th{background:#f8fafc;color:#6c7683}
+    .empty{padding:18px;text-align:center;color:#7b8794}
     .toast{position:fixed;right:16px;bottom:16px;background:#1f2933;color:#fff;padding:10px 12px;border-radius:8px;opacity:0;transform:translateY(8px);transition:.2s}
     .toast.show{opacity:1;transform:translateY(0)}
-    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:90}.overlay.show{display:block}
-    @media(max-width:1200px){.columns{grid-template-columns:1fr 1fr}.detail-col{grid-column:1/-1}}
-    @media(max-width:992px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.menu-toggle{display:grid}.columns{grid-template-columns:1fr}}
-    @media(max-width:768px){.content{padding:16px}.filter-top,.kpis{grid-template-columns:1fr}}
+    @media(max-width:1100px){.layout{grid-template-columns:1fr}.main{margin-left:0}.sidebar{display:none}.toolbar{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <div class="wrapper">
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-brand"><span class="material-icons">health_and_safety</span><div><div class="brand-title">ClinicFlow AI</div><div class="brand-sub">運用ダッシュボード</div></div></div>
-      <div class="sidebar-user"><div class="avatar">佐藤</div><div><div style="color:#fff;font-weight:700">受付担当：佐藤</div><div style="font-size:11px;color:#8c959d">サポート管理者</div></div></div>
-      <nav class="sidebar-nav">
-        <a class="sidebar-item" href="/admin-dashboard.html"><span class="material-icons">dashboard</span>ダッシュボード</a>
-        <a class="sidebar-item" href="/inbox.html"><span class="material-icons">inbox</span>受信トレイ <span class="badge info">6</span></a>
-        <a class="sidebar-item" href="/tickets.html"><span class="material-icons">support_agent</span>チケット（有人対応） <span class="badge warning">3</span></a>
-        <a class="sidebar-item" href="/knowledge.html"><span class="material-icons">menu_book</span>ナレッジ管理</a>
-        <a class="sidebar-item active" href="/customers.html"><span class="material-icons">groups</span>顧客管理</a>
-        <a class="sidebar-item" href="/reports.html"><span class="material-icons">assessment</span>レポート</a>
-        <!-- updated: settings screen navigation -->
-        <a class="sidebar-item" href="/settings.html"><span class="material-icons">shield</span>設定（ガードレール）</a>
-      </nav>
-    </aside>
-    <div class="overlay" id="overlay"></div>
-    <main class="main">
-      <header class="header">
-        <div class="header-left"><button class="menu-toggle" id="menuToggle"><span class="material-icons">menu</span></button><div style="font-size:13px;color:#6c757d"><span style="color:#17a2b8">ホーム</span> / 顧客管理</div></div>
-        <div class="header-right"><button class="header-btn"><span class="material-icons">search</span></button><button class="header-btn"><span class="material-icons">mail</span><span class="header-btn-badge red">3</span></button><button class="header-btn"><span class="material-icons">notifications</span><span class="header-btn-badge yellow">15</span></button><div class="header-avatar">佐藤</div></div>
-      </header>
-      <section class="content">
-        <h1 class="page-title">顧客管理</h1>
-        <p class="page-sub">顧客単位で会話・チケット・メモを管理</p>
+<div class="wrapper">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="material-icons">health_and_safety</span><div><div class="brand-title">ClinicFlow AI</div><div class="brand-sub">運用ダッシュボード</div></div></div>
+    <div class="sidebar-user"><div class="avatar" id="sidebarUserAvatar">川</div><div><div class="user-name" id="sidebarUserName">受付担当：川口</div><div class="user-role" id="sidebarUserRole">スタッフ</div></div></div>
+    <nav>
+      <a class="sidebar-item" href="/admin-dashboard.html"><span class="material-icons">dashboard</span>ダッシュボード</a>
+      <a class="sidebar-item" href="/inbox.html"><span class="material-icons">inbox</span>受信トレイ</a>
+      <a class="sidebar-item" href="/tickets.html"><span class="material-icons">support_agent</span>チケット（有人対応）</a>
+      <a class="sidebar-item" href="/knowledge.html"><span class="material-icons">menu_book</span>ナレッジ管理</a>
+      <a class="sidebar-item active" href="/customers.html"><span class="material-icons">groups</span>顧客管理</a>
+      <a class="sidebar-item" href="/reservation.html"><span class="material-icons">event_note</span>予約管理</a>
+      <a class="sidebar-item" href="/reports.html"><span class="material-icons">analytics</span>レポート</a>
+      <a class="sidebar-item" href="/settings.html"><span class="material-icons">shield</span>設定（ガードレール）</a>
+    </nav>
+  </aside>
+  <main class="main">
+    <header class="header">
+      <div style="font-size:13px;color:#6c757d"><span style="color:#17a2b8">ホーム</span> &gt; 顧客カルテ（ライト版）</div>
+      <div style="display:flex;gap:8px;align-items:center"><button class="header-btn" type="button"><span class="material-icons">mail</span></button><button class="header-btn" type="button"><span class="material-icons">notifications</span></button><div class="header-avatar">川</div></div>
+    </header>
+    <section class="content">
+      <h1 class="title">顧客カルテ（ライト版）</h1>
+      <p class="sub">AI運用に必要な顧客情報と、問い合わせ/予約/チケット履歴だけを一元管理します。</p>
+      <div class="toolbar">
+        <input id="searchInput" class="ipt" type="text" placeholder="顧客名・電話で検索">
+        <select id="visitFilter" class="sel"><option value="">初診/再診（全て）</option><option value="first">初診</option><option value="repeat">再診</option></select>
+        <select id="tagFilter" class="sel"><option value="">タグ（全て）</option></select>
+        <button id="newCustomerBtn" class="btn primary" type="button">新規作成</button>
+      </div>
+      <div class="layout">
+        <section class="card">
+          <div class="list" id="customerList"></div>
+        </section>
+        <section class="card detail">
+          <div id="detailRoot"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast">保存しました</div>
+<script src="/staff-common.js"></script>
+<script>
+const CUSTOMERS_KEY='customers';
+const INBOX_KEY='inboxItems';
+const RESERVATION_KEY='reservationItems';
+const TICKETS_KEY='clinicflow_tickets_v2';
+const ALT_TICKETS_KEY='ticketItems';
 
-        <div class="card filter-wrap">
-          <div class="filter-top"><input id="q" class="ipt" placeholder="顧客名/カナ/タグ/メモを検索"><select id="statusSel" class="sel"><option value="all">状態タグ（全て）</option><option>初診</option><option>カウンセリング前</option><option>術後3日</option><option>術後1週間</option><option>リピーター</option></select></div>
-          <div class="pill-row"><strong style="font-size:12px;color:#6c757d">状態タグ</strong><span id="statusPills" class="pill-row"></span></div>
-          <div class="pill-row"><strong style="font-size:12px;color:#6c757d">チャネル</strong><span id="channelPills" class="pill-row"></span></div>
-          <div class="pill-row"><label class="check"><input id="fh" type="checkbox"> handoffあり（<span id="ch">0</span>）</label><label class="check"><input id="fs" type="checkbox"> safetyAlertあり（<span id="cs">0</span>）</label><label class="check"><input id="fv" type="checkbox"> VIPのみ</label></div>
-        </div>
+const state={q:'',visit:'',tag:'',selectedCustomerId:'',tab:'basic'};
 
-        <div class="columns">
-          <section class="card"><div class="col-head"><span>状態タグ</span><span class="sub" id="cc">0件</span></div><div class="col-body" id="cl"></div><div class="pager"><div class="page">1</div><div class="page">2</div><div class="page on">2</div><div class="page">3</div></div></section>
-          <section class="card"><div class="col-head"><span>時系列</span><span class="sub">会話</span></div><div class="col-body" id="tl"></div><div class="pager"><div class="page">1</div><div class="page on">2</div><div class="page">3</div><div class="page">4</div></div></section>
-          <section class="card detail-col"><div class="detail">
-            <div class="customer-head"><div class="customer-name" id="dn">-</div><div class="chips"><span id="dst" class="chip cyan">-</span><label class="chip gray">OFF <input id="vip" type="checkbox"></label><span id="dch" class="chip gray">-</span><span id="dc" class="chip gray">-</span></div></div>
-            <div class="tabs"><button class="tab on" data-tab="sum">概要</button><button class="tab" data-tab="conv">会話履歴</button><button class="tab" data-tab="ticket">チケット</button><button class="tab" data-tab="memo">メモ/タグ</button></div>
-            <div id="tab-sum"><div class="kpis"><div class="kpi kpi1">総やりとり<br><strong id="kt">0</strong></div><div class="kpi kpi2">handoff回数<br><strong id="kh">0</strong></div><div class="kpi kpi3">safetyAlert回数<br><strong id="ks">0</strong></div></div><div class="actions"><button class="btn pri" id="mk">有人対応チケット作成</button><button class="btn" id="edit">顧客情報を編集</button></div><div class="box"><div class="chips" id="stags"></div><div class="box" style="margin-top:8px"><strong>メモ</strong><div id="lm" class="sub" style="margin-top:4px">-</div><div class="actions" style="margin-top:8px"><button class="btn tpl" data-note="電話フォロー予定">電話フォロー予定</button><button class="btn tpl" data-note="カウンセリング案内">カウンセリング案内</button><button class="btn tpl" data-note="術後経過確認">術後経過確認</button></div></div></div></div>
-            <div id="tab-conv" class="hidden"><div class="box" id="cd">会話を選択してください。</div><div class="actions"><button class="btn pri" id="cvt">この会話をチケット化</button></div></div>
-            <div id="tab-ticket" class="hidden"><div id="tk"></div></div>
-            <div id="tab-memo" class="hidden"><div class="box"><strong>タグ</strong><div class="chips" id="tg" style="margin-top:6px"></div><div class="actions"><input id="tgi" class="ipt" placeholder="タグ追加"><button id="at" class="btn">追加</button></div></div><div class="box"><strong>メモ追加</strong><div class="actions" style="margin-top:6px"><input id="mi" class="ipt" placeholder="メモ追加"><button id="am" class="btn pri">追加</button></div><div id="ml" style="display:grid;gap:8px;margin-top:8px"></div></div></div>
-          </div></section>
-        </div>
-      </section>
-    </main>
-  </div>
-  <div id="toast" class="toast"></div>
+const $=(id)=>document.getElementById(id);
+const customerListEl=$('customerList');
+const detailRootEl=$('detailRoot');
 
-  <script src="/staff-common.js"></script>
-  <script src="/knowledge-badge.js"></script>
-  <script>
-  // TODO(API): localStorageのload/saveをSpring Boot APIへ差し替え
-  const K="clinicflow_customers_style_v1",CI={LINE:"chat",WEB:"language",電話:"call"},STS=["初診","カウンセリング前","術後3日","術後1週間","リピーター"],CHS=["LINE","WEB","電話"];
-  const seed=()=>{const c=[],v=[],t=[],nm=[["山田","ヤマダ"],["佐々木","ササキ"],["加藤","カトウ"],["吉橋","ヨシハシ"],["田辺","タナベ"],["伊藤","イトウ"],["渡辺","ワタナベ"],["中村","ナカムラ"],["小林","コバヤシ"],["鈴木","スズキ"]],svc=["二重","脱毛","ヒアルロン酸","脂肪吸引","その他"];
-    nm.forEach((x,i)=>{const id=`cu-${String(i+1).padStart(3,"0")}`;c.push({id,name:x[0],kana:x[1],maskedContact:`0${80+i}-****-${1234+i}`,channel:CHS[i%3],statusTag:STS[i%5],interestedService:svc[i%5],lastContactAt:`2026-02-${24-(i%2)} ${String(10+i).padStart(2,"0")}:2${i%6}`,totalChats:2+(i%5),handoffCount:i%3,vip:i%4===0,tags:[svc[i%5],"不安","調整あり"],notes:[{by:"佐藤",time:`2026-02-24 10:4${i%8}`,text:"術後の出血。電話フォロー予定。"}],consent:i%5!==0});
-      for(let k=0;k<1+(i%3);k++)v.push({id:`cv-${i+1}-${k+1}`,customerId:id,startedAt:`2026-02-${24-(k%2)} ${10+k}:1${i%6}`,category:["術後不安","予約変更","料金","施術説明"][k%4],handoff:(k+i)%2===0,safetyAlert:(k+i)%4===0,important:(k+i)%3===0,summary:["検討","カウンセリング予約","料金相談","術後確認"][k%4],messages:[{role:"user",time:"10:25",text:"術後に出血が止まりません"},{role:"assistant",time:"10:27",text:"診断はできませんが、症状が強い場合は当院へご連絡ください。",citations:[{source:"postcare.md",snippet:"出血が続く場合は受診を推奨"}]}]});});
-    t.push({id:"t-001",customerId:"cu-001",title:"術後に出血が続く",category:"術後不安",priority:"緊急",status:"未対応",assignee:"未割当",dueAt:"2026-02-24 12:00"});
-    t.push({id:"t-002",customerId:"cu-002",title:"料金の再見積もり",category:"料金",priority:"中",status:"対応中",assignee:"佐藤",dueAt:"2026-02-24 18:00"});
-    t.push({id:"t-003",customerId:"cu-004",title:"予約変更希望",category:"予約変更",priority:"高",status:"顧客返信待ち",assignee:"鈴木",dueAt:"2026-02-24 14:30"});
-    return{customers:c,conversations:v,tickets:t};};
-  const load=()=>{try{const r=localStorage.getItem(K);if(r)return JSON.parse(r)}catch(_){}const d=seed();localStorage.setItem(K,JSON.stringify(d));return d;};
-  const DB=load(),S={cid:DB.customers[0]?.id||null,cvid:null,tab:"sum",q:"",sSel:"all",sP:"all",cP:"all",h:false,s:false,v:false};
-  const staffCtx=(window.StaffSettings&&window.StaffSettings.loadSettings)?window.StaffSettings.loadSettings():{members:[],currentId:""};
-  const staffId=v=>(window.StaffSettings&&window.StaffSettings.normalizeStaffId)?window.StaffSettings.normalizeStaffId(v,staffCtx):"";
-  const staffName=id=>(window.StaffSettings&&window.StaffSettings.getStaffName)?window.StaffSettings.getStaffName(id,staffCtx):"未割当";
-  const staffOptions=(selectedId)=>window.StaffSettings&&window.StaffSettings.buildStaffOptions?window.StaffSettings.buildStaffOptions(selectedId,staffCtx,true):`<option value="">未割当</option>`;
-  DB.tickets.forEach(t=>{const id=staffId(t.assigneeId||t.assignee);t.assigneeId=id;t.assignee=staffName(id);});
-  const $=id=>document.getElementById(id),E={sidebar:$("sidebar"),overlay:$("overlay"),menu:$("menuToggle"),q:$("q"),ss:$("statusSel"),sp:$("statusPills"),cp:$("channelPills"),fh:$("fh"),fs:$("fs"),fv:$("fv"),ch:$("ch"),cs:$("cs"),cc:$("cc"),cl:$("cl"),tl:$("tl"),dn:$("dn"),dst:$("dst"),dch:$("dch"),dc:$("dc"),vip:$("vip"),kt:$("kt"),kh:$("kh"),ks:$("ks"),stags:$("stags"),lm:$("lm"),cd:$("cd"),tk:$("tk"),tg:$("tg"),tgi:$("tgi"),at:$("at"),mi:$("mi"),am:$("am"),ml:$("ml"),mk:$("mk"),edit:$("edit"),cvt:$("cvt"),toast:$("toast"),tabs:[...document.querySelectorAll(".tab")]};
-  const save=()=>localStorage.setItem(K,JSON.stringify(DB)),now=()=>{const d=new Date(),p=n=>String(n).padStart(2,"0");return`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`},toast=t=>{E.toast.textContent=t;E.toast.classList.add("show");setTimeout(()=>E.toast.classList.remove("show"),1200)};
-  const cur=()=>DB.customers.find(c=>c.id===S.cid)||null,cv=id=>DB.conversations.filter(v=>v.customerId===id).sort((a,b)=>b.startedAt.localeCompare(a.startedAt)),tk=id=>DB.tickets.filter(t=>t.customerId===id),esc=s=>String(s??"").replace(/[&<>\"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));
-  const list=()=>DB.customers.filter(c=>{const a=cv(c.id);if(S.sSel!=="all"&&c.statusTag!==S.sSel)return false;if(S.sP!=="all"&&c.statusTag!==S.sP)return false;if(S.cP!=="all"&&c.channel!==S.cP)return false;if(S.h&&!a.some(x=>x.handoff))return false;if(S.s&&!a.some(x=>x.safetyAlert))return false;if(S.v&&!c.vip)return false;if(S.q){const src=`${c.name} ${c.kana} ${(c.tags||[]).join(" ")} ${(c.notes||[]).map(n=>n.text).join(" ")}`.toLowerCase();if(!src.includes(S.q.toLowerCase()))return false}return true}).sort((a,b)=>b.lastContactAt.localeCompare(a.lastContactAt));
-  function switchTab(t){S.tab=t;["sum","conv","ticket","memo"].forEach(x=>$("tab-"+x).classList.toggle("hidden",x!==t));E.tabs.forEach(x=>x.classList.toggle("on",x.dataset.tab===t));}
-  function renderPills(){E.sp.innerHTML=[["all","全て",DB.customers.length],...STS.map(s=>[s,s,DB.customers.filter(c=>c.statusTag===s).length])].map(v=>`<button class="pill ${S.sP===v[0]?"on":""}" data-sp="${v[0]}">${v[1]} ${v[2]}</button>`).join("");E.cp.innerHTML=[["all","全て",DB.customers.length],...CHS.map(c=>[c,c,DB.customers.filter(x=>x.channel===c).length])].map(v=>`<button class="pill ${S.cP===v[0]?"on":""}" data-cp="${v[0]}">${v[1]} ${v[2]}</button>`).join("");E.ch.textContent=DB.customers.filter(c=>cv(c.id).some(v=>v.handoff)).length;E.cs.textContent=DB.customers.filter(c=>cv(c.id).some(v=>v.safetyAlert)).length;}
-  function renderCustomers(){const a=list();E.cc.textContent=`${a.length}件`;if(!a.some(c=>c.id===S.cid))S.cid=a[0]?.id||DB.customers[0]?.id||null;if(!a.length){E.cl.innerHTML='<div class="sub" style="padding:12px">該当顧客がいません。</div>';return}E.cl.innerHTML=a.map(c=>{const x=cv(c.id),safe=x.some(v=>v.safetyAlert);return`<div class="item ${c.id===S.cid?"on":""}" data-cid="${c.id}"><div class="name">${c.name} <span class="chip cyan">${c.statusTag}</span> ${safe?'<span class="material-icons" style="font-size:14px;color:#dc3545">warning</span>':''}</div><div class="chips"><span class="chip gray"><span class="material-icons" style="font-size:12px">${CI[c.channel]}</span>${c.channel}</span><span class="chip gray">${c.maskedContact}</span></div><div class="sub">○ ${c.lastContactAt} / ${x[0]?.summary||"-"}</div></div>`}).join("");}
-  function renderTimeline(){const c=cur();if(!c){E.tl.innerHTML="";return}const a=cv(c.id);if(!a.some(v=>v.id===S.cvid))S.cvid=a[0]?.id||null;E.tl.innerHTML=a.map(v=>`<div class="item ${v.id===S.cvid?"on":""}" data-cv="${v.id}"><div class="name">${v.summary}</div><div class="sub" style="display:flex;justify-content:space-between"><span>・ ${v.startedAt}</span><button style="border:0;background:transparent;cursor:pointer" data-pin="${v.id}"><span class="material-icons" style="font-size:16px;color:${v.important?"#f59f00":"#adb5bd"}">star</span></button></div><div class="chips"><span class="chip cyan">${v.category}</span>${v.handoff?'<span class="chip warn">handoff</span>':''}${v.safetyAlert?'<span class="chip danger">safetyAlert</span>':''}</div></div>`).join("");}
-  function renderSummary(c){const a=cv(c.id),m=[...(c.notes||[])].slice(-1)[0];E.dn.textContent=c.name;E.dst.textContent=c.statusTag;E.dch.innerHTML=`<span class="material-icons" style="font-size:12px">${CI[c.channel]}</span>${c.channel}`;E.dc.textContent=c.maskedContact;E.vip.checked=!!c.vip;E.kt.textContent=c.totalChats;E.kh.textContent=c.handoffCount;E.ks.textContent=a.filter(v=>v.safetyAlert).length;E.stags.innerHTML=(c.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join("");E.lm.textContent=m?`${m.by} ${m.time} ${m.text}`:"メモなし";}
-  function renderConv(c){const x=cv(c.id).find(v=>v.id===S.cvid);if(!x){E.cd.innerHTML="会話がありません。";return}E.cd.innerHTML=`<div class="sub">${x.startedAt} / ${x.category}</div>${x.messages.map(m=>`<div class="msg ${m.role==="user"?"user":"assistant"}"><div>${esc(m.text)}</div><div class="sub">${m.time}</div>${m.citations?`<details><summary>citations</summary>${m.citations.map(z=>`<div class="sub">${esc(z.source)}: ${esc(z.snippet)}</div>`).join("")}</details>`:""}</div>`).join("")}`;}
-  function renderTickets(c){const a=tk(c.id);if(!a.length){E.tk.innerHTML='<div class="box sub">チケットはありません。</div>';return}E.tk.innerHTML=a.map(t=>{const od=new Date(t.dueAt.replace(" ","T")+":00")<new Date();return`<div class="box" data-tid="${t.id}"><div class="chips"><span class="chip ${t.priority==="緊急"?"danger":t.priority==="高"?"warn":"gray"}">${t.priority}</span><span class="chip gray">${t.status}</span><strong>${esc(t.title)}</strong></div><div class="actions"><select class="sel" data-assignee>${staffOptions(t.assigneeId||"")}</select><span class="sub" style="color:${od?"#dc3545":"#6c757d"}">期限 ${t.dueAt}</span></div><div class="actions"><button class="btn" data-st="未対応">未対応</button><button class="btn" data-st="対応中">対応中</button><button class="btn" data-st="顧客返信待ち">顧客返信待ち</button><button class="btn pri" data-st="完了">完了</button></div></div>`}).join("");}
-  function renderMemo(c){E.tg.innerHTML=(c.tags||[]).map(t=>`<span class="tag">${esc(t)} <button data-del="${esc(t)}">×</button></span>`).join("");E.ml.innerHTML=[...(c.notes||[])].reverse().map(n=>`<div class="box"><div class="sub">${n.by} ${n.time}</div><div>${esc(n.text)}</div></div>`).join("");}
-  function renderDetail(){const c=cur();if(!c)return;renderSummary(c);renderConv(c);renderTickets(c);renderMemo(c);switchTab(S.tab);}
-  function renderAll(){renderPills();renderCustomers();renderTimeline();renderDetail();}
-  document.addEventListener("click",e=>{const c=e.target.closest("[data-cid]");if(c){S.cid=c.dataset.cid;S.cvid=null;renderAll();return}const v=e.target.closest("[data-cv]");if(v){S.cvid=v.dataset.cv;S.tab="conv";renderTimeline();renderDetail();return}const p=e.target.closest("[data-pin]");if(p){const x=DB.conversations.find(z=>z.id===p.dataset.pin);if(x){x.important=!x.important;save();renderTimeline();toast("保存しました")}return}const sp=e.target.closest("[data-sp]");if(sp){S.sP=sp.dataset.sp;renderAll();return}const cp=e.target.closest("[data-cp]");if(cp){S.cP=cp.dataset.cp;renderAll();return}const tab=e.target.closest(".tab");if(tab){switchTab(tab.dataset.tab);return}const dt=e.target.closest("[data-del]");if(dt){const cu=cur();cu.tags=cu.tags.filter(t=>t!==dt.dataset.del);save();renderMemo(cu);renderSummary(cu);toast("削除しました");return}const tpl=e.target.closest(".tpl");if(tpl){E.mi.value=tpl.dataset.note;S.tab="memo";switchTab("memo");return}const st=e.target.closest("[data-st]");if(st){const box=st.closest("[data-tid]"),tt=DB.tickets.find(t=>t.id===box.dataset.tid);if(!tt)return;tt.status=st.dataset.st;save();renderTickets(cur());toast(tt.status==="完了"?"完了にしました":"保存しました")}});
-  E.q.oninput=()=>{S.q=E.q.value;renderCustomers()};E.ss.onchange=()=>{S.sSel=E.ss.value;renderAll()};E.fh.onchange=()=>{S.h=E.fh.checked;renderAll()};E.fs.onchange=()=>{S.s=E.fs.checked;renderAll()};E.fv.onchange=()=>{S.v=E.fv.checked;renderAll()};
-  E.vip.onchange=()=>{const c=cur();if(!c)return;c.vip=E.vip.checked;save();renderCustomers();toast("保存しました")};
-  E.mk.onclick=()=>{const c=cur();if(!c)return;DB.tickets.unshift({id:`t-${Date.now()}`,customerId:c.id,title:`${c.name}さま対応`,category:"顧客対応",priority:"中",status:"未対応",assigneeId:"",assignee:"未割当",dueAt:now()});save();S.tab="ticket";renderDetail();toast("追加しました")};
-  E.edit.onclick=()=>{const c=cur();if(!c)return;const n=prompt("顧客名",c.name);if(n===null)return;const s=prompt("状態タグ",c.statusTag);if(s===null)return;c.name=n||c.name;c.statusTag=s||c.statusTag;save();renderAll();toast("保存しました")};
-  E.cvt.onclick=()=>{const c=cur();if(!c)return;const x=cv(c.id).find(v=>v.id===S.cvid);if(!x)return;DB.tickets.unshift({id:`t-${Date.now()}`,customerId:c.id,title:x.summary,category:x.category,priority:x.safetyAlert?"緊急":"中",status:"未対応",assigneeId:"",assignee:"未割当",dueAt:now()});save();S.tab="ticket";renderDetail();toast("追加しました")};
-  E.tk.addEventListener("change",e=>{if(!e.target.matches("[data-assignee]"))return;const box=e.target.closest("[data-tid]"),tt=DB.tickets.find(t=>t.id===box.dataset.tid);if(!tt)return;tt.assigneeId=e.target.value;tt.assignee=staffName(tt.assigneeId);save();toast("保存しました")});
-  E.at.onclick=()=>{const c=cur(),v=E.tgi.value.trim();if(!c||!v)return;if(!c.tags.includes(v))c.tags.push(v);E.tgi.value="";save();renderMemo(c);renderSummary(c);toast("追加しました")};
-  E.tgi.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();E.at.click()}});
-  E.am.onclick=()=>{const c=cur(),v=E.mi.value.trim();if(!c||!v)return;const current=(window.StaffSettings&&window.StaffSettings.getCurrentStaff)?window.StaffSettings.getCurrentStaff(staffCtx):{name:"佐藤"};c.notes.push({by:current.name,time:now(),text:v});E.mi.value="";save();renderMemo(c);renderSummary(c);toast("追加しました")};
-  E.menu.onclick=()=>{E.sidebar.classList.toggle("open");E.overlay.classList.toggle("show")};E.overlay.onclick=()=>{E.sidebar.classList.remove("open");E.overlay.classList.remove("show")};
-  if(window.StaffSettings&&window.StaffSettings.renderSidebarUser){window.StaffSettings.renderSidebarUser(document);}
+function nowISO(){return new Date().toISOString();}
+function fmt(v){if(!v) return '-';const d=new Date(v);if(isNaN(d.getTime())) return String(v);return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;}
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,(m)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function phoneNorm(v){return String(v||'').replace(/[^\d]/g,'');}
+function customerIdNext(rows){let max=0;rows.forEach((r)=>{const m=String(r.id||'').match(/^CUS-(\d{4,})$/);if(m){max=Math.max(max,Number(m[1]||0));}});return `CUS-${String(max+1).padStart(4,'0')}`;}
+function statusText(v){return v?'初診':'再診';}
+
+function loadJson(key,fallback){try{const v=JSON.parse(localStorage.getItem(key)||'null');return v??fallback;}catch(_){return fallback;}}
+function saveJson(key,v){localStorage.setItem(key,JSON.stringify(v));}
+function loadCustomers(){const rows=loadJson(CUSTOMERS_KEY,[]);return Array.isArray(rows)?rows:[];}
+function saveCustomers(rows){saveJson(CUSTOMERS_KEY,Array.isArray(rows)?rows:[]);}
+function loadInbox(){const rows=loadJson(INBOX_KEY,[]);return Array.isArray(rows)?rows:[];}
+function saveInbox(rows){saveJson(INBOX_KEY,Array.isArray(rows)?rows:[]);}
+function loadReservations(){const rows=loadJson(RESERVATION_KEY,[]);return Array.isArray(rows)?rows:[];}
+function loadTickets(){const t1=loadJson(TICKETS_KEY,null);if(Array.isArray(t1)) return t1;const t2=loadJson(ALT_TICKETS_KEY,[]);return Array.isArray(t2)?t2:[];}
+
+function normalizeCustomer(c){
+  const now=nowISO();
+  return {
+    id:String(c.id||''),
+    name:String(c.name||'顧客'),
+    phone:String(c.phone||''),
+    email:String(c.email||''),
+    firstVisit:typeof c.firstVisit==='boolean'?c.firstVisit:true,
+    tags:Array.isArray(c.tags)?c.tags.map((x)=>String(x||'').trim()).filter(Boolean):[],
+    notes:String(c.notes||''),
+    riskFlags:{safetyHistory:!!(c.riskFlags&&c.riskFlags.safetyHistory),complaintHistory:!!(c.riskFlags&&c.riskFlags.complaintHistory)},
+    lastContactAt:c.lastContactAt||now,
+    createdAt:c.createdAt||now,
+    updatedAt:c.updatedAt||now
+  };
+}
+
+function seedCustomersIfNeeded(){
+  const rows=loadCustomers();
+  if(rows.length) return rows.map(normalizeCustomer);
+  const now=nowISO();
+  const defaults=[
+    {id:'CUS-0001',name:'山田',phone:'090-****-1234',email:'',firstVisit:true,tags:['術後フォロー','要注意'],notes:'クレーム履歴あり。丁寧に対応。',riskFlags:{safetyHistory:true,complaintHistory:false},lastContactAt:'2026-02-25T10:27:00',createdAt:now,updatedAt:now}
+  ].map(normalizeCustomer);
+  saveCustomers(defaults);
+  return defaults;
+}
+
+// light版の移行処理: inbox customerName/phone から customers を自動生成し customerId を付与
+function migrateInboxToCustomers(customers,inbox){
+  const rows=customers.slice();
+  const byId=new Map(rows.map((c)=>[c.id,c]));
+  const byPhone=new Map(rows.map((c)=>[phoneNorm(c.phone),c]));
+  let customersChanged=false;
+  let inboxChanged=false;
+  inbox.forEach((item)=>{
+    const n=String(item.customerName||'').replace(/さま/g,'').trim();
+    const p=String(item.maskedContact||item.phone||'').trim();
+    const pn=phoneNorm(p);
+    let c=item.customerId?byId.get(item.customerId):null;
+    if(!c&&pn) c=byPhone.get(pn)||null;
+    if(!c){
+      c=rows.find((x)=>String(x.name||'').trim()===n)||null;
+    }
+    if(!c){
+      const now=nowISO();
+      c=normalizeCustomer({
+        id:customerIdNext(rows),name:n||'顧客',phone:p,email:'',firstVisit:String(item.customerTag||'').includes('初診'),
+        tags:[],notes:'',riskFlags:{safetyHistory:!!(item.flags&&item.flags.safetyAlert),complaintHistory:!!(item.flags&&item.flags.complaint)},
+        lastContactAt:item.updatedAt||item.createdAt||now,createdAt:now,updatedAt:now
+      });
+      rows.push(c);
+      byId.set(c.id,c);
+      byPhone.set(phoneNorm(c.phone),c);
+      customersChanged=true;
+    }else{
+      c.lastContactAt=item.updatedAt||item.createdAt||c.lastContactAt;
+      c.riskFlags={
+        safetyHistory:!!(c.riskFlags&&c.riskFlags.safetyHistory)||!!(item.flags&&item.flags.safetyAlert),
+        complaintHistory:!!(c.riskFlags&&c.riskFlags.complaintHistory)||!!(item.flags&&item.flags.complaint)
+      };
+      c.updatedAt=nowISO();
+      customersChanged=true;
+    }
+    if(item.customerId!==c.id){
+      item.customerId=c.id;
+      inboxChanged=true;
+    }
+  });
+  if(customersChanged) saveCustomers(rows);
+  if(inboxChanged) saveInbox(inbox);
+  return rows;
+}
+
+let customers=seedCustomersIfNeeded();
+let inboxItems=loadInbox();
+let reservationItems=loadReservations();
+let ticketItems=loadTickets();
+customers=migrateInboxToCustomers(customers,inboxItems).map(normalizeCustomer);
+
+function parseUrlSelection(){
+  const params=new URLSearchParams(location.search||'');
+  const id=params.get('customerId');
+  if(id&&customers.some((c)=>c.id===id)){state.selectedCustomerId=id;return;}
+  state.selectedCustomerId=customers[0]?customers[0].id:'';
+}
+parseUrlSelection();
+
+function currentCustomer(){return customers.find((c)=>c.id===state.selectedCustomerId)||null;}
+function updateTagFilter(){
+  const tags=new Set();
+  customers.forEach((c)=>(c.tags||[]).forEach((t)=>tags.add(t)));
+  $('tagFilter').innerHTML=`<option value="">タグ（全て）</option>${[...tags].sort().map((t)=>`<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('')}`;
+}
+
+function filteredCustomers(){
+  const q=state.q.trim().toLowerCase();
+  return customers.filter((c)=>{
+    if(state.visit==='first'&&!c.firstVisit) return false;
+    if(state.visit==='repeat'&&c.firstVisit) return false;
+    if(state.tag&&!(c.tags||[]).includes(state.tag)) return false;
+    if(q){
+      const src=[c.name,c.phone,c.email,(c.tags||[]).join(' '),c.notes].join(' ').toLowerCase();
+      if(!src.includes(q)) return false;
+    }
+    return true;
+  }).sort((a,b)=>String(b.lastContactAt||'').localeCompare(String(a.lastContactAt||'')));
+}
+
+function renderList(){
+  const list=filteredCustomers();
+  if(!list.some((c)=>c.id===state.selectedCustomerId)){state.selectedCustomerId=list[0]?list[0].id:'';}
+  if(!list.length){customerListEl.innerHTML='<div class="empty">該当する顧客がいません</div>';return;}
+  customerListEl.innerHTML=list.map((c)=>`<article class="item ${c.id===state.selectedCustomerId?'active':''}" data-id="${c.id}">
+      <div class="name">${escapeHtml(c.name)}</div>
+      <div class="meta">${escapeHtml(c.phone)} / 最終連絡: ${fmt(c.lastContactAt)}</div>
+      <div class="chips">
+        ${(c.tags||[]).slice(0,3).map((t)=>`<span class="chip">${escapeHtml(t)}</span>`).join('')}
+        ${c.riskFlags&&c.riskFlags.safetyHistory?'<span class="chip warn">🚨 安全履歴</span>':''}
+        ${c.riskFlags&&c.riskFlags.complaintHistory?'<span class="chip danger">⚠ クレーム履歴</span>':''}
+      </div>
+    </article>`).join('');
+}
+
+function customerInquiries(id){return inboxItems.filter((i)=>i.customerId===id).sort((a,b)=>String(b.updatedAt||b.createdAt||'').localeCompare(String(a.updatedAt||a.createdAt||'')));}
+function customerReservations(id){return reservationItems.filter((r)=>r.customerId===id).sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')));}
+function customerTickets(id){return ticketItems.filter((t)=>t.customerId===id);}
+
+function renderDetail(){
+  const c=currentCustomer();
+  if(!c){detailRootEl.innerHTML='<div class="empty">顧客を選択してください</div>';return;}
+  const inquiries=customerInquiries(c.id);
+  const reservations=customerReservations(c.id);
+  const tickets=customerTickets(c.id);
+  detailRootEl.innerHTML=`
+    <div class="detail-head">
+      <div><div style="font-size:24px;font-weight:700">${escapeHtml(c.name)}</div><div style="font-size:12px;color:#647282">${escapeHtml(c.phone)} / 最終連絡 ${fmt(c.lastContactAt)}</div></div>
+      <div class="risk">
+        ${c.riskFlags&&c.riskFlags.safetyHistory?'<span class="chip warn">🚨 安全アラート履歴</span>':''}
+        ${c.riskFlags&&c.riskFlags.complaintHistory?'<span class="chip danger">⚠ クレーム履歴</span>':''}
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab ${state.tab==='basic'?'active':''}" data-tab="basic">基本情報</button>
+      <button class="tab ${state.tab==='inquiries'?'active':''}" data-tab="inquiries">問い合わせ履歴</button>
+      <button class="tab ${state.tab==='reservations'?'active':''}" data-tab="reservations">予約履歴</button>
+      <button class="tab ${state.tab==='tickets'?'active':''}" data-tab="tickets">チケット履歴</button>
+    </div>
+
+    <div class="pane ${state.tab==='basic'?'active':''}" id="pane-basic">
+      <div class="grid">
+        <div class="field"><label>氏名</label><input id="fName" value="${escapeHtml(c.name)}"></div>
+        <div class="field"><label>電話</label><input id="fPhone" value="${escapeHtml(c.phone)}"></div>
+        <div class="field"><label>メール</label><input id="fEmail" value="${escapeHtml(c.email||'')}"></div>
+        <div class="field"><label>初診/再診</label><select id="fVisit"><option value="first" ${c.firstVisit?'selected':''}>初診</option><option value="repeat" ${!c.firstVisit?'selected':''}>再診</option></select></div>
+      </div>
+      <div class="field" style="margin-top:10px"><label>タグ</label><div class="tag-row" id="tagList">${(c.tags||[]).map((t)=>`<span class="tag">${escapeHtml(t)} <button data-del-tag="${escapeHtml(t)}" type="button">×</button></span>`).join('')}</div><div style="display:flex;gap:8px;margin-top:8px"><input id="newTagInput" class="ipt" placeholder="タグを入力"><button id="addTagBtn" class="btn" type="button">追加</button></div></div>
+      <div class="field" style="margin-top:10px"><label>メモ</label><textarea id="fNotes" placeholder="例: 術後フォロー希望。電話連絡は夕方が希望。">${escapeHtml(c.notes||'')}</textarea></div>
+      <div style="margin-top:10px"><button id="saveBasicBtn" class="btn primary" type="button">保存</button></div>
+    </div>
+
+    <div class="pane ${state.tab==='inquiries'?'active':''}" id="pane-inquiries">
+      <div class="table-wrap">${inquiries.length?`<table><thead><tr><th>日時</th><th>カテゴリ</th><th>分類</th><th>ステータス</th><th>要約</th><th>操作</th></tr></thead><tbody>${inquiries.map((x)=>`<tr><td>${fmt(x.updatedAt||x.createdAt)}</td><td>${escapeHtml(x.category||'-')}</td><td>${escapeHtml((x.aiMeta&&x.aiMeta.classification)||'manual_review')}</td><td>${escapeHtml(x.status||'-')}</td><td>${escapeHtml((x.messages&&x.messages[0]&&x.messages[0].text)||'-')}</td><td><a href="/inbox.html?customerId=${encodeURIComponent(c.id)}">受信トレイで開く</a></td></tr>`).join('')}</tbody></table>`:'<div class="empty">問い合わせ履歴はありません</div>'}</div>
+    </div>
+
+    <div class="pane ${state.tab==='reservations'?'active':''}" id="pane-reservations">
+      <div class="table-wrap">${reservations.length?`<table><thead><tr><th>希望日時</th><th>施術名</th><th>初診/再診</th><th>ステータス</th><th>操作</th></tr></thead><tbody>${reservations.map((r)=>`<tr><td>${escapeHtml(`${r.requestedDate||'-'} ${r.requestedTime||''}`)}</td><td>${escapeHtml(r.treatment||'-')}</td><td>${r.firstVisit?'初診':'再診'}</td><td>${escapeHtml(r.status||'-')}</td><td><a href="/reservation.html">予約管理で開く</a></td></tr>`).join('')}</tbody></table>`:'<div class="empty">予約履歴はありません</div>'}</div>
+    </div>
+
+    <div class="pane ${state.tab==='tickets'?'active':''}" id="pane-tickets">
+      <div class="table-wrap">${tickets.length?`<table><thead><tr><th>ID</th><th>タイトル</th><th>優先度</th><th>ステータス</th><th>操作</th></tr></thead><tbody>${tickets.map((t)=>`<tr><td>${escapeHtml(t.id||'-')}</td><td>${escapeHtml(t.title||'-')}</td><td>${escapeHtml(t.priority||'-')}</td><td>${escapeHtml(t.status||'-')}</td><td><a href="/tickets.html">チケットで開く</a></td></tr>`).join('')}</tbody></table>`:'<div class="empty">チケット履歴はありません</div>'}</div>
+    </div>
+  `;
+}
+
+function showToast(msg){const t=$('toast');t.textContent=msg||'保存しました';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400);}
+
+function saveBasic(){
+  const c=currentCustomer();
+  if(!c) return;
+  c.name=$('fName').value.trim()||c.name;
+  c.phone=$('fPhone').value.trim();
+  c.email=$('fEmail').value.trim();
+  c.firstVisit=$('fVisit').value==='first';
+  c.notes=$('fNotes').value;
+  c.updatedAt=nowISO();
+  saveCustomers(customers);
+  showToast('保存しました');
+  updateTagFilter();
   renderAll();
-  </script>
+}
+
+function addCustomer(){
+  const now=nowISO();
+  const row=normalizeCustomer({id:customerIdNext(customers),name:'新規顧客',phone:'',email:'',firstVisit:true,tags:[],notes:'',riskFlags:{safetyHistory:false,complaintHistory:false},lastContactAt:now,createdAt:now,updatedAt:now});
+  customers.unshift(row);
+  state.selectedCustomerId=row.id;
+  state.tab='basic';
+  saveCustomers(customers);
+  renderAll();
+}
+
+function bind(){
+  customerListEl.querySelectorAll('[data-id]').forEach((el)=>el.addEventListener('click',()=>{state.selectedCustomerId=el.dataset.id;renderAll();}));
+  detailRootEl.querySelectorAll('[data-tab]').forEach((el)=>el.addEventListener('click',()=>{state.tab=el.dataset.tab;renderDetail();bind();}));
+  const saveBtn=$('saveBasicBtn'); if(saveBtn) saveBtn.addEventListener('click',saveBasic);
+  const addTagBtn=$('addTagBtn'); if(addTagBtn) addTagBtn.addEventListener('click',()=>{const c=currentCustomer();if(!c) return;const v=($('newTagInput').value||'').trim();if(!v) return;if(!(c.tags||[]).includes(v)) c.tags.push(v);$('newTagInput').value='';c.updatedAt=nowISO();saveCustomers(customers);showToast('保存しました');updateTagFilter();renderAll();});
+  detailRootEl.querySelectorAll('[data-del-tag]').forEach((el)=>el.addEventListener('click',()=>{const c=currentCustomer();if(!c) return;c.tags=(c.tags||[]).filter((t)=>t!==el.dataset.delTag);c.updatedAt=nowISO();saveCustomers(customers);showToast('保存しました');updateTagFilter();renderAll();}));
+}
+
+function renderAll(){renderList();renderDetail();bind();}
+
+$('searchInput').addEventListener('input',()=>{state.q=$('searchInput').value;renderAll();});
+$('visitFilter').addEventListener('change',()=>{state.visit=$('visitFilter').value;renderAll();});
+$('tagFilter').addEventListener('change',()=>{state.tag=$('tagFilter').value;renderAll();});
+$('newCustomerBtn').addEventListener('click',addCustomer);
+
+if(window.StaffSettings&&window.StaffSettings.renderSidebarUser){window.StaffSettings.renderSidebarUser(document);}
+updateTagFilter();
+renderAll();
+</script>
 </body>
 </html>

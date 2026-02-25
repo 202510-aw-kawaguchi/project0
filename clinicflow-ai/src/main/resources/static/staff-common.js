@@ -270,6 +270,24 @@
     selectEl.innerHTML = buildStaffOptions(selectedId, null, includeUnassigned);
   }
 
+  function ensureReservationMenu() {
+    var nav = document.querySelector(".sidebar-nav");
+    if (!nav) return;
+    if (nav.querySelector('a[href="/reservation.html"]')) return;
+    var a = document.createElement("a");
+    a.className = "sidebar-item";
+    a.href = "/reservation.html";
+    a.innerHTML = '<span class="material-icons">event_note</span>予約管理';
+    var active = (window.location.pathname || "").endsWith("/reservation.html") || (window.location.pathname || "") === "/reservation.html";
+    if (active) a.classList.add("active");
+    var anchor = nav.querySelector('a[href="/reports.html"]') || nav.querySelector('a[href="/settings.html"]');
+    if (anchor && anchor.parentNode === nav) {
+      nav.insertBefore(a, anchor);
+    } else {
+      nav.appendChild(a);
+    }
+  }
+
   function ensureHeaderDropdownStyle() {
     if (document.getElementById("cfHeaderDropdownStyle")) return;
     var style = document.createElement("style");
@@ -388,9 +406,11 @@
 
   // updated: execute once immediately and again on DOMContentLoaded
   renderSidebarUser(document);
+  ensureReservationMenu();
   initHeaderDropdowns();
   document.addEventListener("DOMContentLoaded", function () {
     renderSidebarUser(document);
+    ensureReservationMenu();
     initHeaderDropdowns();
   });
   // updated: fallback delegation so click works even if page markup differs

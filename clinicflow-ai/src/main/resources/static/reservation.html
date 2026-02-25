@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClinicFlow AI | 予約管理</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}body{margin:0;font-family:"Noto Sans JP",sans-serif;background:#f4f6f9;color:#2f3742}
+    .wrapper{display:flex;min-height:100vh}.sidebar{position:fixed;top:0;left:0;width:250px;height:100vh;overflow:auto;background:linear-gradient(180deg,#343a40,#212529);color:#c2c7d0}
+    .sidebar-brand{padding:16px 20px;background:rgba(0,0,0,.2);display:flex;gap:10px;align-items:center;color:#fff}.sidebar-brand .material-icons{color:#17a2b8}
+    .brand-title{font-size:18px;font-weight:700;line-height:1.2}.brand-sub{font-size:11px;opacity:.85}.sidebar-user{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:10px;align-items:center}
+    .avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#17a2b8,#20c997);color:#fff;font-weight:700}
+    .sidebar-nav{padding:10px 0 20px}.sidebar-item{padding:12px 20px;color:inherit;text-decoration:none;display:flex;align-items:center;gap:10px}.sidebar-item:hover{background:rgba(255,255,255,.05)}
+    .sidebar-item.active{background:rgba(23,162,184,.2);color:#17a2b8;border-left:3px solid #17a2b8;padding-left:17px}
+    .main{flex:1;margin-left:250px;min-width:0}.header{height:56px;position:sticky;top:0;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:5}
+    .header-left,.header-right{display:flex;align-items:center;gap:8px}.header-btn{width:40px;height:40px;border:0;background:transparent;border-radius:50%;display:grid;place-items:center}.header-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#17a2b8,#20c997);color:#fff;font-weight:700}
+    .content{padding:20px}.title{margin:0;font-size:30px}.sub{margin:2px 0 14px;color:#6c7683}
+    .toolbar{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:12px;display:grid;grid-template-columns:180px 1fr auto;gap:10px;margin-bottom:14px}
+    .sel,.input,.btn{border:1px solid #d2dae3;border-radius:8px;padding:8px 10px;font:inherit;background:#fff}.btn{cursor:pointer}
+    .card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06)}table{width:100%;border-collapse:collapse}.table-wrap{overflow:auto}
+    th{background:#f8f9fa;color:#6c757d;text-transform:uppercase;font-size:12px;text-align:left;padding:10px 12px}td{padding:12px;border-top:1px solid #eef2f6;vertical-align:middle}
+    .st{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+    .st.pending{background:#e9ecef;color:#495057}.st.fixed{background:#d9ecff;color:#1463c6}.st.done{background:#dff4e4;color:#157347}
+    .row-actions{display:flex;gap:8px;flex-wrap:wrap}.btn.primary{background:#17a2b8;border-color:#17a2b8;color:#fff}.btn.warn{background:#e7f1ff;border-color:#b7d1ff;color:#1558b0}.btn.done{background:#e7f7ec;border-color:#bde5c7;color:#1a7d41}.btn.danger{background:#fff0f1;border-color:#ffd0d4;color:#c22635}
+    .empty{padding:24px;text-align:center;color:#6c7683}
+    @media(max-width:992px){.sidebar{transform:translateX(-100%)}.main{margin-left:0}.toolbar{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="material-icons">health_and_safety</span><div><div class="brand-title">ClinicFlow AI</div><div class="brand-sub">運用ダッシュボード</div></div></div>
+    <div class="sidebar-user"><div class="avatar">佐</div><div><div class="user-name">受付担当：佐藤</div><div class="user-role" style="font-size:11px;color:#6c757d">サポート管理者</div></div></div>
+    <nav class="sidebar-nav">
+      <a class="sidebar-item" href="/admin-dashboard.html"><span class="material-icons">dashboard</span>ダッシュボード</a>
+      <a class="sidebar-item" href="/inbox.html"><span class="material-icons">inbox</span>受信トレイ</a>
+      <a class="sidebar-item" href="/tickets.html"><span class="material-icons">support_agent</span>チケット（有人対応）</a>
+      <a class="sidebar-item" href="/knowledge.html"><span class="material-icons">menu_book</span>ナレッジ管理</a>
+      <a class="sidebar-item" href="/customers.html"><span class="material-icons">groups</span>顧客管理</a>
+      <a class="sidebar-item active" href="/reservation.html"><span class="material-icons">event_note</span>予約管理</a>
+      <a class="sidebar-item" href="/reports.html"><span class="material-icons">analytics</span>レポート</a>
+      <a class="sidebar-item" href="/settings.html"><span class="material-icons">shield</span>設定（ガードレール）</a>
+    </nav>
+  </aside>
+  <main class="main">
+    <header class="header">
+      <div class="header-left"><div style="font-size:13px;color:#6c757d"><a href="#" style="color:#17a2b8;text-decoration:none">ホーム</a> &gt; 予約管理</div></div>
+      <div class="header-right"><button class="header-btn" type="button"><span class="material-icons">mail</span></button><button class="header-btn" type="button"><span class="material-icons">notifications</span></button><div class="header-avatar">佐</div></div>
+    </header>
+    <section class="content">
+      <h1 class="title">予約管理</h1>
+      <p class="sub">仮受付から確定までのライト版予約管理</p>
+
+      <section class="toolbar">
+        <select id="statusFilter" class="sel">
+          <option value="">すべて</option>
+          <option value="仮受付">仮受付</option>
+          <option value="確定">確定</option>
+          <option value="完了">完了</option>
+        </select>
+        <input id="nameSearch" class="input" type="text" placeholder="顧客名で検索">
+        <button id="reloadBtn" class="btn" type="button">再読込</button>
+      </section>
+
+      <article class="card table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>顧客名</th>
+              <th>希望日時</th>
+              <th>施術名</th>
+              <th>初診/再診</th>
+              <th>ステータス</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="reservationRows"></tbody>
+        </table>
+      </article>
+    </section>
+  </main>
+</div>
+<script src="/staff-common.js"></script>
+<script>
+const RESERVATION_KEY='reservationItems';
+const INBOX_KEY='inboxItems';
+
+const state={status:'',q:''};
+const rowsEl=document.getElementById('reservationRows');
+const statusFilterEl=document.getElementById('statusFilter');
+const nameSearchEl=document.getElementById('nameSearch');
+
+function nowISO(){return new Date().toISOString();}
+function loadReservationItems(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(RESERVATION_KEY)||'[]');
+    if(!Array.isArray(raw)) return [];
+    return raw.map((r)=>({
+      id:r.id||`RES-${Date.now()}`,
+      customerName:r.customerName||'',
+      phone:r.phone||'',
+      customerId:r.customerId||'',
+      requestedDate:r.requestedDate||'',
+      requestedTime:r.requestedTime||'',
+      treatment:r.treatment||'',
+      firstVisit:typeof r.firstVisit==='boolean'?r.firstVisit:true,
+      status:r.status||'仮受付',
+      sourceMessageId:r.sourceMessageId||'',
+      createdAt:r.createdAt||nowISO(),
+      updatedAt:r.updatedAt||nowISO()
+    }));
+  }catch(_){
+    return [];
+  }
+}
+function saveReservationItems(items){
+  localStorage.setItem(RESERVATION_KEY,JSON.stringify(items));
+}
+function loadInboxItems(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(INBOX_KEY)||'[]');
+    return Array.isArray(raw)?raw:[];
+  }catch(_){
+    return [];
+  }
+}
+function saveInboxItems(items){
+  localStorage.setItem(INBOX_KEY,JSON.stringify(items));
+}
+function syncInboxStatus(sourceMessageId,status){
+  if(!sourceMessageId) return;
+  const inbox=loadInboxItems();
+  const item=inbox.find((x)=>x.id===sourceMessageId);
+  if(!item) return;
+  if(status==='確定'){
+    item.status='予約確定';
+    item.updatedAt=nowISO();
+    saveInboxItems(inbox);
+  }
+}
+function statusOrder(v){
+  if(v==='仮受付') return 1;
+  if(v==='確定') return 2;
+  if(v==='完了') return 3;
+  return 4;
+}
+function statusClass(v){
+  if(v==='確定') return 'fixed';
+  if(v==='完了') return 'done';
+  return 'pending';
+}
+function filteredSorted(items){
+  return items
+    .filter((r)=>!state.status||r.status===state.status)
+    .filter((r)=>!state.q||String(r.customerName||'').includes(state.q))
+    .sort((a,b)=>{
+      const s=statusOrder(a.status)-statusOrder(b.status);
+      if(s!==0) return s;
+      return new Date(b.updatedAt).getTime()-new Date(a.updatedAt).getTime();
+    });
+}
+function render(){
+  const rows=filteredSorted(loadReservationItems());
+  if(!rows.length){
+    rowsEl.innerHTML='<tr><td colspan="6" class="empty">予約データがありません</td></tr>';
+    return;
+  }
+  rowsEl.innerHTML=rows.map((r)=>`<tr data-id="${r.id}">
+    <td>${r.customerName||'-'}</td>
+    <td>${r.requestedDate||'-'} ${r.requestedTime||''}</td>
+    <td>${r.treatment||'-'}</td>
+    <td>${r.firstVisit?'初診':'再診'}</td>
+    <td><span class="st ${statusClass(r.status)}">${r.status}</span></td>
+    <td><div class="row-actions">
+      <button class="btn warn" data-action="confirm" type="button">確定する</button>
+      <button class="btn done" data-action="complete" type="button">完了にする</button>
+      <button class="btn danger" data-action="delete" type="button">削除</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+rowsEl.addEventListener('click',(e)=>{
+  const btn=e.target.closest('[data-action]');
+  if(!btn) return;
+  const tr=btn.closest('tr[data-id]');
+  if(!tr) return;
+  const id=tr.dataset.id;
+  const action=btn.dataset.action;
+  const items=loadReservationItems();
+  const row=items.find((x)=>x.id===id);
+  if(!row) return;
+  if(action==='confirm'){
+    row.status='確定';
+    row.updatedAt=nowISO();
+    syncInboxStatus(row.sourceMessageId,'確定');
+  }else if(action==='complete'){
+    row.status='完了';
+    row.updatedAt=nowISO();
+  }else if(action==='delete'){
+    const next=items.filter((x)=>x.id!==id);
+    saveReservationItems(next);
+    render();
+    return;
+  }
+  saveReservationItems(items);
+  render();
+});
+
+statusFilterEl.addEventListener('change',()=>{state.status=statusFilterEl.value;render();});
+nameSearchEl.addEventListener('input',()=>{state.q=nameSearchEl.value.trim();render();});
+document.getElementById('reloadBtn').addEventListener('click',()=>render());
+
+render();
+</script>
+</body>
+</html>

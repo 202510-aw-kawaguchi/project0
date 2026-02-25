@@ -42,7 +42,7 @@
     .list-scroll{overflow:auto;padding:6px 0}.inbox-item{border-left:3px solid transparent;padding:12px 14px 12px 12px;cursor:pointer;transition:background .2s;border-bottom:1px solid #f0f3f6}.inbox-item:hover{background:#f8f9fa}.inbox-item.active{border-left-color:#17a2b8;background:#f8fcfd}
     .item-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}.unread-dot{width:8px;height:8px;border-radius:50%;background:#17a2b8}.item-name{font-weight:700}.item-time{margin-left:auto;color:#6c757d;font-size:12px}
     .meta-row{display:flex;gap:6px;align-items:center;margin-bottom:5px;flex-wrap:wrap}.item-summary{color:#5d6772;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:500}.b-cat{background:#eef2f6;color:#4d5967}.b-ai{background:#dff4ef;color:#187a66}.b-handoff{background:#ffe3e5;color:#a12335}.b-alert{background:#fff3cd;color:#7a5b00}.b-open{background:#ffe3e5;color:#a12335}.b-progress{background:#d4edda;color:#1e7e34}.b-done{background:#e2e3e5;color:#495057}.b-after{background:#eef2ff;color:#4955a3}.b-auto{background:#e8f7ee;color:#157347}.b-check{background:#fdecec;color:#b02a37}
+    .badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:500}.b-cat{background:#eef2f6;color:#4d5967}.b-ai{background:#dff4ef;color:#187a66}.b-resv-pending{background:#e9ecef;color:#495057}.b-resv-fixed{background:#d9ecff;color:#1463c6}.b-handoff{background:#ffe3e5;color:#a12335}.b-alert{background:#fff3cd;color:#7a5b00}.b-open{background:#ffe3e5;color:#a12335}.b-progress{background:#d4edda;color:#1e7e34}.b-done{background:#e2e3e5;color:#495057}.b-after{background:#eef2ff;color:#4955a3}.b-auto{background:#e8f7ee;color:#157347}.b-check{background:#fdecec;color:#b02a37}
     .detail-head{padding:16px;border-bottom:1px solid #edf1f5}.alert-banner{background:#f8d7da;color:#8f1d29;border-radius:8px;padding:10px 12px;margin-bottom:12px;border:1px solid #f2bec4}
     .customer-title{margin:0;font-size:18px}.customer-meta{color:#5f6873;font-size:12px}.customer-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
     .messages{flex:1;overflow:auto;padding:14px 16px;background:#fbfcfd;display:flex;flex-direction:column;gap:10px}.msg{max-width:86%;padding:10px 12px;border-radius:12px}.msg.user{align-self:flex-end;background:#17a2b8;color:#fff;border-bottom-right-radius:4px}.msg.assistant{align-self:flex-start;background:#fff;border:1px solid #e8edf2;border-bottom-left-radius:4px}.msg-time{margin-top:5px;font-size:11px;opacity:.75}
@@ -113,7 +113,9 @@
 <script src="/knowledge-badge.js"></script>
 <script>
 const INBOX_KEY='inboxItems';
+const RESERVATION_KEY='reservationItems';
 const SETTINGS_KEY='clinicflow_settings_v2';
+const CUSTOMERS_KEY='customers';
 const CATEGORY_GENERAL=['料金','施術説明','ダウンタイム/注意事項','アクセス/営業時間','その他（軽微）','その他'];
 const SAFETY_WORDS=['出血','血が止まら','止血','呼吸','息が','胸が苦しい','意識','失神','激痛','強い痛み','高熱','発熱','腫れがひどい','化膿','アレルギー','じんましん','嘔吐','めまい'];
 const RESERVATION_WORDS_STRONG=['予約','予約したい','予約変更','変更','キャンセル','取りたい','空き','空いて','日時','日程','何日','何時','予約できますか'];
@@ -198,6 +200,35 @@ function ensureDemoComplaintItems(){
 function saveInboxItems(){
   localStorage.setItem(INBOX_KEY,JSON.stringify(inboxItems));
 }
+function loadReservationItems(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(RESERVATION_KEY)||'[]');
+    return Array.isArray(raw)?raw:[];
+  }catch(_){
+    return [];
+  }
+}
+function saveReservationItems(items){
+  localStorage.setItem(RESERVATION_KEY,JSON.stringify(Array.isArray(items)?items:[]));
+}
+function toReservationId(){
+  const d=new Date();
+  const ymd=`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+  const rows=loadReservationItems();
+  let max=0;
+  rows.forEach(r=>{
+    const m=String(r.id||'').match(new RegExp(`^RES-${ymd}-(\\d+)$`));
+    if(m){
+      const n=Number(m[1]||0);
+      if(n>max) max=n;
+    }
+  });
+  return `RES-${ymd}-${String(max+1).padStart(3,'0')}`;
+}
+function hasConfirmedReservation(sourceMessageId){
+  if(!sourceMessageId) return false;
+  return loadReservationItems().some((r)=>r.sourceMessageId===sourceMessageId && r.status==='確定');
+}
 function normalizeInboxItem(item){
   const flags={afterHours:false,autoReplied:false,safetyAlert:false,complaint:false,reservation:false,manualReview:false,nextActionTag:'なし',...(item.flags||{})};
   if(item.safetyAlert) flags.safetyAlert=true;
@@ -227,11 +258,111 @@ function normalizeInboxItem(item){
     complaintSummary:item.complaintSummary||null,
     unread:typeof item.unread==='boolean'?item.unread:true,
     customerTag:item.customerTag||'一般',
-    maskedContact:item.maskedContact||'---'
+    maskedContact:item.maskedContact||'---',
+    customerId:item.customerId||''
   };
 }
 
 function parseHM(v){const p=String(v||'00:00').split(':').map(Number);return (p[0]||0)*60+(p[1]||0);}
+// light chart: minimal customer master for AI operations (contact + flags + history link)
+function loadCustomers(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(CUSTOMERS_KEY)||'[]');
+    return Array.isArray(raw)?raw:[];
+  }catch(_){
+    return [];
+  }
+}
+function saveCustomers(customers){
+  localStorage.setItem(CUSTOMERS_KEY,JSON.stringify(Array.isArray(customers)?customers:[]));
+}
+function nowDateTimeText(){
+  const d=new Date();
+  const p=(n)=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+function normalizePhoneForCustomer(phone){
+  return String(phone||'').replace(/[^\d]/g,'');
+}
+function nextCustomerId(customers){
+  let max=0;
+  customers.forEach((c)=>{
+    const m=String(c.id||'').match(/^CUS-(\d{4,})$/);
+    if(m){
+      const n=Number(m[1]||0);
+      if(n>max) max=n;
+    }
+  });
+  return `CUS-${String(max+1).padStart(4,'0')}`;
+}
+function ensureCustomerLinkForInboxItems(items){
+  const list=Array.isArray(items)?items:[];
+  const customers=loadCustomers();
+  let customerChanged=false;
+  let inboxChanged=false;
+  const byPhone=new Map();
+  const byNamePhone=new Map();
+  customers.forEach((c)=>{
+    const phoneNorm=normalizePhoneForCustomer(c.phone);
+    if(phoneNorm) byPhone.set(phoneNorm,c);
+    byNamePhone.set(`${String(c.name||'').trim()}|${phoneNorm}`,c);
+  });
+  list.forEach((i)=>{
+    const name=String(i.customerName||'').replace(/さま/g,'').trim();
+    const phone=String(i.maskedContact||'').trim();
+    const phoneNorm=normalizePhoneForCustomer(phone);
+    let customer=null;
+    if(i.customerId){
+      customer=customers.find((c)=>c.id===i.customerId)||null;
+    }
+    if(!customer&&phoneNorm&&byPhone.has(phoneNorm)) customer=byPhone.get(phoneNorm);
+    if(!customer&&byNamePhone.has(`${name}|${phoneNorm}`)) customer=byNamePhone.get(`${name}|${phoneNorm}`);
+    if(!customer){
+      const now=nowDateTimeText();
+      customer={
+        id:nextCustomerId(customers),
+        name:name||'顧客',
+        phone:phone||'',
+        email:'',
+        firstVisit:String(i.customerTag||'').includes('初診'),
+        tags:[],
+        notes:'',
+        riskFlags:{safetyHistory:!!(i.flags&&i.flags.safetyAlert),complaintHistory:!!(i.flags&&i.flags.complaint)},
+        lastContactAt:i.updatedAt||i.createdAt||now,
+        createdAt:now,
+        updatedAt:now
+      };
+      customers.push(customer);
+      customerChanged=true;
+      if(phoneNorm) byPhone.set(phoneNorm,customer);
+      byNamePhone.set(`${customer.name}|${phoneNorm}`,customer);
+    }else{
+      const prevSafety=!!(customer.riskFlags&&customer.riskFlags.safetyHistory);
+      const prevComplaint=!!(customer.riskFlags&&customer.riskFlags.complaintHistory);
+      const nextName=name||customer.name;
+      const nextPhone=phone||customer.phone;
+      const nextLast=i.updatedAt||i.createdAt||customer.lastContactAt;
+      const nextFlags={
+        safetyHistory:prevSafety||!!(i.flags&&i.flags.safetyAlert),
+        complaintHistory:prevComplaint||!!(i.flags&&i.flags.complaint)
+      };
+      if(customer.name!==nextName||customer.phone!==nextPhone||customer.lastContactAt!==nextLast||JSON.stringify(customer.riskFlags||{})!==JSON.stringify(nextFlags)){
+        customer.name=nextName;
+        customer.phone=nextPhone;
+        customer.lastContactAt=nextLast;
+        customer.riskFlags=nextFlags;
+        customer.updatedAt=nowDateTimeText();
+        customerChanged=true;
+      }
+    }
+    if(i.customerId!==customer.id){
+      i.customerId=customer.id;
+      inboxChanged=true;
+    }
+  });
+  if(customerChanged) saveCustomers(customers);
+  if(inboxChanged) saveInboxItems();
+}
 function formatYmd(d){
   const y=d.getFullYear();
   const m=String(d.getMonth()+1).padStart(2,'0');
@@ -475,6 +606,16 @@ function processAfterHoursAutoReply(){
 }
 function applyCustomerSelectionFromQuery(){
   const params=new URLSearchParams(location.search||'');
+  const customerId=params.get('customerId');
+  if(customerId){
+    const byId=inboxItems.find((x)=>x.customerId===customerId);
+    if(byId){
+      state.selectedId=byId.id;
+      byId.unread=false;
+      saveInboxItems();
+      return true;
+    }
+  }
   const customer=params.get('customer');
   if(!customer) return false;
   const target=inboxItems.find((x)=>String(x.customerName||'')===customer);
@@ -490,6 +631,8 @@ ensureDemoComplaintItems();
 state.selectedId=inboxItems[0]?inboxItems[0].id:'';
 applyCustomerSelectionFromQuery();
 processAfterHoursAutoReply();
+// light chart migration: map existing inbox records to customers/customerId.
+ensureCustomerLinkForInboxItems(inboxItems);
 
 function badgeStatusCls(s){return s==='対応中'?'b-progress':s==='完了'?'b-done':'b-open';}
 function fmtTime(v){
@@ -543,7 +686,7 @@ function renderList(){
         <span class="badge ${badgeStatusCls(i.status)}">${i.status}</span>
         ${i.flags.afterHours?'<span class="badge b-after">🌙 営業時間外</span>':''}
         ${isAiResolved(i)?'<span class="badge b-auto">🤖 自動返信済</span>':''}
-        ${i.flags.reservation?`<span class="badge b-ai">${i.reservationFormData?'🗓 仮受付（情報取得済）':'🗓 仮受付'}</span>`:''}
+        ${i.flags.reservation?`<span class="badge ${hasConfirmedReservation(i.id)?'b-resv-fixed':'b-resv-pending'}">${hasConfirmedReservation(i.id)?'🗓 予約確定':'🗓 仮受付'}</span>`:''}
         ${i.flags.safetyAlert?'<span class="badge b-alert">🚨 安全アラート</span>':''}
         ${(getClassification(i)==='safety'&&i.ticketCreated)?'<span class="badge b-handoff">🔴 有人対応（緊急）</span>':''}
         ${i.flags.complaint?'<span class="badge b-handoff">⚠ クレーム（優先）</span>':''}
@@ -620,6 +763,7 @@ function renderClassDetailCard(i,classification){
         </div>
         <label>備考<br><textarea id="reservationNote" rows="3" style="margin-top:4px;width:100%;border:1px solid #d8dee6;border-radius:6px;padding:7px 8px;resize:vertical">${f.note||''}</textarea></label>
         <button class="btn primary" id="reservationSaveBtn" type="button">仮受付を保存</button>
+        <button class="btn" id="reservationRegisterBtn" type="button">予約管理へ登録</button>
       </div>
     </div>`;
   }
@@ -647,7 +791,7 @@ function renderDetail(){
         <span class="badge ${badgeStatusCls(i.status)}">${i.status}</span>
         ${i.flags.afterHours?'<span class="badge b-after">🌙 営業時間外</span>':''}
         ${isAiResolved(i)?'<span class="badge b-auto">🤖 自動返信済</span>':''}
-        ${i.flags.reservation?`<span class="badge b-ai">${i.reservationFormData?'🗓 仮受付（情報取得済）':'🗓 仮受付'}</span>`:''}
+        ${i.flags.reservation?`<span class="badge ${hasConfirmedReservation(i.id)?'b-resv-fixed':'b-resv-pending'}">${hasConfirmedReservation(i.id)?'🗓 予約確定':'🗓 仮受付'}</span>`:''}
         ${i.flags.safetyAlert?'<span class="badge b-alert">🚨 安全アラート</span>':''}
         ${(getClassification(i)==='safety'&&i.ticketCreated)?'<span class="badge b-handoff">🔴 有人対応（緊急）</span>':''}
         ${i.flags.complaint?'<span class="badge b-handoff">⚠ クレーム（優先）</span>':''}
@@ -660,6 +804,7 @@ function renderDetail(){
       <div class="action-row">
         <button class="btn warn" id="handoffBtn" type="button">チケット化（有人対応へ）</button>
         <button class="btn" data-template="営業時間内に確認のうえご連絡します。">テンプレ返信: 受付</button>
+        <button class="btn" id="openCustomerChartBtn" type="button">顧客カルテを開く</button>
       </div>
       <textarea id="replyBox" class="reply-box" placeholder="返信文を入力（モック）"></textarea>
       <div class="action-row" style="margin-top:10px;">
@@ -689,6 +834,16 @@ function bindDetail(){
   const done=document.getElementById('doneBtn');
   const urgentStart=document.getElementById('urgentStartBtn');
   const reservationSaveBtn=document.getElementById('reservationSaveBtn');
+  const reservationRegisterBtn=document.getElementById('reservationRegisterBtn');
+  const openCustomerChartBtn=document.getElementById('openCustomerChartBtn');
+  if(openCustomerChartBtn) openCustomerChartBtn.addEventListener('click',()=>{
+    if(!i.customerId){
+      ensureCustomerLinkForInboxItems(inboxItems);
+    }
+    if(i.customerId){
+      window.location.href=`/customers.html?customerId=${encodeURIComponent(i.customerId)}`;
+    }
+  });
   if(urgentStart) urgentStart.addEventListener('click',()=>{
     i.status='対応中';
     i.updatedAt=nowISO();
@@ -713,6 +868,43 @@ function bindDetail(){
     i.updatedAt=nowISO();
     saveInboxItems();
     renderAll();
+  });
+  if(reservationRegisterBtn) reservationRegisterBtn.addEventListener('click',()=>{
+    const rows=loadReservationItems();
+    const now=nowISO();
+    const form=i.reservationFormData||{};
+    const requestedDate=form.preferredDate||'';
+    const requestedTime=form.preferredTime||'';
+    const treatment=form.procedure||'';
+    const firstVisit=(form.visitType||'初診')!=='再診';
+    const existing=rows.find((r)=>r.sourceMessageId===i.id);
+    if(existing){
+      existing.customerName=i.customerName||existing.customerName;
+      existing.phone=i.maskedContact||existing.phone;
+      existing.customerId=i.customerId||existing.customerId||'';
+      existing.requestedDate=requestedDate;
+      existing.requestedTime=requestedTime;
+      existing.treatment=treatment;
+      existing.firstVisit=firstVisit;
+      existing.updatedAt=now;
+    }else{
+      rows.push({
+        id:toReservationId(),
+        customerName:i.customerName||'',
+        phone:i.maskedContact||'',
+        customerId:i.customerId||'',
+        requestedDate,
+        requestedTime,
+        treatment,
+        firstVisit,
+        status:'仮受付',
+        sourceMessageId:i.id,
+        createdAt:now,
+        updatedAt:now
+      });
+    }
+    saveReservationItems(rows);
+    window.location.href='/reservation.html';
   });
   const send=document.getElementById('sendReplyBtn');
   if(send) send.addEventListener('click',()=>{
