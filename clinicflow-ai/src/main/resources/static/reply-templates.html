@@ -131,6 +131,7 @@
   <div id="toast" class="toast"></div>
 
 <script src="/staff-common.js"></script>
+<script src="/knowledge-badge.js"></script>
 <script>
     // TODO(API): GET/POST/PUT/DELETE を /api/reply-templates に差し替え
     const KEY = "clinicflow_reply_templates_v1";
@@ -242,6 +243,25 @@
     $("insertSafety").onclick=()=>{insertAtCursor("\n---\n※症状が強い場合や不安がある場合は、すぐに当院へご連絡ください。\n緊急性がある場合は医療機関の受診をご検討ください。\n---")};
     $("copyUse").onclick=async()=>{try{await navigator.clipboard.writeText(repVars(el.body.value));toast("コピーしました")}catch{toast("コピーに失敗しました")}};
     rerender();
+
+    // updated: show badge on "ナレッジ管理" when any sub-module has notifications
+    (function renderKnowledgeBadge(){
+      function readArray(key){try{const v=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(v)?v:[]}catch(_){return []}}
+      const faq=readArray("clinicflow_faq_items_v1").filter(i=>i&&i.status==="needs_review").length;
+      const tpl=readArray("clinicflow_reply_templates_v1").filter(i=>i&&i.status==="needs_review").length;
+      const apv=readArray("clinicflow_approvals_v1").filter(i=>i&&(i.status==="承認待ち"||i.status==="承認中")).length;
+      const total=faq+tpl+apv;
+      const link=document.querySelector('a[href="/knowledge.html"]');
+      if(!link)return;
+      const old=link.querySelector(".knowledge-notice-badge");
+      if(old)old.remove();
+      if(total<=0)return;
+      const b=document.createElement("span");
+      b.className="knowledge-notice-badge";
+      b.textContent=String(total);
+      b.style.cssText="margin-left:auto;min-width:18px;height:18px;padding:0 6px;border-radius:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:#dc3545;color:#fff;";
+      link.appendChild(b);
+    })();
   </script>
 </body>
 </html>

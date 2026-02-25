@@ -30,6 +30,7 @@ body{margin:0;font-family:"Noto Sans JP",sans-serif;background:#f4f6f9;color:#33
 <div class="btns"><button id="save" class="btn p">保存</button><button id="pub" class="btn s">公開</button><button id="rev" class="btn w">要確認にする</button><button id="dup" class="btn">複製</button><button id="del" class="btn d">削除</button><button id="tmp" class="btn">受診誘導テンプレ挿入</button></div>
 <div id="meta" style="font-size:12px;color:#6c757d">更新情報: -</div></div></section></div></div></main></div>
 <script src="/staff-common.js"></script>
+<script src="/knowledge-badge.js"></script>
 <script>
 // TODO(API): GET/POST/PUT/DELETE を /api/knowledge/faqs に差し替え
 const KEY="clinicflow_faq_items_v1",C=["料金","予約/変更/キャンセル","施術説明","ダウンタイム/注意事項","術後不安（受診誘導含む）","アクセス/営業時間","規約/プライバシー","その他"],S={draft:"下書き",published:"公開",needs_review:"要確認"},NG=["診断","処方","病名","投薬"];
@@ -59,4 +60,23 @@ $("dup").onclick=()=>{const i=st.items.find(v=>v.id===st.id);if(!i)return;const 
 $("del").onclick=()=>{const i=st.items.find(v=>v.id===st.id);if(!i)return;if(confirm("削除しますか？")){st.items=st.items.filter(v=>v.id!==i.id);st.id=null;saveLS();redraw()}};
 $("tmp").onclick=()=>{E.body.value=(E.body.value+"\n---\n※症状が強い場合や不安がある場合は、すぐに当院へご連絡ください。\n---").trimStart();E.pv.innerHTML=md(E.body.value);setDirty(true)};
 redraw();
+
+// updated: show badge on "ナレッジ管理" when any sub-module has notifications
+(function renderKnowledgeBadge(){
+  function readArray(key){try{const v=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(v)?v:[]}catch(_){return []}}
+  const faq=readArray("clinicflow_faq_items_v1").filter(i=>i&&i.status==="needs_review").length;
+  const tpl=readArray("clinicflow_reply_templates_v1").filter(i=>i&&i.status==="needs_review").length;
+  const apv=readArray("clinicflow_approvals_v1").filter(i=>i&&(i.status==="承認待ち"||i.status==="承認中")).length;
+  const total=faq+tpl+apv;
+  const link=document.querySelector('a[href="/knowledge.html"]');
+  if(!link)return;
+  const old=link.querySelector(".knowledge-notice-badge");
+  if(old)old.remove();
+  if(total<=0)return;
+  const b=document.createElement("span");
+  b.className="knowledge-notice-badge";
+  b.textContent=String(total);
+  b.style.cssText="margin-left:auto;min-width:18px;height:18px;padding:0 6px;border-radius:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:#dc3545;color:#fff;";
+  link.appendChild(b);
+})();
 </script></body></html>

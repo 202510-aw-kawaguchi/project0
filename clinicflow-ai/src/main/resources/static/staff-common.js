@@ -122,12 +122,41 @@
           nameEl = nameEl || userNameClass;
           roleEl = roleEl || userRoleClass;
         } else {
-          const textNodes = sidebarUser.querySelectorAll("div > div");
-          if (textNodes.length >= 2) {
-            nameEl = nameEl || textNodes[0];
-            roleEl = roleEl || textNodes[1];
+          // Prefer the text wrapper next to avatar to avoid picking wrong nested nodes.
+          const infoWrap = avatarEl && avatarEl.nextElementSibling ? avatarEl.nextElementSibling : null;
+          if (infoWrap) {
+            const infoLines = Array.prototype.slice.call(infoWrap.children);
+            if (infoLines.length >= 1) nameEl = nameEl || infoLines[0];
+            if (infoLines.length >= 2) roleEl = roleEl || infoLines[1];
+          }
+          // Fallback for irregular markup.
+          if (!nameEl || !roleEl) {
+            const textNodes = sidebarUser.querySelectorAll("div > div");
+            if (textNodes.length >= 2) {
+              nameEl = nameEl || textNodes[0];
+              roleEl = roleEl || textNodes[1];
+            }
           }
         }
+      }
+    }
+
+    // Ensure both lines exist even in minimal markup pages.
+    if (sidebarUser && (!nameEl || !roleEl)) {
+      let infoWrap = avatarEl && avatarEl.nextElementSibling ? avatarEl.nextElementSibling : null;
+      if (!infoWrap) {
+        infoWrap = document.createElement("div");
+        sidebarUser.appendChild(infoWrap);
+      }
+      if (!nameEl) {
+        nameEl = document.createElement("div");
+        infoWrap.appendChild(nameEl);
+      }
+      if (!roleEl) {
+        roleEl = document.createElement("div");
+        roleEl.style.fontSize = "11px";
+        roleEl.style.color = "#6c757d";
+        infoWrap.appendChild(roleEl);
       }
     }
 

@@ -145,6 +145,7 @@
 </div>
 <div id="toast" class="toast"></div>
 <script src="/staff-common.js"></script>
+<script src="/knowledge-badge.js"></script>
 <script>
   // TODO(API): approvals一覧は GET /api/approvals、更新は PATCH /api/approvals/{id} に差し替え
   const KEY="clinicflow_approvals_v1";
@@ -271,6 +272,25 @@
   $("btnSafeInsert").onclick=()=>{const a=selected();if(!a)return;a.diff.after += "\n---\n※症状が強い場合や不安がある場合は、すぐに当院へご連絡ください。\n---";if(!a.riskFlags.includes("安全テンプレ不足")){}else a.riskFlags=a.riskFlags.filter(r=>r!=="安全テンプレ不足");saveLS();rerender();toast("安全テンプレを追記しました")};
   $("btnDetect").onclick=()=>{const a=selected();if(!a)return;const hit=ngWords.filter(w=>a.diff.after.includes(w));if(!hit.length){toast("禁止表現は見つかりませんでした");return}a.riskFlags=[...new Set([...a.riskFlags,"医療判断疑い"])];a.comments.push({by:"システム",time:now(),text:`禁止表現検出: ${hit.join("、")}`});saveLS();rerender();toast("禁止表現を検出しました")};
   if(window.StaffSettings&&window.StaffSettings.renderSidebarUser){window.StaffSettings.renderSidebarUser(document);}
+
+  // updated: show badge on "ナレッジ管理" when any sub-module has notifications
+  (function renderKnowledgeBadge(){
+    function readArray(key){try{const v=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(v)?v:[]}catch(_){return []}}
+    const faq=readArray("clinicflow_faq_items_v1").filter(i=>i&&i.status==="needs_review").length;
+    const tpl=readArray("clinicflow_reply_templates_v1").filter(i=>i&&i.status==="needs_review").length;
+    const apv=readArray("clinicflow_approvals_v1").filter(i=>i&&(i.status==="承認待ち"||i.status==="承認中")).length;
+    const total=faq+tpl+apv;
+    const link=document.querySelector('a[href="/knowledge.html"]');
+    if(!link)return;
+    const old=link.querySelector(".knowledge-notice-badge");
+    if(old)old.remove();
+    if(total<=0)return;
+    const b=document.createElement("span");
+    b.className="knowledge-notice-badge";
+    b.textContent=String(total);
+    b.style.cssText="margin-left:auto;min-width:18px;height:18px;padding:0 6px;border-radius:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:#dc3545;color:#fff;";
+    link.appendChild(b);
+  })();
   rerender();
 </script>
 </body>

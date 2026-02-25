@@ -62,7 +62,7 @@
     .tabs{display:flex;gap:6px;overflow:auto}
     .tab{white-space:nowrap;border:1px solid #cfd8e3;background:#fff;border-radius:8px;padding:6px 10px;cursor:pointer}
     .tab.on{background:var(--pri);border-color:var(--pri);color:#fff}
-    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
     .kpi{border-radius:10px;padding:10px;color:#fff}.kpi1{background:#1e88e5}.kpi2{background:#f9a825}.kpi3{background:#ef5350}
     .actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid #cfd8e3;background:#fff;border-radius:8px;padding:8px 12px;cursor:pointer;font:inherit}
     .btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
@@ -129,6 +129,7 @@
   <div id="toast" class="toast"></div>
 
   <script src="/staff-common.js"></script>
+  <script src="/knowledge-badge.js"></script>
   <script>
   // TODO(API): localStorageのload/saveをSpring Boot APIへ差し替え
   const K="clinicflow_customers_style_v1",CI={LINE:"chat",WEB:"language",電話:"call"},STS=["初診","カウンセリング前","術後3日","術後1週間","リピーター"],CHS=["LINE","WEB","電話"];

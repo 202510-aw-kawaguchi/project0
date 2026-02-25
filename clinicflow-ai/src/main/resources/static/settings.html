@@ -200,6 +200,7 @@
 </div>
 <div id="toast" class="toast"></div>
 <script src="/staff-common.js"></script>
+<script src="/knowledge-badge.js"></script>
 <script>
 const STORAGE_KEY='clinicflow_settings_v2';
 const defaultWords=['出血','発熱','呼吸困難','アレルギー','強い痛み','意識','腫れが悪化'];
@@ -315,7 +316,7 @@ function renderStaffPanel(){
       <td>${safeText(m.name)}</td>
       <td>${safeText(m.role)}</td>
       <td>${m.active?'有効':'無効'}</td>
-      <td><span class="dot" style="background:${safeText(m.color)}"></span> ${safeText(m.color)}</td>
+      <td><span class="dot" style="background:${safeText(m.color)}"></span></td>
       <td>
         <button class="btn" data-staff-edit="${m.id}" type="button">編集</button>
         <button class="btn warn" data-staff-toggle="${m.id}" type="button">${m.active?'無効化':'有効化'}</button>
