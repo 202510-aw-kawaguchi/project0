@@ -209,6 +209,14 @@ applySubMode((location.hash||'#faq').replace('#',''));
     notify('差し戻しました');
   };
 })();
+
+// サイドバー「顧客管理」を確実に遷移させる
+document.querySelectorAll('a[href="/customers.html"]').forEach((link) => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.location.assign('/customers.html');
+  });
+});
 </script></body></html>
 
 
