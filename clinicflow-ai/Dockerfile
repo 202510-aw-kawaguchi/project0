@@ -4,7 +4,7 @@ WORKDIR /app
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
 
-RUN chmod +x ./mvnw ./.mvn/apache-maven/bin/mvn ./.mvn/apache-maven/bin/mvnDebug ./.mvn/apache-maven/bin/mvnyjp
+RUN chmod +x ./mvnw
 
 COPY src/ src/
 
