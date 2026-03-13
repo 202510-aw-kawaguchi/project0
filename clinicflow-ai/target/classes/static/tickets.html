@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClinicFlow AI | Tickets</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}body{margin:0;font-family:"Noto Sans JP",sans-serif;background:#f4f6f9;color:#333;font-size:14px;line-height:1.6}
+    .wrapper{display:flex;min-height:100vh}
+    .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;overflow-y:auto;z-index:100;background:linear-gradient(180deg,#343a40 0%,#212529 100%);color:#c2c7d0;transition:transform .3s}
+    .sidebar-brand{padding:16px 20px;background:rgba(0,0,0,.2);color:#fff;display:flex;gap:10px;align-items:center}.sidebar-brand .material-icons{color:#17a2b8}
+    .brand-title{font-size:18px;font-weight:700;line-height:1.2}.brand-sub{font-size:11px;opacity:.85}
+    .sidebar-user{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:10px;align-items:center}
+    .avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;background:linear-gradient(135deg,#17a2b8,#20c997)}
+    .user-name{font-size:14px;color:#fff}.user-role{font-size:11px;color:#6c757d}
+    .sidebar-nav{padding:10px 0 20px}
+    .sidebar-item{padding:12px 20px;color:inherit;text-decoration:none;display:flex;align-items:center;gap:10px;transition:background .2s}
+    .sidebar-item:hover{background:rgba(255,255,255,.05)}
+    .sidebar-item.active{background:rgba(23,162,184,.2);color:#17a2b8;border-left:3px solid #17a2b8;padding-left:17px}
+    .sidebar-item-badge{margin-left:auto;min-width:18px;height:18px;padding:0 6px;border-radius:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:#fff;background:#dc3545}
+    .sidebar-item-badge.info{background:#17a2b8}.sidebar-item-badge.warning{background:#ffc107;color:#333}
+    .main{flex:1;margin-left:250px;min-width:0}
+    .header{position:sticky;top:0;z-index:50;height:56px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+    .header-left,.header-right{display:flex;align-items:center;gap:8px}.menu-toggle{display:none;width:40px;height:40px;border-radius:50%;border:0;background:transparent;cursor:pointer;align-items:center;justify-content:center}
+    .menu-toggle:hover,.header-btn:hover{background:#f4f6f9}.breadcrumb{font-size:13px;color:#6c757d}.breadcrumb a{color:#17a2b8;text-decoration:none}
+    .header-btn{width:40px;height:40px;border:0;border-radius:50%;background:transparent;position:relative;display:grid;place-items:center;cursor:pointer}
+    .header-btn-badge{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff}
+    .header-btn-badge.red{background:#dc3545}.header-btn-badge.yellow{background:#ffc107;color:#333}
+    .header-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700;background:linear-gradient(135deg,#17a2b8,#20c997)}
+    .content{padding:20px}.layout{display:grid;grid-template-columns:1.45fr 1fr;gap:20px}
+    .card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06)}.left,.right{min-height:700px;display:flex;flex-direction:column;overflow:hidden}
+    .toolbar{padding:14px;border-bottom:1px solid #edf1f5;display:grid;gap:10px}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap}.tab{border:1px solid #d8dee6;background:#fff;border-radius:20px;padding:6px 12px;font-size:12px;cursor:pointer;color:#56606b}
+    .tab.active{background:#17a2b8;border-color:#17a2b8;color:#fff}
+    .filters{display:grid;grid-template-columns:1.3fr repeat(5,1fr) auto;gap:8px}
+    .filters input,.filters select{border:1px solid #d8dee6;border-radius:8px;padding:7px 10px;font-size:12px;background:#fff}
+    .btn-reset{border:1px solid #d8dee6;border-radius:8px;background:#fff;padding:7px 12px;font-size:12px;cursor:pointer}
+    .body{flex:1;overflow:auto;padding:12px}
+    .kanban{display:grid;grid-template-columns:repeat(4,minmax(220px,1fr));gap:12px;min-width:930px}
+    .col{background:#f8fafc;border:1px solid #e6ebf1;border-radius:10px;padding:10px;min-height:460px}.col.drag{border-color:#17a2b8;background:#eef8fa}
+    .col-head{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;margin-bottom:10px}.count{min-width:20px;height:20px;border-radius:20px;background:#e7edf4;color:#425160;padding:0 7px;display:inline-flex;align-items:center;justify-content:center;font-size:11px}
+    .ticket{background:#fff;border:1px solid #eef2f5;border-radius:10px;padding:10px;margin-bottom:10px;cursor:grab;box-shadow:0 2px 8px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s}
+    .ticket:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.1)}.ticket.active{border-left:3px solid #17a2b8;padding-left:8px}
+    .row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px}.title{margin:5px 0;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .meta{font-size:12px;color:#61707f;display:flex;justify-content:space-between;align-items:center;gap:8px}.due.over{color:#dc3545;font-weight:700}
+    .assignee{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:#17a2b8;color:#fff}.assignee.none{background:#adb5bd}
+    .badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:500}
+    .p-urgent{background:#f8d7da;color:#9a1f2a}.p-high{background:#fff3e0;color:#a55d00}.p-mid{background:#fff3cd;color:#7a5b00}.p-low{background:#d1ecf1;color:#0c5460}
+    .cat{background:#eef2f6;color:#4d5967}.s-open{background:#ffe3e5;color:#a12335}.s-progress{background:#d4edda;color:#1e7e34}.s-wait{background:#fff3cd;color:#856404}.s-done{background:#e2e3e5;color:#495057}
+    .table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:1px solid #edf1f5;text-align:left;white-space:nowrap}th{background:#f8f9fa;color:#6c757d;font-size:12px;text-transform:uppercase}tr:hover td{background:#f8f9fa}tr.active td{background:#eef8fa}
+    .sla-box{margin-bottom:12px;border:1px solid #ebeff4;border-radius:10px;background:#fff}.sla-head{padding:10px 12px;background:#f8fafc;font-weight:700;display:flex;justify-content:space-between}.sla-head.red{background:#f8d7da;color:#8f1d29}
+    .sla-item{padding:10px 12px;border-top:1px solid #eef2f6;cursor:pointer}.sla-item:hover{background:#f8f9fa}.sla-item.active{border-left:3px solid #17a2b8;background:#eef8fa;padding-left:9px}
+    .detail{flex:1;overflow:auto}.detail-head{padding:16px;border-bottom:1px solid #edf1f5}.detail-title{margin:0;font-size:18px}.detail-meta{font-size:12px;color:#627181;margin-top:4px}
+    .alert{margin-top:10px;background:#f8d7da;border:1px solid #f2bec4;color:#8f1d29;border-radius:8px;padding:10px 12px}.summary{margin-top:10px;background:#f8fafc;border:1px solid #e8edf2;border-radius:8px;padding:10px 12px}
+    .customer{margin:14px 16px;border:1px solid #ebeff4;border-radius:10px;padding:10px 12px;background:#fcfdff}
+    .msgs{margin:0 16px 14px;display:flex;flex-direction:column;gap:10px}.msg{max-width:86%;padding:10px 12px;border-radius:12px}
+    .msg.user{align-self:flex-end;background:#17a2b8;color:#fff;border-bottom-right-radius:4px}.msg.assistant{align-self:flex-start;background:#fff;border:1px solid #e8edf2;border-bottom-left-radius:4px}.msg.staff{align-self:flex-end;background:#e9f6ff;border:1px solid #b9e1ff;border-bottom-right-radius:4px}
+    .msg-time{font-size:11px;opacity:.75;margin-top:4px}.cite{margin-top:8px;border:1px solid #e3e8ef;border-radius:8px;padding:6px 8px;background:#f8f9fa}.cite summary{cursor:pointer;font-size:12px;color:#2a6285}.cite-item{margin-top:6px;font-size:12px;color:#4f5a67}
+    .panel{border-top:1px solid #edf1f5;padding:14px 16px 16px;background:#fff}.panel select,.panel input,.panel textarea{border:1px solid #d7dee6;border-radius:8px;padding:8px 10px;font-size:12px;outline:none}
+    .panel textarea{width:100%;min-height:70px;resize:vertical}.btn{border:1px solid #d7dee6;border-radius:8px;background:#fff;padding:8px 12px;font-size:12px;cursor:pointer}
+    .btn.primary{background:#17a2b8;border-color:#17a2b8;color:#fff}.btn.success{background:#28a745;border-color:#28a745;color:#fff}.btn.warn{background:#fff3cd;border-color:#ffc107;color:#6d5200}
+    .links a{color:#17a2b8;text-decoration:none;margin-right:10px;font-size:12px}.empty{padding:26px;color:#6c757d;text-align:center}
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:90}.overlay.show{display:block}
+    @media (max-width:1200px){.layout{grid-template-columns:1fr}}@media (max-width:992px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.menu-toggle{display:inline-flex}.filters{grid-template-columns:1fr 1fr}}@media (max-width:768px){.content{padding:16px}.breadcrumb{display:none}.filters{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand"><span class="material-icons">health_and_safety</span><div><div class="brand-title">ClinicFlow AI</div><div class="brand-sub">運用ダッシュボード</div></div></div>
+    <div class="sidebar-user"><div class="avatar">佐藤</div><div><div class="user-name">受付担当：佐藤</div><div class="user-role">サポート管理者</div></div></div>
+    <nav class="sidebar-nav">
+      <a class="sidebar-item" href="/admin-dashboard.html"><span class="material-icons">dashboard</span>ダッシュボード</a>
+      <a class="sidebar-item" href="/inbox.html"><span class="material-icons">inbox</span>受信トレイ <span class="sidebar-item-badge info">12</span></a>
+      <a class="sidebar-item active" href="/tickets.html"><span class="material-icons">support_agent</span>チケット（有人対応） <span class="sidebar-item-badge warning">4</span></a>
+      <a class="sidebar-item" href="/knowledge.html"><span class="material-icons">menu_book</span>ナレッジ管理</a>
+      <a class="sidebar-item" href="/customers.html"><span class="material-icons">groups</span>顧客管理</a>
+      <a class="sidebar-item" href="/reports.html"><span class="material-icons">analytics</span>レポート</a>
+      <!-- updated: settings screen navigation -->
+      <a class="sidebar-item" href="/settings.html"><span class="material-icons">shield</span>設定（ガードレール）</a>
+    </nav>
+  </aside>
+  <div class="overlay" id="overlay"></div>
+  <main class="main">
+    <header class="header"><div class="header-left"><button class="menu-toggle" id="menuToggle" type="button"><span class="material-icons">menu</span></button><div class="breadcrumb"><a href="#">ホーム</a> &gt; チケット（有人対応）</div></div><div class="header-right"><button class="header-btn" type="button"><span class="material-icons">mail</span><span class="header-btn-badge red">3</span></button><button class="header-btn" type="button"><span class="material-icons">notifications</span><span class="header-btn-badge yellow">15</span></button><div class="header-avatar">佐藤</div></div></header>
+    <section class="content"><div class="layout"><article class="card left"><div class="toolbar"><div class="tabs" id="viewTabs"><button class="tab active" data-view="board">ボード（Kanban）</button><button class="tab" data-view="table">一覧（Table）</button><button class="tab" data-view="sla">SLA</button></div><div class="filters"><input id="qFilter" type="text" placeholder="検索（顧客名/内容/カテゴリ）"><select id="categoryFilter"><option value="">カテゴリ（全て）</option><option>予約変更</option><option>料金</option><option>施術説明</option><option>ダウンタイム</option><option>術後不安</option><option>クレーム</option><option>その他</option></select><select id="priorityFilter"><option value="">優先度（全て）</option><option>緊急</option><option>高</option><option>中</option><option>低</option></select><select id="assigneeFilter"><option value="">担当者（全て）</option><option>未割当</option><option>佐藤</option><option>鈴木</option><option>田中</option></select><select id="deadlineFilter"><option value="">期限（全て）</option><option>今日</option><option>明日</option><option>今週</option><option>期限切れ</option></select><button class="btn-reset" id="resetBtn" type="button">リセット</button></div></div><div class="body" id="leftBody"></div></article><article class="card right"><div class="detail" id="detailBody"></div></article></div></section>
+  </main>
+</div>
+<script src="/staff-common.js"></script>
+<script src="/knowledge-badge.js"></script>
+<script>
+const STORAGE_KEY='clinicflow_tickets_v2';
+const CUSTOMERS_KEY='customers';
+const priorityMap={'緊急':'urgent','高':'high','中':'mid','低':'low'};
+const statusMap={'未対応':'open','対応中':'progress','顧客返信待ち':'wait','完了':'done'};
+const defaultTickets=[
+{id:'t-001',priority:'緊急',status:'未対応',sla:{dueAt:'2026-02-24 12:00'},category:'術後不安',customerName:'山田',customerTag:'術後3日',maskedContact:'090-****-1234',title:'術後に出血が続く',summary:'出血継続。安全ルールにより即時の有人対応が必要。',ruleId:'SAFETY_BLEEDING',createdAt:'10:27',updatedAt:'10:35',assignee:'未割当',messages:[{role:'user',text:'術後に出血が止まりません',time:'10:25'},{role:'assistant',text:'診断はできません。至急受診をご案内します。',time:'10:27',citations:[{source:'postcare.md',snippet:'出血が続く場合は受診を優先'}]}],internalNotes:[{by:'佐藤',time:'10:33',text:'至急電話フォロー予定'}]},
+{id:'t-002',priority:'高',status:'対応中',sla:{dueAt:'2026-02-24 13:30'},category:'予約変更',customerName:'佐藤',customerTag:'初診',maskedContact:'080-****-9912',title:'予約を来週木曜へ変更希望',summary:'候補日確認中。',ruleId:'HANDOFF_RESERVATION',createdAt:'10:12',updatedAt:'10:42',assignee:'佐藤',messages:[{role:'user',text:'来週木曜へ予約変更できますか？',time:'10:10'}],internalNotes:[]},
+{id:'t-003',priority:'中',status:'顧客返信待ち',sla:{dueAt:'2026-02-24 18:00'},category:'施術説明',customerName:'鈴木',customerTag:'初診',maskedContact:'070-****-2251',title:'ダウンタイムの目安を知りたい',summary:'施術名確認後に個別案内が必要。',ruleId:'HANDOFF_INFO',createdAt:'09:55',updatedAt:'10:20',assignee:'鈴木',messages:[{role:'user',text:'ダウンタイムは何日ですか？',time:'09:53'}],internalNotes:[{by:'鈴木',time:'10:20',text:'顧客へ追加質問送信済み'}]},
+{id:'t-004',priority:'中',status:'未対応',sla:{dueAt:'2026-02-24 16:20'},category:'料金',customerName:'田中',customerTag:'初診',maskedContact:'090-****-7752',title:'モニター価格の適用条件',summary:'キャンペーン条件確認が必要。',ruleId:'HANDOFF_PRICE',createdAt:'09:42',updatedAt:'09:42',assignee:'未割当',messages:[{role:'user',text:'モニター価格の条件を教えてください',time:'09:40'}],internalNotes:[]},
+{id:'t-005',priority:'高',status:'対応中',sla:{dueAt:'2026-02-24 11:40'},category:'クレーム',customerName:'中村',customerTag:'再診',maskedContact:'080-****-0031',title:'説明と異なる請求に関する相談',summary:'請求関連クレーム。責任者対応。',ruleId:'SAFETY_COMPLAINT',createdAt:'09:20',updatedAt:'10:05',assignee:'田中',messages:[{role:'user',text:'聞いていた金額と違う',time:'09:18'}],internalNotes:[{by:'田中',time:'10:05',text:'請求履歴確認中'}]},
+{id:'t-006',priority:'低',status:'完了',sla:{dueAt:'2026-02-25 10:00'},category:'予約変更',customerName:'小林',customerTag:'初診',maskedContact:'090-****-1022',title:'初回カウンセリング日程変更',summary:'希望日で調整完了。',ruleId:'HANDOFF_RESERVATION',createdAt:'08:50',updatedAt:'09:10',assignee:'佐藤',messages:[{role:'user',text:'来週に変更したいです',time:'08:48'}],internalNotes:[]},
+{id:'t-007',priority:'中',status:'未対応',sla:{dueAt:'2026-02-24 17:30'},category:'その他',customerName:'高橋',customerTag:'術後1日',maskedContact:'070-****-6644',title:'薬の服用タイミングについて',summary:'術後案内資料と照合が必要。',ruleId:'HANDOFF_POSTCARE',createdAt:'08:48',updatedAt:'08:48',assignee:'未割当',messages:[{role:'user',text:'薬は食前ですか？',time:'08:46'}],internalNotes:[]},
+{id:'t-008',priority:'緊急',status:'対応中',sla:{dueAt:'2026-02-24 11:20'},category:'術後不安',customerName:'伊藤',customerTag:'術後2日',maskedContact:'090-****-5122',title:'発熱がある、受診判断を相談',summary:'発熱あり。安全アラートで緊急連絡対応中。',ruleId:'SAFETY_FEVER',createdAt:'08:32',updatedAt:'10:01',assignee:'鈴木',messages:[{role:'user',text:'発熱があります。受診すべきですか？',time:'08:30'}],internalNotes:[{by:'鈴木',time:'10:01',text:'折返し連絡済み'}]},
+{id:'t-009',priority:'低',status:'顧客返信待ち',sla:{dueAt:'2026-02-25 09:30'},category:'料金',customerName:'渡辺',customerTag:'初診',maskedContact:'080-****-4488',title:'分割支払い可否について',summary:'支払い方法の案内送付済み。',ruleId:'HANDOFF_PRICE',createdAt:'08:10',updatedAt:'09:02',assignee:'田中',messages:[{role:'user',text:'分割払いできますか？',time:'08:07'}],internalNotes:[]},
+{id:'t-010',priority:'高',status:'未対応',sla:{dueAt:'2026-02-24 15:00'},category:'ダウンタイム',customerName:'加藤',customerTag:'施術検討中',maskedContact:'070-****-2240',title:'仕事復帰時期の相談',summary:'施術別の復帰目安を有人で調整回答。',ruleId:'HANDOFF_INFO',createdAt:'07:56',updatedAt:'07:56',assignee:'未割当',messages:[{role:'user',text:'仕事復帰は何日後が目安ですか？',time:'07:54'}],internalNotes:[]}
+];
+const load=()=>{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return structuredClone(defaultTickets);try{return JSON.parse(raw)}catch{return structuredClone(defaultTickets)}};
+let tickets=load();
+function loadCustomers(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(CUSTOMERS_KEY)||'[]');
+    return Array.isArray(raw)?raw:[];
+  }catch(_){
+    return [];
+  }
+}
+function normalizePhoneForCustomer(phone){
+  return String(phone||'').replace(/[^\d]/g,'');
+}
+function ensureTicketCustomerLinks(){
+  const customers=loadCustomers();
+  const byId=new Map(customers.map((c)=>[c.id,c]));
+  const byPhone=new Map(customers.map((c)=>[normalizePhoneForCustomer(c.phone),c]));
+  tickets.forEach((t)=>{
+    if(t.customerId&&byId.has(t.customerId)) return;
+    const p=normalizePhoneForCustomer(t.maskedContact||'');
+    let hit=p?byPhone.get(p):null;
+    if(!hit){
+      const name=String(t.customerName||'').replace(/さま/g,'').trim();
+      hit=customers.find((c)=>String(c.name||'').trim()===name)||null;
+    }
+    t.customerId=hit?hit.id:'';
+  });
+}
+const staffCtx=(window.StaffSettings&&window.StaffSettings.loadSettings)?window.StaffSettings.loadSettings():{members:[],currentId:""};
+const mapToStaffId=v=>(window.StaffSettings&&window.StaffSettings.normalizeStaffId)?window.StaffSettings.normalizeStaffId(v,staffCtx):"";
+const staffName=id=>(window.StaffSettings&&window.StaffSettings.getStaffName)?window.StaffSettings.getStaffName(id,staffCtx):"未割当";
+const activeStaff=()=>((window.StaffSettings&&window.StaffSettings.getActiveMembers)?window.StaffSettings.getActiveMembers(staffCtx):[]);
+function normalizeAssigneeFields(){
+  tickets.forEach(t=>{
+    const id=mapToStaffId(t.assigneeId||t.assignee);
+    t.assigneeId=id;
+    t.assignee=staffName(id);
+  });
+}
+function renderAssigneeFilterOptions(){
+  const sel=$('assigneeFilter');
+  if(!sel)return;
+  sel.innerHTML=`<option value="all">担当者（全て）</option><option value="__none">未割当</option>${activeStaff().map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}`;
+}
+function assigneeOptions(selectedId){
+  if(window.StaffSettings&&window.StaffSettings.buildStaffOptions){
+    return window.StaffSettings.buildStaffOptions(selectedId,staffCtx,true);
+  }
+  return `<option value="" ${!selectedId?"selected":""}>未割当</option>`;
+}
+normalizeAssigneeFields();
+ensureTicketCustomerLinks();
+const state={view:'board',selectedTicketId:tickets[0]?.id||null,q:'',category:'',priority:'',assignee:'all',deadline:''};
+const $=id=>document.getElementById(id);const leftBody=$('leftBody'),detailBody=$('detailBody');
+const save=()=>localStorage.setItem(STORAGE_KEY,JSON.stringify(tickets));
+const nowTime=()=>{const d=new Date();return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
+const parseDue=t=>new Date(t.sla.dueAt.replace(' ','T'));
+const isOver=t=>t.status!=='完了'&&parseDue(t).getTime()<Date.now();
+const pClass=p=>`p-${priorityMap[p]||'mid'}`;const sClass=s=>`s-${statusMap[s]||'open'}`;
+function deadlineMatch(t,k){if(!k)return true;const due=parseDue(t),now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate()),tom=new Date(today);tom.setDate(today.getDate()+1);const eow=new Date(today);eow.setDate(today.getDate()+(7-today.getDay()));const d0=new Date(due.getFullYear(),due.getMonth(),due.getDate());if(k==='期限切れ')return isOver(t);if(k==='今日')return d0.getTime()===today.getTime();if(k==='明日')return d0.getTime()===tom.getTime();if(k==='今週')return d0>=today&&d0<=eow;return true}
+function filtered(){const q=state.q.trim().toLowerCase();return tickets.filter(t=>{if(state.category&&t.category!==state.category)return false;if(state.priority&&t.priority!==state.priority)return false;if(state.assignee==='__none'&&(t.assigneeId||''))return false;else if(state.assignee!=='all'&&state.assignee!=='__none'&&(t.assigneeId||'')!==state.assignee)return false;if(!deadlineMatch(t,state.deadline))return false;if(!q)return true;return [t.customerName,t.title,t.category,t.summary].join(' ').toLowerCase().includes(q)})}
+function ensureSelection(list){if(!list.length){state.selectedTicketId=null;return}if(!list.some(t=>t.id===state.selectedTicketId))state.selectedTicketId=list[0].id}
+function renderBoard(list){const cols=['未対応','対応中','顧客返信待ち','完了'];return `<div class="kanban">${cols.map(st=>{const items=list.filter(t=>t.status===st);return `<section class="col" data-drop-status="${st}"><div class="col-head"><span>${st}</span><span class="count">${items.length}</span></div>${items.map(t=>`<article class="ticket ${t.id===state.selectedTicketId?'active':''}" draggable="true" data-ticket-id="${t.id}"><div class="row"><span class="badge ${pClass(t.priority)}">${t.priority}</span><span class="badge cat">${t.category}</span></div><div class="meta"><strong>${t.customerName}</strong><span>${t.customerTag}</span></div><div class="title">${t.title}</div><div class="meta"><span class="due ${isOver(t)?'over':''}">期限: ${t.sla.dueAt.slice(11)}</span><span class="assignee ${!t.assigneeId?'none':''}">${!t.assigneeId?'?':staffName(t.assigneeId).slice(0,1)}</span></div></article>`).join('')}</section>`}).join('')}</div>`}
+function renderTable(list){return `<div class="table-wrap"><table><thead><tr><th>優先度</th><th>顧客</th><th>タイトル</th><th>カテゴリ</th><th>担当</th><th>期限</th><th>ステータス</th></tr></thead><tbody>${list.map(t=>`<tr class="${t.id===state.selectedTicketId?'active':''}" data-ticket-id="${t.id}"><td><span class="badge ${pClass(t.priority)}">${t.priority}</span></td><td>${t.customerName}</td><td>${t.title}</td><td>${t.category}</td><td>${staffName(t.assigneeId)}</td><td class="${isOver(t)?'due over':''}">${t.sla.dueAt}</td><td><span class="badge ${sClass(t.status)}">${t.status}</span></td></tr>`).join('')}</tbody></table></div>`}
+function renderSLA(list){const now=Date.now(),over=[],soon=[],today=[];list.forEach(t=>{const diff=parseDue(t).getTime()-now;if(isOver(t))over.push(t);else if(diff<=30*60*1000)soon.push(t);else if(deadlineMatch(t,'今日'))today.push(t)});const block=(n,a,red)=>`<section class="sla-box"><div class="sla-head ${red?'red':''}">${n}<span>${a.length}</span></div>${a.length?a.map(t=>`<div class="sla-item ${t.id===state.selectedTicketId?'active':''}" data-ticket-id="${t.id}"><strong>${t.customerName}</strong> / ${t.title}<br><small>期限: ${t.sla.dueAt} | ${t.status}</small></div>`).join(''):'<div class="empty">該当なし</div>'}</section>`;return block('期限切れ',over,true)+block('期限まで30分以内',soon,false)+block('本日中',today,false)}
+function renderLeft(){const list=filtered();ensureSelection(list);if(!list.length){leftBody.innerHTML='<div class="empty">条件に一致するチケットがありません。</div>';return}leftBody.innerHTML=state.view==='board'?renderBoard(list):state.view==='table'?renderTable(list):renderSLA(list);bindLeft()}
+function renderDetail(){const t=tickets.find(x=>x.id===state.selectedTicketId);if(!t){detailBody.innerHTML='<div class="empty">チケットを選択してください。</div>';return}const safety=t.ruleId.startsWith('SAFETY');const msgs=t.messages.map(m=>`<div class="msg ${m.role}"><div>${m.text}</div><div class="msg-time">${m.time}</div>${m.citations?`<details class="cite"><summary>引用ソース</summary>${m.citations.map(c=>`<div class="cite-item"><strong>${c.source}</strong>: ${c.snippet}</div>`).join('')}</details>`:''}</div>`).join('');const notes=t.internalNotes.length?t.internalNotes.map(n=>`<div class="cite-item"><strong>${n.by}</strong> ${n.time}: ${n.text}</div>`).join(''):'<div class="cite-item">内部メモはまだありません。</div>';detailBody.innerHTML=`<div class="detail-head"><h3 class="detail-title">${t.title}</h3><div class="row"><span class="badge ${pClass(t.priority)}">${t.priority}</span><span class="badge ${sClass(t.status)}">${t.status}</span></div><div class="detail-meta">ID: ${t.id} / 作成: ${t.createdAt} / 更新: ${t.updatedAt}</div>${safety?`<div class="alert"><strong>安全アラート:</strong> ${t.ruleId}</div>`:''}<div class="summary"><strong>AI要約:</strong> ${t.summary}</div></div><div class="customer"><strong>${t.customerName}さま</strong>（${t.customerTag}）<br>連絡先: ${t.maskedContact}<br>カテゴリ: <span class="badge cat">${t.category}</span></div><div class="msgs">${msgs}</div><div class="panel"><div class="row"><select id="assigneeSel">${assigneeOptions(t.assigneeId||"")}</select><select id="prioritySel"><option>緊急</option><option>高</option><option>中</option><option>低</option></select><select id="statusSel"><option>未対応</option><option>対応中</option><option>顧客返信待ち</option><option>完了</option></select></div><div class="row"><button class="btn" data-template="ご希望日時を確認のうえ、予約候補をご案内します。">テンプレ返信: 予約提案</button><button class="btn" data-template="料金の目安をご案内します。正式なお見積は来院時に確定します。">テンプレ返信: 料金案内</button><button class="btn warn" data-template="安全のため早めの受診をご案内します。ご都合の良い時間を教えてください。">テンプレ返信: 受診誘導（安全）</button></div><div class="row"><textarea id="replyInput" placeholder="返信文を入力（モック）"></textarea></div><div class="row"><button class="btn primary" id="sendReplyBtn">送信（モック）</button><button class="btn success" id="doneBtn">完了にする</button></div><div class="row"><input id="memoInput" type="text" placeholder="内部メモを入力" style="flex:1;"><button class="btn" id="addMemoBtn">内部メモ追加</button></div><details class="cite"><summary>内部メモ</summary>${notes}</details><div class="links" style="margin-top:10px;"><a href="${t.customerId?`/customers.html?customerId=${encodeURIComponent(t.customerId)}`:'/customers.html'}">顧客カルテを開く</a><a href="/inbox.html">受信トレイで会話を開く</a><a href="#">ナレッジに追加</a></div></div>`;bindDetail(t)}
+function bindLeft(){leftBody.querySelectorAll('[data-ticket-id]').forEach(el=>el.addEventListener('click',()=>{state.selectedTicketId=el.dataset.ticketId;renderAll()}));leftBody.querySelectorAll('.ticket').forEach(card=>card.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',card.dataset.ticketId)));leftBody.querySelectorAll('.col').forEach(col=>{col.addEventListener('dragover',e=>{e.preventDefault();col.classList.add('drag')});col.addEventListener('dragleave',()=>col.classList.remove('drag'));col.addEventListener('drop',e=>{e.preventDefault();col.classList.remove('drag');const id=e.dataTransfer.getData('text/plain');const t=tickets.find(x=>x.id===id);if(!t)return;t.status=col.dataset.dropStatus;t.updatedAt=nowTime();save();renderAll()})})}
+function bindDetail(t){const ass=$('assigneeSel'),pri=$('prioritySel'),st=$('statusSel');ass.value=t.assigneeId||'';pri.value=t.priority;st.value=t.status;ass.addEventListener('change',()=>{t.assigneeId=ass.value;t.assignee=staffName(t.assigneeId);t.updatedAt=nowTime();save();renderAll()});pri.addEventListener('change',()=>{t.priority=pri.value;t.updatedAt=nowTime();save();renderAll()});st.addEventListener('change',()=>{t.status=st.value;t.updatedAt=nowTime();save();renderAll()});const reply=$('replyInput');detailBody.querySelectorAll('[data-template]').forEach(b=>b.addEventListener('click',()=>{reply.value=b.dataset.template;reply.focus()}));$('sendReplyBtn').addEventListener('click',()=>{const text=reply.value.trim();if(!text)return;t.messages.push({role:'staff',text,time:nowTime()});t.updatedAt=nowTime();if(t.status==='未対応')t.status='対応中';reply.value='';save();renderAll()});$('addMemoBtn').addEventListener('click',()=>{const m=$('memoInput');const text=m.value.trim();if(!text)return;const current=(window.StaffSettings&&window.StaffSettings.getCurrentStaff)?window.StaffSettings.getCurrentStaff(staffCtx):{name:'佐藤'};t.internalNotes.push({by:current.name,time:nowTime(),text});t.updatedAt=nowTime();m.value='';save();renderAll()});$('doneBtn').addEventListener('click',()=>{t.status='完了';t.updatedAt=nowTime();save();renderAll()})}
+function renderAll(){renderLeft();renderDetail()}
+$('viewTabs').addEventListener('click',e=>{const b=e.target.closest('[data-view]');if(!b)return;state.view=b.dataset.view;document.querySelectorAll('#viewTabs .tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderAll()});
+$('qFilter').addEventListener('input',e=>{state.q=e.target.value;renderAll()});$('categoryFilter').addEventListener('change',e=>{state.category=e.target.value;renderAll()});$('priorityFilter').addEventListener('change',e=>{state.priority=e.target.value;renderAll()});$('assigneeFilter').addEventListener('change',e=>{state.assignee=e.target.value;renderAll()});$('deadlineFilter').addEventListener('change',e=>{state.deadline=e.target.value;renderAll()});
+$('resetBtn').addEventListener('click',()=>{state.q='';state.category='';state.priority='';state.assignee='all';state.deadline='';['qFilter','categoryFilter','priorityFilter','deadlineFilter'].forEach(id=>$(id).value='');$('assigneeFilter').value='all';renderAll()});
+const menu=$('menuToggle'),sidebar=$('sidebar'),overlay=$('overlay');menu.addEventListener('click',()=>{sidebar.classList.toggle('open');overlay.classList.toggle('show')});overlay.addEventListener('click',()=>{sidebar.classList.remove('open');overlay.classList.remove('show')});window.addEventListener('resize',()=>{if(window.innerWidth>992){sidebar.classList.remove('open');overlay.classList.remove('show')}});
+renderAssigneeFilterOptions();
+if(window.StaffSettings&&window.StaffSettings.renderSidebarUser){window.StaffSettings.renderSidebarUser(document);}
+renderAll();
+</script>
+</body>
+</html>
+
+

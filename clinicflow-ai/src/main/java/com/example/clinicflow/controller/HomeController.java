@@ -8,6 +8,11 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
+        return "redirect:/todo";
+    }
+
+    @GetMapping("/todo")
+    public String todo() {
         return "forward:/admin-dashboard.html";
     }
 }

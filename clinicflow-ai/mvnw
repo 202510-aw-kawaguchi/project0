@@ -1,0 +1,27 @@
+#!/bin/sh
+
+set -eu
+
+find_maven_basedir() {
+  basedir="$1"
+  wdir="$1"
+  while [ "$wdir" != "/" ]; do
+    if [ -d "$wdir/.mvn" ]; then
+      echo "$wdir"
+      return 0
+    fi
+    wdir="$(cd "$wdir/.." && pwd)"
+  done
+  return 1
+}
+
+BASE_DIR="$(find_maven_basedir "$(pwd)")"
+MAVEN_HOME="$BASE_DIR/.mvn/apache-maven"
+MAVEN_BIN="$MAVEN_HOME/bin/mvn"
+
+if [ ! -x "$MAVEN_BIN" ]; then
+  echo "Missing bundled Maven executable: $MAVEN_BIN" >&2
+  exit 1
+fi
+
+exec "$MAVEN_BIN" "-Dmaven.repo.local=$BASE_DIR/.repo" "$@"

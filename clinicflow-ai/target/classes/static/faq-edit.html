@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ClinicFlow AI | FAQ編集</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+body{margin:0;font-family:"Noto Sans JP",sans-serif;background:#f4f6f9;color:#333;font-size:14px}.wrapper{display:flex;min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;overflow:auto;z-index:100;background:linear-gradient(180deg,#343a40,#212529);color:#c2c7d0}
+.brand{padding:14px 18px;background:rgba(0,0,0,.2);color:#fff;font-weight:700}.nav a{display:flex;gap:8px;align-items:center;padding:11px 18px;color:#c2c7d0;text-decoration:none}.nav a:hover{background:rgba(255,255,255,.05)}.nav .active{background:rgba(23,162,184,.2);color:#17a2b8;border-left:3px solid #17a2b8}.sub{padding-left:40px}.sub a{font-size:12px;padding:6px 0}
+.main{flex:1;margin-left:250px}.header{position:sticky;top:0;height:56px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+.content{padding:16px}.grid{display:grid;grid-template-columns:250px 1fr 1.2fr;gap:14px}.card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.filters{padding:12px}.fbtn{width:100%;text-align:left;border:1px solid #dce3eb;background:#fff;border-radius:8px;padding:6px 9px;margin-bottom:6px;display:flex;justify-content:space-between}.fbtn.on{border-color:#17a2b8;background:#f2fcfe;color:#17a2b8}.badge{border-radius:20px;padding:2px 9px;font-size:11px}.draft{background:#e2e3e5}.published{background:#d4edda;color:#1e7e34}.needs_review{background:#fff3cd;color:#7a5b00}.cat{background:#eef2f6}
+.list .top{padding:10px;border-bottom:1px solid #edf2f5}.list input,.ed input,.ed select,.ed textarea{width:100%;border:1px solid #d8dee6;border-radius:8px;padding:8px 10px;font:inherit}.items{max-height:75vh;overflow:auto}.item{padding:10px;border-bottom:1px solid #eef2f5;border-left:3px solid transparent;cursor:pointer}.item:hover{background:#f8f9fa}.item.on{border-left-color:#17a2b8;background:#f8fcfd}
+.ed{padding:12px;display:flex;flex-direction:column;gap:8px}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.split{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ed textarea{min-height:260px}.pv{border:1px solid #d8dee6;border-radius:8px;padding:10px;overflow:auto}.warn{display:none;background:#fff7db;border:1px solid #ffeeba;color:#7a5b00;border-radius:8px;padding:7px 10px}.warn.show{display:block}.btns{display:flex;flex-wrap:wrap;gap:7px}.btn{border:1px solid #cfd8e3;background:#fff;border-radius:8px;padding:8px 10px;cursor:pointer}.p{background:#17a2b8;border-color:#17a2b8;color:#fff}.s{background:#28a745;border-color:#28a745;color:#fff}.w{background:#ffc107;border-color:#ffc107}.d{background:#dc3545;border-color:#dc3545;color:#fff}
+@media(max-width:1200px){.grid{grid-template-columns:250px 1fr}.edw{grid-column:1/-1}}@media(max-width:992px){.sidebar{transform:translateX(-100%)}.main{margin-left:0}.grid{grid-template-columns:1fr}.row,.split{grid-template-columns:1fr}}
+</style></head><body>
+<div class="wrapper"><aside class="sidebar"><div class="brand">ClinicFlow AI<br><small>運用ダッシュボード</small></div><nav class="nav">
+<a href="/admin-dashboard.html"><span class="material-icons">dashboard</span>ダッシュボード</a><a href="/inbox.html"><span class="material-icons">inbox</span>受信トレイ</a><a href="/tickets.html"><span class="material-icons">support_agent</span>チケット（有人対応）</a><a class="active" href="/knowledge.html"><span class="material-icons">menu_book</span>ナレッジ管理</a><div class="sub"><a href="/faq-edit.html" style="color:#fff">FAQ編集</a><a href="/knowledge.html#templates">回答テンプレート</a><a href="/knowledge.html#approval">承認フロー</a></div></nav></aside>
+<main class="main"><header class="header"><div>ホーム > ナレッジ管理 > FAQ編集</div><div>佐藤</div></header><div class="content">
+<h2 style="margin:0 0 10px">FAQ編集</h2><div id="dirty" style="color:#d39e00;font-weight:700;display:none">未保存の変更があります</div>
+<div class="grid">
+<section class="card filters"><div style="font-size:12px;color:#6c757d;font-weight:700">カテゴリ</div><div id="cats"></div><div style="font-size:12px;color:#6c757d;font-weight:700;margin-top:8px">状態</div><div id="sts"></div><label><input id="pin" type="checkbox"> ピン留めのみ</label><br><label><input id="rv" type="checkbox"> 要確認のみ</label></section>
+<section class="card list"><div class="top"><input id="q" placeholder="検索（タイトル/本文/タグ）"></div><div id="list" class="items"></div></section>
+<section class="card edw"><div class="ed">
+<div class="row"><label>質問<input id="title"></label><label>カテゴリ<select id="cat"></select></label></div>
+<div class="row"><label>タグ（カンマ区切り）<input id="tags"></label><label>ステータス<select id="st"><option value="draft">下書き</option><option value="published">公開</option><option value="needs_review">要確認</option></select></label></div>
+<div id="warn" class="warn"></div>
+<div class="split"><div><div style="font-size:12px;color:#6c757d">本文（Markdown）</div><textarea id="body"></textarea></div><div><div style="font-size:12px;color:#6c757d">ライブプレビュー</div><div id="pv" class="pv"></div></div></div>
+<div class="btns"><button id="save" class="btn p">保存</button><button id="pub" class="btn s">公開</button><button id="rev" class="btn w">要確認にする</button><button id="dup" class="btn">複製</button><button id="del" class="btn d">削除</button><button id="tmp" class="btn">受診誘導テンプレ挿入</button></div>
+<div id="meta" style="font-size:12px;color:#6c757d">更新情報: -</div></div></section></div></div></main></div>
+<script src="/staff-common.js"></script>
+<script src="/knowledge-badge.js"></script>
+<script>
+// TODO(API): GET/POST/PUT/DELETE を /api/knowledge/faqs に差し替え
+const KEY="clinicflow_faq_items_v1",C=["料金","予約/変更/キャンセル","施術説明","ダウンタイム/注意事項","術後不安（受診誘導含む）","アクセス/営業時間","規約/プライバシー","その他"],S={draft:"下書き",published:"公開",needs_review:"要確認"},NG=["診断","処方","病名","投薬"];
+const seed=[["二重術の腫れは何日で落ち着きますか","ダウンタイム/注意事項","published","二重,腫れ","### 回答\n- 3〜7日程度で軽快"],["予約変更はいつまで可能ですか","予約/変更/キャンセル","published","予約,変更","### 回答\n前日18時まで"],["ヒアルロン酸の料金目安","料金","draft","料金","### 回答\nカウンセリングで見積り"],["術後に赤みが続く場合","術後不安（受診誘導含む）","needs_review","術後,赤み","### 回答\n症状が強い場合は受診をご案内"],["メイク再開の目安","ダウンタイム/注意事項","published","メイク","### 回答\n施術内容により異なる"],["営業時間とアクセス","アクセス/営業時間","published","営業時間","### 回答\n平日10:00〜19:00"],["個人情報の取り扱い","規約/プライバシー","published","規約","### 回答\n規約に基づき管理"],["ダウンタイム中の入浴","ダウンタイム/注意事項","draft","入浴","### 回答\n当日はシャワー推奨"],["初診時に必要なもの","その他","published","初診","### 回答\n- 身分証"],["施術前の注意事項","施術説明","needs_review","施術","### 回答\n体調不良時は無理しない"]].map((x,i)=>({id:"faq-"+String(i+1).padStart(3,"0"),title:x[0],category:x[1],status:x[2],tags:x[3].split(","),body:x[4],updatedAt:"2026-02-24 10:00",updatedBy:"佐藤",version:1,citationsCount:10+i,helpfulRate:0.8,isPinned:i%4===0}));
+const st={items:JSON.parse(localStorage.getItem(KEY)||"null")||seed,id:null,cf:"all",sf:"all",pin:false,rv:false,q:"",dirty:false};
+const $=id=>document.getElementById(id),E={cats:$("cats"),sts:$("sts"),pin:$("pin"),rv:$("rv"),q:$("q"),list:$("list"),title:$("title"),cat:$("cat"),tags:$("tags"),st:$("st"),body:$("body"),pv:$("pv"),warn:$("warn"),meta:$("meta"),dirty:$("dirty")};
+function saveLS(){localStorage.setItem(KEY,JSON.stringify(st.items))}
+function esc(t){return (t||"").replace(/[&<>\"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
+function md(t){let h="",u=false;for(const r of String(t||"").split("\n")){const l=esc(r);if(l.startsWith("- ")){if(!u){h+="<ul>";u=true}h+="<li>"+l.slice(2)+"</li>";continue}if(u){h+="</ul>";u=false}if(l.startsWith("### "))h+="<h3>"+l.slice(4)+"</h3>";else if(!l.trim())h+="<br>";else h+="<p>"+l+"</p>"}if(u)h+="</ul>";return h.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")}
+function flt(){const k=st.q.toLowerCase().trim();return st.items.filter(i=>(st.cf==="all"||i.category===st.cf)&&(st.sf==="all"||i.status===st.sf)&&(!st.pin||i.isPinned)&&(!st.rv||i.status==="needs_review")&&(!k||(`${i.title} ${i.body} ${i.tags.join(" ")}`.toLowerCase().includes(k))))}
+function catCnt(c){return st.items.filter(i=>i.category===c).length}function stCnt(s){return st.items.filter(i=>i.status===s).length}
+function setDirty(v){st.dirty=v;E.dirty.style.display=v?"block":"none"}
+function renderFilters(){E.cats.innerHTML=[["all","すべて",st.items.length],...C.map(c=>[c,c,catCnt(c)])].map(v=>`<button class="fbtn ${st.cf===v[0]?"on":""}" data-t="c" data-v="${v[0]}"><span>${v[1]}</span><span>${v[2]}</span></button>`).join("");E.sts.innerHTML=[["all","すべて",st.items.length],["draft","下書き",stCnt("draft")],["published","公開",stCnt("published")],["needs_review","要確認",stCnt("needs_review")]].map(v=>`<button class="fbtn ${st.sf===v[0]?"on":""}" data-t="s" data-v="${v[0]}"><span>${v[1]}</span><span>${v[2]}</span></button>`).join("");E.pin.checked=st.pin;E.rv.checked=st.rv}
+function renderList(){const a=flt();if(!st.id||!st.items.find(i=>i.id===st.id))st.id=(a[0]||st.items[0]||{}).id;if(!a.length){E.list.innerHTML='<div style="padding:20px;color:#6c757d">該当するFAQがありません。</div>';return}
+E.list.innerHTML=a.map(i=>`<article class="item ${i.id===st.id?"on":""}" data-id="${i.id}"><div style="font-weight:700">${esc(i.title)}</div><div style="display:flex;gap:6px;margin:4px 0"><span class="badge cat">${esc(i.category)}</span><span class="badge ${i.status}">${S[i.status]}</span></div><div style="font-size:12px;color:#6c757d;display:flex;justify-content:space-between"><span>${i.updatedAt} / ${esc(i.updatedBy)}</span><span><span class="material-icons" style="font-size:14px;vertical-align:-2px">link</span>${i.citationsCount} ・ 👍 ${Math.round(i.helpfulRate*100)}%</span></div></article>`).join("")}
+function loadEd(){E.cat.innerHTML=C.map(c=>`<option>${c}</option>`).join("");const i=st.items.find(v=>v.id===st.id);if(!i)return;E.title.value=i.title;E.cat.value=i.category;E.tags.value=i.tags.join(", ");E.st.value=i.status;E.body.value=i.body;E.pv.innerHTML=md(i.body);E.meta.textContent=`更新情報: v${i.version} / ${i.updatedAt} / ${i.updatedBy}`;checkWarn(i.body)}
+function checkWarn(b){const hit=NG.filter(w=>b.includes(w));if(hit.length){E.warn.classList.add("show");E.warn.textContent=`注意: 禁止表現候補（${hit.join("、")}）が含まれます。要確認ステータスを推奨します。`}else{E.warn.classList.remove("show");E.warn.textContent=""}}
+function now(){const d=new Date(),p=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`}
+function apply(ov){const i=st.items.find(v=>v.id===st.id);if(!i)return;i.title=E.title.value.trim()||"無題FAQ";i.category=E.cat.value;i.tags=E.tags.value.split(",").map(s=>s.trim()).filter(Boolean);i.status=ov||E.st.value;i.body=E.body.value;i.version++;i.updatedAt=now();i.updatedBy="佐藤"}
+function redraw(){renderFilters();renderList();loadEd();setDirty(false)}
+document.addEventListener("click",e=>{const f=e.target.closest(".fbtn");if(f){if(f.dataset.t==="c")st.cf=f.dataset.v;else st.sf=f.dataset.v;redraw();return}const it=e.target.closest(".item");if(it){st.id=it.dataset.id;renderList();loadEd();setDirty(false)}})
+E.pin.onchange=()=>{st.pin=E.pin.checked;redraw()};E.rv.onchange=()=>{st.rv=E.rv.checked;redraw()};E.q.oninput=()=>{st.q=E.q.value;redraw()};
+[E.title,E.cat,E.tags,E.st,E.body].forEach(x=>x.oninput=()=>{if(x===E.body){E.pv.innerHTML=md(E.body.value);checkWarn(E.body.value)}setDirty(true)});
+$("save").onclick=()=>{let ov=null;if(NG.some(w=>E.body.value.includes(w))&&confirm("本文に禁止表現候補があります。要確認へ変更しますか？"))ov="needs_review";apply(ov);saveLS();redraw();alert("保存しました。")};
+$("pub").onclick=()=>{apply("published");saveLS();redraw()};$("rev").onclick=()=>{apply("needs_review");saveLS();redraw()};
+$("dup").onclick=()=>{const i=st.items.find(v=>v.id===st.id);if(!i)return;const c={...structuredClone(i),id:"faq-"+Date.now(),title:i.title+"（コピー）",version:1,updatedAt:now()};st.items.unshift(c);st.id=c.id;saveLS();redraw()};
+$("del").onclick=()=>{const i=st.items.find(v=>v.id===st.id);if(!i)return;if(confirm("削除しますか？")){st.items=st.items.filter(v=>v.id!==i.id);st.id=null;saveLS();redraw()}};
+$("tmp").onclick=()=>{E.body.value=(E.body.value+"\n---\n※症状が強い場合や不安がある場合は、すぐに当院へご連絡ください。\n---").trimStart();E.pv.innerHTML=md(E.body.value);setDirty(true)};
+redraw();
+
+// updated: show badge on "ナレッジ管理" when any sub-module has notifications
+(function renderKnowledgeBadge(){
+  function readArray(key){try{const v=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(v)?v:[]}catch(_){return []}}
+  const faq=readArray("clinicflow_faq_items_v1").filter(i=>i&&i.status==="needs_review").length;
+  const tpl=readArray("clinicflow_reply_templates_v1").filter(i=>i&&i.status==="needs_review").length;
+  const apv=readArray("clinicflow_approvals_v1").filter(i=>i&&(i.status==="承認待ち"||i.status==="承認中")).length;
+  const total=faq+tpl+apv;
+  const link=document.querySelector('a[href="/knowledge.html"]');
+  if(!link)return;
+  const old=link.querySelector(".knowledge-notice-badge");
+  if(old)old.remove();
+  if(total<=0)return;
+  const b=document.createElement("span");
+  b.className="knowledge-notice-badge";
+  b.textContent=String(total);
+  b.style.cssText="margin-left:auto;min-width:18px;height:18px;padding:0 6px;border-radius:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:#dc3545;color:#fff;";
+  link.appendChild(b);
+})();
+</script></body></html>

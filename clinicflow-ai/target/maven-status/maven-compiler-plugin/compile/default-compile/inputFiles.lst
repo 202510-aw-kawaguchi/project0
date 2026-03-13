@@ -1,0 +1,13 @@
+C:\academia\src\project0\clinicflow-ai\src\main\java\com\example\clinicflow\chat\ChatRequest.java
+C:\academia\src\project0\clinicflow-ai\src\main\java\com\example\clinicflow\chat\ChatResponse.java
+C:\academia\src\project0\clinicflow-ai\src\main\java\com\example\clinicflow\chat\SupportAiService.java
+C:\academia\src\project0\clinicflow-ai\src\main\java\com\example\clinicflow\ClinicflowAiApplication.java
+C:\academia\src\project0\clinicflow-ai\src\main\java\com\example\clinicflow\controller\AuthController.java
+C:\academia\src\project0\clinicflow-ai\src\main\java\com\example\clinicflow\controller\ChatController.java
+C:\academia\src\project0\clinicflow-ai\src\main\java\com\example\clinicflow\controller\HealthController.java
+C:\academia\src\project0\clinicflow-ai\src\main\java\com\example\clinicflow\controller\HomeController.java
+C:\academia\src\project0\clinicflow-ai\src\main\java\com\example\clinicflow\security\CustomUserDetailsService.java
+C:\academia\src\project0\clinicflow-ai\src\main\java\com\example\clinicflow\security\SecurityConfig.java
+C:\academia\src\project0\clinicflow-ai\src\main\java\com\example\clinicflow\security\UserDataInitializer.java
+C:\academia\src\project0\clinicflow-ai\src\main\java\com\example\clinicflow\user\AppUser.java
+C:\academia\src\project0\clinicflow-ai\src\main\java\com\example\clinicflow\user\AppUserRepository.java

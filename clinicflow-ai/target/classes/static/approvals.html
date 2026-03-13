@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClinicFlow AI | 承認フロー</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <style>
+    :root{--bg:#f4f6f9;--card:#fff;--txt:#333;--muted:#6c757d;--line:#dce3ea;--pri:#17a2b8;--ok:#28a745;--warn:#ffc107;--danger:#dc3545;--sh:0 2px 8px rgba(0,0,0,.06)}
+    *{box-sizing:border-box}body{margin:0;font-family:"Noto Sans JP",sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.6}
+    .wrapper{display:flex;min-height:100vh}.sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;overflow:auto;background:linear-gradient(180deg,#343a40,#212529);color:#c2c7d0;z-index:100}
+    .brand{padding:16px 20px;background:rgba(0,0,0,.2);font-weight:700;color:#fff}.nav a{display:flex;align-items:center;gap:10px;padding:12px 20px;color:inherit;text-decoration:none}
+    .nav a:hover{background:rgba(255,255,255,.05)}.nav a.active{background:rgba(23,162,184,.2);color:#17a2b8;border-left:3px solid #17a2b8;padding-left:17px}
+    .sub{padding:2px 0 8px 44px}.sub a{font-size:13px;padding:6px 0;display:flex;align-items:center;gap:8px}.sub a.active{color:#fff;font-weight:700}
+    .badge{border-radius:20px;padding:2px 9px;font-size:11px;display:inline-flex;align-items:center}.b-danger{background:#dc3545;color:#fff}.b-info{background:#17a2b8;color:#fff}.b-warning{background:#ffc107;color:#333}
+    .main{flex:1;margin-left:250px;min-width:0}.header{position:sticky;top:0;z-index:50;height:56px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+    .content{padding:16px}.title{margin:0}.subtxt{margin:2px 0 12px;color:var(--muted);font-size:12px}
+    .layout{display:grid;grid-template-columns:280px 1fr 1.2fr;gap:16px}
+    .card{background:var(--card);border-radius:10px;box-shadow:var(--sh)}
+    .filters{padding:12px}.sec{margin:0 0 8px;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase}
+    .row{display:grid;gap:6px;margin-bottom:10px}.fbtn{border:1px solid #e3e9ef;background:#fff;border-radius:8px;padding:7px 10px;display:flex;justify-content:space-between;cursor:pointer}
+    .fbtn.on{border-color:var(--pri);background:#f2fcfe;color:var(--pri);font-weight:700}
+    .sel{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+    .checks label{display:flex;justify-content:space-between;gap:8px;padding:4px 0}
+    .list{display:flex;flex-direction:column;min-height:760px}.search{padding:12px;border-bottom:1px solid #edf2f5}.ipt{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+    .items{overflow:auto;max-height:calc(100vh - 220px)}.item{border-left:3px solid transparent;border-bottom:1px solid #f0f3f6;padding:12px;cursor:pointer;transition:.2s}
+    .item:hover{background:#f8f9fa;transform:translateY(-1px)}.item.on{border-left-color:var(--pri);background:#f8fcfd}
+    .nm{font-weight:700}.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.chip{padding:2px 9px;border-radius:20px;font-size:11px}.cat{background:#eef2f6;color:#4f5b67}.st-wait{background:#fff3cd;color:#7a5b00}.st-prog{background:#d1ecf1;color:#0c5460}.st-back{background:#f8d7da;color:#721c24}.st-ok{background:#d4edda;color:#155724}
+    .p-high{background:#f8d7da;color:#721c24}.p-mid{background:#fff3cd;color:#856404}.p-low{background:#d1ecf1;color:#0c5460}.rf{background:#fdecea;color:#b02a37}
+    .meta{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}.over{color:var(--danger);font-weight:700}
+    .detail{padding:12px;display:flex;flex-direction:column;gap:10px;min-height:760px}.head{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .warn{border:1px solid #ffeeba;background:#fff7db;color:#7a5b00;border-radius:8px;padding:8px 10px;display:none}.warn.red{background:#fdecea;border-color:#f5c6cb;color:#842029}.warn.show{display:block}
+    .tabs{display:flex;gap:6px}.tab{border:1px solid #cfd8e3;background:#fff;border-radius:8px;padding:6px 10px;cursor:pointer}.tab.on{background:#17a2b8;color:#fff;border-color:#17a2b8}
+    .diff{display:grid;grid-template-columns:1fr 1fr;gap:8px}.box{border:1px solid var(--line);border-radius:8px;padding:10px;max-height:220px;overflow:auto;background:#fff}
+    .line{white-space:pre-wrap}.chg{background:#fff4ce}.checkgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .cmt-list{border:1px solid var(--line);border-radius:8px;padding:8px;max-height:140px;overflow:auto}.cmt{padding:6px 0;border-bottom:1px dashed #e9edf2}.cmt:last-child{border-bottom:0}
+    .btns{display:flex;flex-wrap:wrap;gap:7px}.btn{border:1px solid #cfd8e3;background:#fff;border-radius:8px;padding:8px 12px;cursor:pointer}
+    .pri{background:var(--pri);border-color:var(--pri);color:#fff}.ok{background:var(--ok);border-color:var(--ok);color:#fff}.w{background:var(--warn);border-color:var(--warn)}.d{background:var(--danger);border-color:var(--danger);color:#fff}
+    .toast{position:fixed;right:16px;bottom:16px;background:#1f2933;color:#fff;padding:10px 12px;border-radius:8px;opacity:0;transform:translateY(8px);transition:.2s}.toast.show{opacity:1;transform:translateY(0)}
+    @media (max-width:1200px){.layout{grid-template-columns:280px 1fr}.detail-wrap{grid-column:1/-1}.items{max-height:420px}}
+    @media (max-width:992px){.sidebar{transform:translateX(-100%)}.main{margin-left:0}.layout{grid-template-columns:1fr}}
+    @media (max-width:768px){.content{padding:16px}.diff,.head,.checkgrid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <aside class="sidebar">
+    <div class="brand">ClinicFlow AI<br><small>運用ダッシュボード</small></div>
+    <nav class="nav">
+      <a href="/admin-dashboard.html"><span class="material-icons">dashboard</span>ダッシュボード</a>
+      <a href="/inbox.html"><span class="material-icons">inbox</span>受信トレイ <span class="badge b-info">12</span></a>
+      <a href="/tickets.html"><span class="material-icons">support_agent</span>チケット（有人対応） <span class="badge b-warning">4</span></a>
+      <a class="active" href="/knowledge.html"><span class="material-icons">menu_book</span>ナレッジ管理</a>
+      <div class="sub">
+        <a href="/faq-edit.html"><span class="material-icons" style="font-size:16px">quiz</span>FAQ編集</a>
+        <a href="/reply-templates.html"><span class="material-icons" style="font-size:16px">description</span>回答テンプレート</a>
+        <a class="active" href="/approvals.html"><span class="material-icons" style="font-size:16px">fact_check</span>承認フロー <span class="badge b-danger">2</span></a>
+      </div>
+    </nav>
+  </aside>
+  <main class="main">
+    <header class="header"><div>ホーム &gt; ナレッジ管理 &gt; 承認フロー</div><div>受付担当：佐藤</div></header>
+    <div class="content">
+      <h2 class="title">承認フロー</h2>
+      <p class="subtxt">公開前の誤案内・医療判断・表現ブレを防ぐための承認ワークフローです。</p>
+      <div class="layout">
+        <section class="card filters">
+          <h3 class="sec">ステータス</h3><div id="fStatus" class="row"></div>
+          <h3 class="sec">種別</h3><div id="fType" class="row"></div>
+          <h3 class="sec">リスクフラグ</h3>
+          <div class="checks">
+            <label><span>医療判断疑い</span><input type="checkbox" data-risk="医療判断疑い" /></label>
+            <label><span>誇大表現</span><input type="checkbox" data-risk="誇大表現" /></label>
+            <label><span>安全テンプレ不足</span><input type="checkbox" data-risk="安全テンプレ不足" /></label>
+            <label><span>個人情報の可能性</span><input type="checkbox" data-risk="個人情報の可能性" /></label>
+          </div>
+          <h3 class="sec">優先度</h3>
+          <select id="fPriority" class="sel"><option value="all">すべて</option><option value="高">高</option><option value="中">中</option><option value="低">低</option></select>
+          <h3 class="sec" style="margin-top:10px">期限</h3>
+          <select id="fDue" class="sel"><option value="all">すべて</option><option value="期限切れ">期限切れ</option><option value="30分以内">期限まで30分以内</option><option value="今日中">今日中</option><option value="今週">今週</option></select>
+          <h3 class="sec" style="margin-top:10px">担当</h3>
+          <select id="fAssignee" class="sel"><option value="all">すべて</option><option>未割当</option><option>院長</option><option>責任者</option><option>法務</option></select>
+        </section>
+
+        <section class="card list">
+          <div class="search"><input id="search" class="ipt" placeholder="検索（タイトル / after本文 / カテゴリ / 申請者）" /></div>
+          <div id="list" class="items"></div>
+        </section>
+
+        <section class="card detail-wrap">
+          <div class="detail">
+            <div class="head">
+              <div>
+                <div style="font-weight:700" id="dTitle">-</div>
+                <div id="dMeta" style="font-size:12px;color:#6c757d">-</div>
+              </div>
+              <div>
+                <label>担当
+                  <select id="dAssignee" class="sel"><option>未割当</option><option>院長</option><option>責任者</option><option>法務</option></select>
+                </label>
+              </div>
+            </div>
+            <div id="riskBanner" class="warn"></div>
+            <div>
+              <div class="tabs"><button class="tab on" data-tab="diff">差分表示</button><button class="tab" data-tab="full">全文表示</button></div>
+              <div class="diff" style="margin-top:8px">
+                <div><div style="font-size:12px;color:#6c757d">Before</div><div id="beforeBox" class="box"></div></div>
+                <div><div style="font-size:12px;color:#6c757d">After</div><div id="afterBox" class="box"></div></div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;color:#6c757d;margin-bottom:6px">承認チェックリスト</div>
+              <div class="checkgrid">
+                <label>医療判断<select id="ckMedical" class="sel"><option>未確認</option><option>OK</option><option>NG</option></select></label>
+                <label>誇大表現<select id="ckExaggeration" class="sel"><option>未確認</option><option>OK</option><option>NG</option></select></label>
+                <label>個人情報<select id="ckPrivacy" class="sel"><option>未確認</option><option>OK</option><option>NG</option></select></label>
+                <label>安全テンプレ<select id="ckSafety" class="sel"><option>未確認</option><option>OK</option><option>NG</option></select></label>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;color:#6c757d;margin-bottom:6px">コメント</div>
+              <div class="checkgrid">
+                <input id="cmtInput" class="ipt" placeholder="コメントを入力" />
+                <button id="addCmt" class="btn">追加</button>
+              </div>
+              <div id="cmtList" class="cmt-list" style="margin-top:8px"></div>
+            </div>
+            <div class="btns">
+              <button id="btnApprove" class="btn ok">承認する</button>
+              <button id="btnBack" class="btn d">差し戻す</button>
+              <button id="btnInProgress" class="btn w">承認中にする</button>
+              <button id="btnPublish" class="btn pri">公開反映（モック）</button>
+              <button id="btnSafeInsert" class="btn">安全テンプレ挿入</button>
+              <button id="btnDetect" class="btn">禁止表現を検出</button>
+            </div>
+            <div style="font-size:12px;color:#6c757d">※公開反映（モック）は実運用でFAQ/回答テンプレートのstatusをpublishedへ更新する想定です。</div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+<div id="toast" class="toast"></div>
+<script src="/staff-common.js"></script>
+<script src="/knowledge-badge.js"></script>
+<script>
+  // TODO(API): approvals一覧は GET /api/approvals、更新は PATCH /api/approvals/{id} に差し替え
+  const KEY="clinicflow_approvals_v1";
+  const statuses=["承認待ち","承認中","差し戻し","承認済み"];
+  const types=["FAQ","回答テンプレート","ガードレール文言"];
+  const riskKeys=["医療判断疑い","誇大表現","安全テンプレ不足","個人情報の可能性"];
+  const ngWords=["診断","処方","病名","投薬"];
+  const seed=[
+    {id:"a-001",type:"FAQ",itemId:"k-003",title:"脂肪吸引の料金目安",category:"料金",status:"承認待ち",priority:"高",riskFlags:["医療判断疑い","安全テンプレ不足"],requestedBy:"佐藤",requestedAt:"2026-02-24 09:32",dueAt:"2026-02-24 12:00",assignee:"未割当",versionFrom:2,versionTo:3,diff:{before:"料金は症状で変動します。",after:"診断により料金が変わります。"},comments:[{by:"院長",time:"10:10",text:"『診断』という語を避けてください"}],checklist:{medicalJudgement:"未確認",exaggeration:"未確認",privacy:"未確認",safetyTemplate:"未確認"}},
+    {id:"a-002",type:"回答テンプレート",itemId:"t-011",title:"受診誘導テンプレ",category:"術後不安",status:"承認中",priority:"中",riskFlags:["安全テンプレ不足"],requestedBy:"鈴木",requestedAt:"2026-02-24 09:10",dueAt:"2026-02-24 11:40",assignee:"責任者",versionFrom:1,versionTo:2,diff:{before:"不安があればご相談ください。",after:"不安がある場合は当院へ連絡のうえ受診をご検討ください。"},comments:[],checklist:{medicalJudgement:"OK",exaggeration:"OK",privacy:"未確認",safetyTemplate:"OK"}},
+    {id:"a-003",type:"ガードレール文言",itemId:"g-210",title:"医療判断回避ルール更新",category:"ガードレール",status:"差し戻し",priority:"高",riskFlags:["誇大表現"],requestedBy:"田中",requestedAt:"2026-02-24 08:50",dueAt:"2026-02-24 13:30",assignee:"法務",versionFrom:4,versionTo:5,diff:{before:"確実に改善します。",after:"多くのケースで改善が期待されます。"},comments:[{by:"法務",time:"09:20",text:"断定表現の削除をお願いします"}],checklist:{medicalJudgement:"OK",exaggeration:"NG",privacy:"OK",safetyTemplate:"未確認"}},
+    {id:"a-004",type:"FAQ",itemId:"k-041",title:"ダウンタイムの説明",category:"ダウンタイム",status:"承認待ち",priority:"中",riskFlags:[],requestedBy:"佐藤",requestedAt:"2026-02-24 09:42",dueAt:"2026-02-24 18:00",assignee:"院長",versionFrom:1,versionTo:2,diff:{before:"腫れます。",after:"個人差はありますが数日程度で落ち着く傾向です。"},comments:[],checklist:{medicalJudgement:"未確認",exaggeration:"未確認",privacy:"未確認",safetyTemplate:"未確認"}},
+    {id:"a-005",type:"回答テンプレート",itemId:"t-030",title:"キャンセル規定案内",category:"予約変更",status:"承認済み",priority:"低",riskFlags:[],requestedBy:"鈴木",requestedAt:"2026-02-24 07:55",dueAt:"2026-02-24 16:00",assignee:"責任者",versionFrom:2,versionTo:3,diff:{before:"当日キャンセル不可",after:"前日18時以降の変更は規定料金が発生します。"},comments:[{by:"責任者",time:"08:40",text:"問題ありません"}],checklist:{medicalJudgement:"OK",exaggeration:"OK",privacy:"OK",safetyTemplate:"OK"}},
+    {id:"a-006",type:"FAQ",itemId:"k-055",title:"術後の赤み対応",category:"術後不安",status:"承認待ち",priority:"高",riskFlags:["安全テンプレ不足"],requestedBy:"佐藤",requestedAt:"2026-02-24 10:05",dueAt:"2026-02-24 10:40",assignee:"未割当",versionFrom:3,versionTo:4,diff:{before:"様子を見てください。",after:"症状が続く場合は早めにご相談ください。"},comments:[],checklist:{medicalJudgement:"未確認",exaggeration:"未確認",privacy:"未確認",safetyTemplate:"NG"}},
+    {id:"a-007",type:"回答テンプレート",itemId:"t-021",title:"料金問い合わせ一次回答",category:"料金",status:"承認中",priority:"中",riskFlags:["誇大表現"],requestedBy:"田中",requestedAt:"2026-02-24 09:20",dueAt:"2026-02-24 17:00",assignee:"法務",versionFrom:1,versionTo:2,diff:{before:"最安値です。",after:"料金は施術内容により異なります。"},comments:[],checklist:{medicalJudgement:"OK",exaggeration:"未確認",privacy:"OK",safetyTemplate:"未確認"}},
+    {id:"a-008",type:"ガードレール文言",itemId:"g-214",title:"個人情報マスクルール",category:"プライバシー",status:"承認待ち",priority:"中",riskFlags:["個人情報の可能性"],requestedBy:"鈴木",requestedAt:"2026-02-24 08:32",dueAt:"2026-02-24 19:00",assignee:"法務",versionFrom:2,versionTo:3,diff:{before:"電話番号を表示",after:"電話番号は下4桁のみ表示"},comments:[],checklist:{medicalJudgement:"OK",exaggeration:"OK",privacy:"未確認",safetyTemplate:"未確認"}},
+    {id:"a-009",type:"FAQ",itemId:"k-077",title:"施術の副作用説明",category:"施術説明",status:"差し戻し",priority:"高",riskFlags:["医療判断疑い"],requestedBy:"田中",requestedAt:"2026-02-24 06:45",dueAt:"2026-02-24 14:00",assignee:"院長",versionFrom:1,versionTo:2,diff:{before:"副作用はありません。",after:"副作用が起きることがあります。"},comments:[{by:"院長",time:"07:10",text:"断定表現を避けてください"}],checklist:{medicalJudgement:"NG",exaggeration:"OK",privacy:"OK",safetyTemplate:"未確認"}},
+    {id:"a-010",type:"回答テンプレート",itemId:"t-099",title:"クレーム一次対応",category:"クレーム",status:"承認待ち",priority:"低",riskFlags:[],requestedBy:"佐藤",requestedAt:"2026-02-24 09:55",dueAt:"2026-02-25 10:00",assignee:"責任者",versionFrom:3,versionTo:4,diff:{before:"申し訳ありません。",after:"ご不快な思いをさせてしまい申し訳ありません。担当者よりご連絡します。"},comments:[],checklist:{medicalJudgement:"OK",exaggeration:"OK",privacy:"OK",safetyTemplate:"未確認"}}
+  ];
+  const st={items:load(),id:null,fStatus:"all",fType:"all",fRisks:new Set(),fPriority:"all",fDue:"all",fAssignee:"all",q:"",tab:"diff"};
+  const $=id=>document.getElementById(id);
+  const el={fStatus:$("fStatus"),fType:$("fType"),fPriority:$("fPriority"),fDue:$("fDue"),fAssignee:$("fAssignee"),search:$("search"),list:$("list"),dTitle:$("dTitle"),dMeta:$("dMeta"),dAssignee:$("dAssignee"),riskBanner:$("riskBanner"),beforeBox:$("beforeBox"),afterBox:$("afterBox"),ckMedical:$("ckMedical"),ckExaggeration:$("ckExaggeration"),ckPrivacy:$("ckPrivacy"),ckSafety:$("ckSafety"),cmtInput:$("cmtInput"),addCmt:$("addCmt"),cmtList:$("cmtList"),toast:$("toast"),btnPublish:$("btnPublish")};
+  const staffCtx=(window.StaffSettings&&window.StaffSettings.loadSettings)?window.StaffSettings.loadSettings():{members:[],currentId:""};
+  const toStaffId=v=>(window.StaffSettings&&window.StaffSettings.normalizeStaffId)?window.StaffSettings.normalizeStaffId(v,staffCtx):"";
+  const staffName=id=>(window.StaffSettings&&window.StaffSettings.getStaffName)?window.StaffSettings.getStaffName(id,staffCtx):"未割当";
+  const activeStaff=()=>((window.StaffSettings&&window.StaffSettings.getActiveMembers)?window.StaffSettings.getActiveMembers(staffCtx):[]);
+  st.items.forEach(a=>{const id=toStaffId(a.assigneeId||a.assignee);a.assigneeId=id;a.assignee=staffName(id);});
+  function load(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):seed}catch{return seed}}
+  function saveLS(){localStorage.setItem(KEY,JSON.stringify(st.items))}
+  function toast(m){el.toast.textContent=m;el.toast.classList.add("show");setTimeout(()=>el.toast.classList.remove("show"),1400)}
+  function now(){const d=new Date(),p=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`}
+  function toDate(s){return new Date(s.replace(" ","T")+":00")}
+  function dueClass(a){return toDate(a.dueAt)<new Date()?"over":""}
+  function dueMatch(a){
+    if(st.fDue==="all")return true;const n=new Date(),d=toDate(a.dueAt),ms=d-n;
+    if(st.fDue==="期限切れ")return ms<0;
+    if(st.fDue==="30分以内")return ms>=0&&ms<=30*60*1000;
+    if(st.fDue==="今日中")return d.toDateString()===n.toDateString();
+    if(st.fDue==="今週"){const x=new Date(n);x.setDate(n.getDate()+7);return d>=n&&d<=x}
+    return true;
+  }
+  function selected(){return st.items.find(i=>i.id===st.id)||null}
+  function filtered(){
+    const k=st.q.trim().toLowerCase();
+    return st.items.filter(a=>
+      (st.fStatus==="all"||a.status===st.fStatus)&&
+      (st.fType==="all"||a.type===st.fType)&&
+      (st.fPriority==="all"||a.priority===st.fPriority)&&
+      (st.fAssignee==="all"||(st.fAssignee==="__none"?!a.assigneeId:a.assigneeId===st.fAssignee))&&
+      dueMatch(a)&&
+      ([...st.fRisks].every(r=>a.riskFlags.includes(r)))&&
+      (!k||`${a.title} ${a.diff.after} ${a.category} ${a.requestedBy}`.toLowerCase().includes(k))
+    );
+  }
+  function countByStatus(s){return st.items.filter(i=>i.status===s).length}
+  function countByType(t){return st.items.filter(i=>i.type===t).length}
+  function stCls(s){return s==="承認待ち"?"st-wait":s==="承認中"?"st-prog":s==="差し戻し"?"st-back":"st-ok"}
+  function prCls(p){return p==="高"?"p-high":p==="中"?"p-mid":"p-low"}
+  function esc(t){return String(t??"").replace(/[&<>\"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
+  function diffLines(before,after,full){
+    const b=before.split("\n"),a=after.split("\n"),max=Math.max(b.length,a.length);
+    const left=[],right=[];
+    for(let i=0;i<max;i++){
+      const lb=b[i]??"",la=a[i]??"",ch=lb!==la;
+      left.push(`<div class="line ${(!full&&ch)?"chg":""}">${esc(lb)}</div>`);
+      right.push(`<div class="line ${(!full&&ch)?"chg":""}">${esc(la)}</div>`);
+    }
+    return {left:left.join(""),right:right.join("")};
+  }
+  function renderFilters(){
+    el.fStatus.innerHTML=[{k:"all",n:"すべて",c:st.items.length},...statuses.map(s=>({k:s,n:s,c:countByStatus(s)}))].map(v=>`<button class="fbtn ${st.fStatus===v.k?"on":""}" data-f="status" data-v="${v.k}"><span>${v.n}</span><span>${v.c}</span></button>`).join("");
+    el.fType.innerHTML=[{k:"all",n:"すべて",c:st.items.length},...types.map(s=>({k:s,n:s,c:countByType(s)}))].map(v=>`<button class="fbtn ${st.fType===v.k?"on":""}" data-f="type" data-v="${v.k}"><span>${v.n}</span><span>${v.c}</span></button>`).join("");
+  }
+  function renderList(){
+    const arr=filtered().sort((x,y)=>toDate(x.dueAt)-toDate(y.dueAt));
+    if(!st.id||!st.items.find(i=>i.id===st.id))st.id=(arr[0]||st.items[0]||{}).id||null;
+    if(!arr.length){el.list.innerHTML='<div style="padding:22px;color:#6c757d">該当する承認依頼がありません。</div>';return}
+    el.list.innerHTML=arr.map(a=>`<article class="item ${a.id===st.id?"on":""}" data-id="${a.id}">
+      <div class="nm">${esc(a.title)}</div>
+      <div class="chips"><span class="chip cat">${a.type}</span><span class="chip cat">${esc(a.category)}</span><span class="chip ${stCls(a.status)}">${a.status}</span><span class="chip ${prCls(a.priority)}">${a.priority}</span>${a.riskFlags.map(r=>`<span class="chip rf">${esc(r)}</span>`).join("")}</div>
+      <div class="meta"><span class="${dueClass(a)}">期限: ${a.dueAt}</span><span>担当: ${staffName(a.assigneeId)}</span></div>
+      <div class="meta"><span>申請: ${a.requestedBy} / ${a.requestedAt}</span><span>ID: ${a.id}</span></div>
+    </article>`).join("");
+  }
+  function renderDetail(){
+    const a=selected();if(!a)return;
+    el.dTitle.textContent=a.title;
+    el.dMeta.textContent=`${a.status} / ${a.priority} | ${a.type}・${a.category} | ${a.itemId} | v${a.versionFrom}→v${a.versionTo} | 期限 ${a.dueAt}`;
+    el.dAssignee.value=a.assigneeId||"";
+    if(a.riskFlags.length){
+      const red=a.riskFlags.includes("医療判断疑い");
+      el.riskBanner.className="warn show"+(red?" red":"");
+      el.riskBanner.textContent=`リスク警告: ${a.riskFlags.join(" / ")}`;
+    }else{el.riskBanner.className="warn";el.riskBanner.textContent=""}
+    const d=diffLines(a.diff.before,a.diff.after,st.tab==="full");
+    el.beforeBox.innerHTML=d.left;el.afterBox.innerHTML=d.right;
+    el.ckMedical.value=a.checklist.medicalJudgement;el.ckExaggeration.value=a.checklist.exaggeration;el.ckPrivacy.value=a.checklist.privacy;el.ckSafety.value=a.checklist.safetyTemplate;
+    el.cmtList.innerHTML=a.comments.length?a.comments.map(c=>`<div class="cmt"><div style="font-size:12px;color:#6c757d">${c.by} / ${c.time}</div><div>${esc(c.text)}</div></div>`).join(""):'<div style="color:#6c757d">コメントなし</div>';
+    el.btnPublish.disabled=a.status!=="承認済み";
+  }
+  function renderAssigneeSelectors(){
+    const detailOptions=`<option value="">未割当</option>${activeStaff().map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}`;
+    const filterOptions=`<option value="all">すべて</option><option value="__none">未割当</option>${activeStaff().map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}`;
+    if(el.dAssignee){el.dAssignee.innerHTML=detailOptions;}
+    if(el.fAssignee){el.fAssignee.innerHTML=filterOptions;el.fAssignee.value=st.fAssignee;}
+  }
+  function rerender(){renderFilters();renderAssigneeSelectors();renderList();renderDetail();document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.dataset.tab===st.tab))}
+  document.addEventListener("click",e=>{
+    const f=e.target.closest(".fbtn");if(f){if(f.dataset.f==="status")st.fStatus=f.dataset.v;else st.fType=f.dataset.v;rerender();return}
+    const it=e.target.closest(".item");if(it){st.id=it.dataset.id;renderList();renderDetail();return}
+    const tb=e.target.closest(".tab");if(tb){st.tab=tb.dataset.tab;renderDetail();rerender();return}
+  });
+  document.querySelectorAll("[data-risk]").forEach(c=>c.onchange=()=>{if(c.checked)st.fRisks.add(c.dataset.risk);else st.fRisks.delete(c.dataset.risk);rerender()});
+  el.fPriority.onchange=()=>{st.fPriority=el.fPriority.value;rerender()};el.fDue.onchange=()=>{st.fDue=el.fDue.value;rerender()};el.fAssignee.onchange=()=>{st.fAssignee=el.fAssignee.value;rerender()};
+  el.search.oninput=()=>{st.q=el.search.value;rerender()};
+  el.dAssignee.onchange=()=>{const a=selected();if(!a)return;a.assigneeId=el.dAssignee.value;a.assignee=staffName(a.assigneeId);saveLS();rerender();toast("担当を更新しました")};
+  function saveChecklist(){const a=selected();if(!a)return;a.checklist={medicalJudgement:el.ckMedical.value,exaggeration:el.ckExaggeration.value,privacy:el.ckPrivacy.value,safetyTemplate:el.ckSafety.value};saveLS();toast("チェック更新しました")}
+  el.ckMedical.onchange=saveChecklist;el.ckExaggeration.onchange=saveChecklist;el.ckPrivacy.onchange=saveChecklist;el.ckSafety.onchange=saveChecklist;
+  $("addCmt").onclick=()=>{const a=selected(),t=$("cmtInput").value.trim();if(!a||!t)return;a.comments.push({by:"佐藤",time:now(),text:t});$("cmtInput").value="";saveLS();renderDetail();toast("コメント追加しました")};
+  $("btnApprove").onclick=()=>{const a=selected();if(!a)return;a.status="承認済み";saveLS();rerender();toast("承認しました")};
+  $("btnBack").onclick=()=>{const a=selected();if(!a)return;const reason=prompt("差し戻し理由を入力してください");if(reason===null)return;a.status="差し戻し";a.comments.push({by:"佐藤",time:now(),text:`差し戻し: ${reason||"理由未入力"}`});saveLS();rerender();toast("差し戻しました")};
+  $("btnInProgress").onclick=()=>{const a=selected();if(!a)return;a.status="承認中";saveLS();rerender();toast("承認中にしました")};
+  $("btnPublish").onclick=()=>{const a=selected();if(!a||a.status!=="承認済み")return;toast("公開反映しました（モック）")};
+  $("btnSafeInsert").onclick=()=>{const a=selected();if(!a)return;a.diff.after += "\n---\n※症状が強い場合や不安がある場合は、すぐに当院へご連絡ください。\n---";if(!a.riskFlags.includes("安全テンプレ不足")){}else a.riskFlags=a.riskFlags.filter(r=>r!=="安全テンプレ不足");saveLS();rerender();toast("安全テンプレを追記しました")};
+  $("btnDetect").onclick=()=>{const a=selected();if(!a)return;const hit=ngWords.filter(w=>a.diff.after.includes(w));if(!hit.length){toast("禁止表現は見つかりませんでした");return}a.riskFlags=[...new Set([...a.riskFlags,"医療判断疑い"])];a.comments.push({by:"システム",time:now(),text:`禁止表現検出: ${hit.join("、")}`});saveLS();rerender();toast("禁止表現を検出しました")};
+  if(window.StaffSettings&&window.StaffSettings.renderSidebarUser){window.StaffSettings.renderSidebarUser(document);}
+
+  // updated: show badge on "ナレッジ管理" when any sub-module has notifications
+  (function renderKnowledgeBadge(){
+    function readArray(key){try{const v=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(v)?v:[]}catch(_){return []}}
+    const faq=readArray("clinicflow_faq_items_v1").filter(i=>i&&i.status==="needs_review").length;
+    const tpl=readArray("clinicflow_reply_templates_v1").filter(i=>i&&i.status==="needs_review").length;
+    const apv=readArray("clinicflow_approvals_v1").filter(i=>i&&(i.status==="承認待ち"||i.status==="承認中")).length;
+    const total=faq+tpl+apv;
+    const link=document.querySelector('a[href="/knowledge.html"]');
+    if(!link)return;
+    const old=link.querySelector(".knowledge-notice-badge");
+    if(old)old.remove();
+    if(total<=0)return;
+    const b=document.createElement("span");
+    b.className="knowledge-notice-badge";
+    b.textContent=String(total);
+    b.style.cssText="margin-left:auto;min-width:18px;height:18px;padding:0 6px;border-radius:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:#dc3545;color:#fff;";
+    link.appendChild(b);
+  })();
+  rerender();
+</script>
+</body>
+</html>

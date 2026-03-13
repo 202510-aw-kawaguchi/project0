@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>カスタマーサポートAI</title>
+  <style>
+    body {
+      margin: 0;
+      background: #e9eef5;
+      font-family: "Segoe UI", "Yu Gothic UI", sans-serif;
+    }
+
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      max-width: 480px;
+      margin: 0 auto;
+      background: #fff;
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: #007ACC;
+      color: white;
+    }
+
+    .user-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0;
+      margin-bottom: 2px;
+    }
+
+    .user-status {
+      font-size: 0.75rem;
+      opacity: 0.9;
+    }
+
+    .user-status.online::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #34C759;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .menu-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: transparent;
+      color: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      background: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .date-divider {
+      text-align: center;
+      margin: 16px 0;
+    }
+
+    .date-divider span {
+      background: #e5e5e5;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    .message {
+      display: flex;
+      gap: 8px;
+      max-width: 85%;
+    }
+
+    .message-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .message-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message-bubble {
+      padding: 12px 16px;
+      border-radius: 18px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .message-time {
+      font-size: 0.7rem;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    .message.received {
+      align-self: flex-start;
+    }
+
+    .message.received .message-bubble {
+      background: white;
+      color: #333;
+      border-bottom-left-radius: 4px;
+    }
+
+    .message.sent {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message.sent .message-bubble {
+      background: #007ACC;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.sent .message-time {
+      text-align: right;
+    }
+
+    .message-status.read {
+      font-size: 0.7rem;
+      color: #007ACC;
+      margin-left: 8px;
+    }
+
+    .message-meta {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-top: 4px;
+    }
+
+    .chat-input-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: white;
+      border-top: 1px solid #e5e5e5;
+    }
+
+    .message-input {
+      flex: 1;
+      padding: 10px 16px;
+      border: 1px solid #e5e5e5;
+      border-radius: 24px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .message-input:focus {
+      border-color: #007ACC;
+    }
+
+    .attach-btn, .emoji-btn, .send-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: transparent;
+      border-radius: 50%;
+      cursor: pointer;
+      color: #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .send-btn {
+      background: #007ACC;
+      color: white;
+    }
+
+    .send-btn:hover {
+      background: #005A9E;
+    }
+
+    .send-btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+
+    .suggestions {
+      margin-left: 40px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .suggestion-btn {
+      border: 1px solid #bcd9f3;
+      background: #eaf4ff;
+      color: #005A9E;
+      border-radius: 16px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    /* タイピングインジケーター */
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 12px 16px;
+      background: white;
+      border-radius: 18px;
+      width: fit-content;
+    }
+
+    .typing-indicator span {
+      width: 8px;
+      height: 8px;
+      background: #999;
+      border-radius: 50%;
+      animation: typing 1.4s infinite ease-in-out;
+    }
+
+    .typing-indicator span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-8px); }
+    }
+  </style>
+</head>
+<body>
+<div class="chat-container">
+  <header class="chat-header">
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='100%25' height='100%25' fill='%23c8d8f3'/%3E%3Ccircle cx='40' cy='31' r='15' fill='%23748fb8'/%3E%3Crect x='20' y='49' width='40' height='20' rx='10' fill='%23748fb8'/%3E%3C/svg%3E" alt="" class="user-avatar">
+    <div class="user-info">
+      <h2 class="user-name">カスタマーサポートAI</h2>
+      <span class="user-status online">オンライン</span>
+    </div>
+    <a class="menu-btn" href="/logout" title="logout">⎋</a>
+  </header>
+
+  <main class="chat-messages" id="chatMessages">
+    <div class="date-divider">
+      <span>今日</span>
+    </div>
+
+    <div class="message received">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='100%25' height='100%25' fill='%23c8d8f3'/%3E%3Ccircle cx='40' cy='31' r='15' fill='%23748fb8'/%3E%3Crect x='20' y='49' width='40' height='20' rx='10' fill='%23748fb8'/%3E%3C/svg%3E" alt="" class="message-avatar">
+      <div class="message-content">
+        <div class="message-bubble">
+          <p>こんにちは。ご質問を入力してください。</p>
+        </div>
+        <span class="message-time">09:00</span>
+      </div>
+    </div>
+  </main>
+
+  <footer class="chat-input-area">
+    <button class="attach-btn">+</button>
+    <input type="text" class="message-input" placeholder="メッセージを入力..." id="messageInput">
+    <button class="emoji-btn">:)</button>
+    <button class="send-btn" id="sendBtn">送信</button>
+  </footer>
+</div>
+
+<script>
+const chatMessages = document.getElementById('chatMessages');
+const messageInput = document.getElementById('messageInput');
+const sendBtn = document.getElementById('sendBtn');
+
+function sendMessage() {
+    const text = messageInput.value.trim();
+    if (!text) return;
+
+    const messageEl = createMessageElement(text, 'sent');
+    chatMessages.appendChild(messageEl);
+    messageInput.value = '';
+    scrollToBottom();
+    sendToServer(text);
+}
+
+function createMessageElement(text, type) {
+    const now = new Date();
+    const time = now.toLocaleTimeString('ja-JP', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    const div = document.createElement('div');
+    div.className = `message ${type}`;
+
+    if (type === 'received') {
+        div.innerHTML = `
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='100%25' height='100%25' fill='%23c8d8f3'/%3E%3Ccircle cx='40' cy='31' r='15' fill='%23748fb8'/%3E%3Crect x='20' y='49' width='40' height='20' rx='10' fill='%23748fb8'/%3E%3C/svg%3E" alt="" class="message-avatar">
+            <div class="message-content">
+                <div class="message-bubble">
+                    <p>${escapeHtml(text)}</p>
+                </div>
+                <span class="message-time">${time}</span>
+            </div>
+        `;
+    } else {
+        div.innerHTML = `
+            <div class="message-content">
+                <div class="message-bubble">
+                    <p>${escapeHtml(text)}</p>
+                </div>
+                <span class="message-time">${time}</span>
+            </div>
+        `;
+    }
+
+    return div;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function scrollToBottom() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function appendSuggestions(items) {
+    if (!items || items.length === 0) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'suggestions';
+
+    items.forEach((item) => {
+        const btn = document.createElement('button');
+        btn.className = 'suggestion-btn';
+        btn.type = 'button';
+        btn.textContent = item;
+        btn.addEventListener('click', () => {
+            messageInput.value = item;
+            sendMessage();
+        });
+        wrapper.appendChild(btn);
+    });
+
+    chatMessages.appendChild(wrapper);
+    scrollToBottom();
+}
+
+function showTypingIndicator() {
+    hideTypingIndicator();
+
+    const indicator = document.createElement('div');
+    indicator.className = 'message received typing';
+    indicator.id = 'typingIndicator';
+    indicator.innerHTML = `
+        <div class="message-content">
+            <div class="typing-indicator">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    `;
+    chatMessages.appendChild(indicator);
+    scrollToBottom();
+}
+
+function hideTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) {
+        indicator.remove();
+    }
+}
+
+async function sendToServer(text) {
+    sendBtn.disabled = true;
+    showTypingIndicator();
+
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: text })
+        });
+
+        if (!response.ok) {
+            throw new Error('API request failed: ' + response.status);
+        }
+
+        const data = await response.json();
+        const answer = data.answer || '回答を取得できませんでした。';
+        hideTypingIndicator();
+
+        const receivedEl = createMessageElement(answer, 'received');
+        chatMessages.appendChild(receivedEl);
+        appendSuggestions(data.suggestions || []);
+        scrollToBottom();
+    } catch (error) {
+        hideTypingIndicator();
+        const errorEl = createMessageElement('通信エラーが発生しました。時間をおいて再試行してください。', 'received');
+        chatMessages.appendChild(errorEl);
+        scrollToBottom();
+    } finally {
+        sendBtn.disabled = false;
+        messageInput.focus();
+    }
+}
+
+sendBtn.addEventListener('click', sendMessage);
+messageInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+</script>
+</body>
+</html>
