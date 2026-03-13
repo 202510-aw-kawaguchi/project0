@@ -1,0 +1,11 @@
+.git
+.idea
+.vscode
+target
+build
+out
+clinicflow-ai/.repo
+clinicflow-ai/target
+clinicflow-ai/build
+clinicflow-ai/out
+*.log
